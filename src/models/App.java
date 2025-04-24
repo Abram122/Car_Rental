@@ -1,6 +1,5 @@
 package models;
 
-public class model {
+public class App {
     
 }
-
