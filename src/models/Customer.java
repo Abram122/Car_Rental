@@ -48,14 +48,6 @@ public class Customer extends User {
         }
     }
 
-    //Override login method because we are gamden awy we it comes to OOP
-    @Override
-    protected int login(String username, String password) {
-        return super.login(username, password); // بيستخدم الـ login بتاع User
-    }
 
-    //Public method to call register (since register is private in UML) i donot know if you want it like this.
-    public int performRegistration() {
-        return register();
-    }
+
 }

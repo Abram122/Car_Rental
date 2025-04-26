@@ -1,35 +1,55 @@
 package utils;
-import com.mysql.cj.jdbc.MysqlDataSource;
 
-import migrations.DBMigration;
+import com.mysql.cj.jdbc.MysqlDataSource;
 
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class MySQLConnection {
-    public static void main(String[] args) {
-        Properties prop = new Properties();
-        MysqlDataSource mysqlDS = new MysqlDataSource();
+    private static MySQLConnection instance;
+    private Connection connection;
+    private MysqlDataSource dataSource;
 
-        try  {
-            InputStream fis = MySQLConnection.class.getClassLoader().getResourceAsStream("resources/DBPropFile.properties");
+    private MySQLConnection() {
+        try {
+            Properties prop = new Properties();
+            InputStream fis = getClass().getClassLoader().getResourceAsStream("resources/DBPropFile.properties");
             prop.load(fis);
-            mysqlDS.setURL(prop.getProperty("MYSQL_DB_URL"));
-            mysqlDS.setUser(prop.getProperty("USER"));
-            mysqlDS.setPassword(prop.getProperty("PASSWORD"));
-        } catch (Exception e) {
-            System.out.println("Error loading DB config");
-            e.printStackTrace();
-            return;
-        }
 
-        try (Connection conn = mysqlDS.getConnection()) {
-            DBMigration.migrate(conn);
+            dataSource = new MysqlDataSource();
+            dataSource.setURL(prop.getProperty("MYSQL_DB_URL"));
+            dataSource.setUser(prop.getProperty("USER"));
+            dataSource.setPassword(prop.getProperty("PASSWORD"));
 
+            connection = dataSource.getConnection();
         } catch (Exception e) {
-            System.out.println("Database error:");
+            System.out.println("Error initializing DB connection");
             e.printStackTrace();
         }
+    }
+
+    public static MySQLConnection getInstance() {
+        if (instance == null) {
+            synchronized (MySQLConnection.class) {
+                if (instance == null) {
+                    instance = new MySQLConnection();
+                }
+            }
+        }
+        return instance;
+    }
+
+    public Connection getConnection() {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connection = dataSource.getConnection();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getting DB connection");
+            e.printStackTrace();
+        }
+        return connection;
     }
 }

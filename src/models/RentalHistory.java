@@ -1,7 +1,5 @@
-
 package models;
 import java.time.LocalDateTime;
-import java.sql.*;
 
 public class RentalHistory {
     private int rentalId;
@@ -62,30 +60,4 @@ public class RentalHistory {
         return "Rental ID: " + rentalId + ", Return Date: " + actualReturnDate + ", Comments: " + comments;
     }
 
-    private int log() {
-        String DB_URL = "jdbc:mysql://localhost:3306/car_rental";
-        String USER = "root";
-        String PASS = "1234";
-
-        try {
-            Connection conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            String sql = "INSERT INTO rental_logs (rentalId, actualReturnDate, comments, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, this.rentalId);
-            pstmt.setTimestamp(2, Timestamp.valueOf(this.actualReturnDate));
-            pstmt.setString(3, this.comments);
-            pstmt.setTimestamp(4, Timestamp.valueOf(this.createdAt));
-            pstmt.setTimestamp(5, Timestamp.valueOf(this.updatedAt));
-
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                return 1;
-            } else {
-                return 0;   
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return -1;  
-        }
-    }
 }
