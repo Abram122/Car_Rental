@@ -1,3 +1,5 @@
+// just to remeber i think we need to adjust our database schema to make it stuff like VARCHAR(100) to accommodate the longer hash strings.
+// because bCrypt hashes are ~60 characters
 package utils;
 
 import com.mysql.cj.jdbc.MysqlDataSource;

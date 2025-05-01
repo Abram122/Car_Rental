@@ -1,4 +1,5 @@
 package controllers;
+import utils.HashUtil;
 
 import dao.CustomerDAO;
 import utils.ValidationException;
@@ -20,10 +21,13 @@ public class RegisterController {
             throw new ValidationException("All fields are required! Please fill in all fields.");
         }
 
-        // Generate a userId (this should ideally come from the database or another service)
-        int userId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+        
+int userId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
 
-        // Use CustomerDAO to save the customer to the database
-        return customerDAO.register(userId, username, password, email,phone, licenseNumber);
+String hashed = HashUtil.hashPassword(password);
+
+//pass the hash (not plain text) to the DAO
+return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
+
     }
 }
