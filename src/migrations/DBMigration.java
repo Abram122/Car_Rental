@@ -14,10 +14,11 @@ public class DBMigration {
                     password_hash VARCHAR(255),
                     first_name VARCHAR(100),
                     last_name VARCHAR(100),
-                    email VARCHAR(150),
+                    email VARCHAR(150) unique,
                     phone VARCHAR(20),
                     birthday DATE,
                     address TEXT,
+                    license_number VARCHAR(50),
                     last_login TIMESTAMP,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

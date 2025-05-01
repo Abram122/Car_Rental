@@ -16,7 +16,7 @@ public class RentalHistoryDAO {
     }
 
     public boolean log(int rentalId, LocalDateTime actualReturnDate, String comments, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        String sql = "INSERT INTO rental_logs (rentalId, actualReturnDate, comments, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO rental_history (rentalId, actualReturnDate, comments, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, rentalId);
             pstmt.setTimestamp(2, Timestamp.valueOf(actualReturnDate));

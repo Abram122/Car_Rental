@@ -13,14 +13,15 @@ public class CustomerDAO {
         this.conn = MySQLConnection.getInstance().getConnection();
     }
 
-    public boolean register(int userId, String username, String password, String phone, String licenseNumber) {
-        String sql = "INSERT INTO customers (userId, username, password, phone, license_number) VALUES (?, ?, ?, ?, ?)";
+    public boolean register(int userId, String username, String password, String email , String phone, String licenseNumber) {
+        String sql = "INSERT INTO user (user_id, username, password_hash, email , phone, license_number) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
             pstmt.setString(2, username);
             pstmt.setString(3, password);
-            pstmt.setString(4, phone);
-            pstmt.setString(5, licenseNumber);
+            pstmt.setString(4, email);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, licenseNumber);
 
             int rowsAffected = pstmt.executeUpdate();
             return rowsAffected > 0;

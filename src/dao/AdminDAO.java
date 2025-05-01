@@ -14,7 +14,7 @@ public class AdminDAO {
     }
 
     public boolean login(String username, String password) {
-        String sql = "SELECT * FROM admins WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM admin WHERE username = ? AND password = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             stmt.setString(2, password);

@@ -24,6 +24,7 @@ public class MySQLConnection {
             dataSource.setPassword(prop.getProperty("PASSWORD"));
 
             connection = dataSource.getConnection();
+            System.out.println("DB connection initialized successfully");
         } catch (Exception e) {
             System.out.println("Error initializing DB connection");
             e.printStackTrace();
