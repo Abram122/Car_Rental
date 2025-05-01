@@ -1,5 +1,5 @@
 
-## 🚗 Car Rental Application
+## 🚗 Car Rental Management System (CRMS) Application
 
 A desktop application for managing car rentals, built with Java Swing and MySQL.  
 It follows a modular MVC-inspired architecture, with database migrations, DAOs, and domain models.
