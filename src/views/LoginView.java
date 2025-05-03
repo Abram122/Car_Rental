@@ -10,14 +10,38 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * DashboardView: package-private class to display a welcome message.
+ */
+class DashboardView extends JPanel {
+    public DashboardView(Main mainFrame, String username, boolean isAdmin) {
+        setLayout(new BorderLayout());
+        String role = isAdmin ? "Admin" : "User";
+        JLabel label = new JLabel(
+            "Welcome " + username + "! Logged in as " + role + ".",
+            SwingConstants.CENTER
+        );
+        label.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        add(label, BorderLayout.CENTER);
+    }
+}
+
+/**
+ * LoginView: handles login and optional 2FA OTP prompt.
+ */
 public class LoginView extends JPanel {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JCheckBox adminCheckBox;
     private JButton loginButton;
     private JLabel switchToRegisterLabel;
+    private LoginController loginController;
+    private Main mainFrame;
 
     public LoginView(Main mainFrame) {
+        this.mainFrame = mainFrame;
+        this.loginController = new LoginController();
+
         setBackground(AppColors.MAIN_BG);
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
@@ -32,7 +56,9 @@ public class LoginView extends JPanel {
         usernameField.setBackground(AppColors.DIVIDER_DARK_GRAY);
         usernameField.setForeground(AppColors.LIGHT_TEXT);
         usernameField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        add(new JLabel("Username", JLabel.RIGHT)).setForeground(AppColors.LIGHT_TEXT);
+        JLabel userLabel = new JLabel("Username", JLabel.RIGHT);
+        userLabel.setForeground(AppColors.LIGHT_TEXT);
+        add(userLabel);
         add(usernameField, "wrap, growx, gapbottom 10");
 
         // Password field
@@ -40,7 +66,9 @@ public class LoginView extends JPanel {
         passwordField.setBackground(AppColors.DIVIDER_DARK_GRAY);
         passwordField.setForeground(AppColors.LIGHT_TEXT);
         passwordField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        add(new JLabel("Password", JLabel.RIGHT)).setForeground(AppColors.LIGHT_TEXT);
+        JLabel passLabel = new JLabel("Password", JLabel.RIGHT);
+        passLabel.setForeground(AppColors.LIGHT_TEXT);
+        add(passLabel);
         add(passwordField, "wrap, growx, gapbottom 10");
 
         // Admin checkbox
@@ -52,24 +80,7 @@ public class LoginView extends JPanel {
         // Login button
         loginButton = new JButton("Login");
         styleButton(loginButton);
-        loginButton.addActionListener(_ -> {
-            try {
-                String username = usernameField.getText();
-                String password = new String(passwordField.getPassword());
-                boolean isAdmin = adminCheckBox.isSelected();
-                LoginController loginController = new LoginController();
-                boolean success = loginController.login(username, password, isAdmin);
-                if (success) {
-                    JOptionPane.showMessageDialog(this, "Login successful!");
-                    // should redirect to the main application view
-                    // For now, just print a message
-                } else {
-                    JOptionPane.showMessageDialog(this, "Invalid credentials!", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (ValidationException ex) {
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        loginButton.addActionListener(_e -> onLogin());
         add(loginButton, "span, center, gapbottom 10");
 
         // Switch to Register label
@@ -79,24 +90,82 @@ public class LoginView extends JPanel {
         switchToRegisterLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Switch to RegisterView by replacing the content pane
                 mainFrame.getContentPane().removeAll();
                 mainFrame.add(new RegisterView(mainFrame));
                 mainFrame.revalidate();
                 mainFrame.repaint();
             }
-
             @Override
             public void mouseEntered(MouseEvent e) {
                 switchToRegisterLabel.setForeground(AppColors.ACCENT_PURPLE);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 switchToRegisterLabel.setForeground(AppColors.ACCENT_TIFFANY);
             }
         });
         add(switchToRegisterLabel, "span, center");
+    }
+
+    private void onLogin() {
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
+        boolean isAdmin = adminCheckBox.isSelected();
+
+        try {
+            boolean success = loginController.login(username, password, isAdmin);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Login successful!");
+                mainFrame.getContentPane().removeAll();
+                mainFrame.add(new DashboardView(mainFrame, username, isAdmin));
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid credentials!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        } catch (ValidationException ve) {
+            if ("OTP_REQUIRED".equals(ve.getMessage())) {
+                promptForOtp(username);
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    ve.getMessage(),
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
+    }
+
+    private void promptForOtp(String username) {
+        String code = JOptionPane.showInputDialog(
+            this,
+            "Enter the 6-digit code sent to your email:",
+            "Two-Factor Authentication",
+            JOptionPane.PLAIN_MESSAGE
+        );
+        if (code != null && !code.trim().isEmpty()) {
+            boolean verified = loginController.verifyAdminOtp(username, code.trim());
+            if (verified) {
+                JOptionPane.showMessageDialog(this, "Login successful!");
+                mainFrame.getContentPane().removeAll();
+                mainFrame.add(new DashboardView(mainFrame, username, true));
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            } else {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid or expired code. Please try again.",
+                    "OTP Verification Failed",
+                    JOptionPane.ERROR_MESSAGE
+                );
+            }
+        }
     }
 
     private void styleButton(JButton button) {
@@ -110,7 +179,6 @@ public class LoginView extends JPanel {
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(AppColors.ACCENT_PURPLE);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(AppColors.ACCENT_TIFFANY);

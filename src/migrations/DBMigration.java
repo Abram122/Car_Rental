@@ -1,4 +1,5 @@
 package migrations;
+
 import java.sql.*;
 
 public class DBMigration {
@@ -10,11 +11,11 @@ public class DBMigration {
             applyMigration(conn, "create_user_table", """
                 CREATE TABLE User (
                     user_id INT PRIMARY KEY AUTO_INCREMENT,
-                    username VARCHAR(100),
-                    password_hash VARCHAR(255),
+                    username VARCHAR(100) UNIQUE NOT NULL,
+                    password_hash VARCHAR(255) NOT NULL,
                     first_name VARCHAR(100),
                     last_name VARCHAR(100),
-                    email VARCHAR(150) unique,
+                    email VARCHAR(150) UNIQUE NOT NULL,
                     phone VARCHAR(20),
                     birthday DATE,
                     address TEXT,
@@ -24,14 +25,21 @@ public class DBMigration {
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )
             """);
-            
+
             applyMigration(conn, "create_admin_table", """
                 CREATE TABLE Admin (
                     admin_id INT PRIMARY KEY AUTO_INCREMENT,
-                    name VARCHAR(100)
+                    username VARCHAR(100) UNIQUE NOT NULL,
+                    password_hash VARCHAR(255) NOT NULL,
+                    email VARCHAR(150) UNIQUE NOT NULL,
+                    otp_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+                    otp_code VARCHAR(6),
+                    otp_expiry TIMESTAMP,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )
             """);
-            
+
             applyMigration(conn, "create_category_table", """
                 CREATE TABLE Category (
                     category_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -41,7 +49,7 @@ public class DBMigration {
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )
             """);
-            
+
             applyMigration(conn, "create_car_model_table", """
                 CREATE TABLE Car_Model (
                     model_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -49,7 +57,7 @@ public class DBMigration {
                     model VARCHAR(100)
                 )
             """);
-            
+
             applyMigration(conn, "create_car_table", """
                 CREATE TABLE Car (
                     car_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -67,7 +75,7 @@ public class DBMigration {
                     FOREIGN KEY (category_id) REFERENCES Category(category_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_manage_car_table", """
                 CREATE TABLE Manage_Car (
                     admin_id INT,
@@ -77,7 +85,7 @@ public class DBMigration {
                     FOREIGN KEY (car_id) REFERENCES Car(car_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_maintenance_table", """
                 CREATE TABLE Maintenance (
                     maintenance_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -91,7 +99,7 @@ public class DBMigration {
                     FOREIGN KEY (car_id) REFERENCES Car(car_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_booking_table", """
                 CREATE TABLE Booking (
                     booking_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -106,7 +114,7 @@ public class DBMigration {
                     FOREIGN KEY (car_id) REFERENCES Car(car_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_review_table", """
                 CREATE TABLE Review (
                     review_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -118,7 +126,7 @@ public class DBMigration {
                     FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_payment_table", """
                 CREATE TABLE Payment (
                     payment_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -132,7 +140,7 @@ public class DBMigration {
                     FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_rental_history_table", """
                 CREATE TABLE Rental_History (
                     rental_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -147,7 +155,7 @@ public class DBMigration {
                     FOREIGN KEY (car_id) REFERENCES Car(car_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_discount_table", """
                 CREATE TABLE Discount (
                     discount_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -156,7 +164,7 @@ public class DBMigration {
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )
             """);
-            
+
             applyMigration(conn, "create_apply_discount_table", """
                 CREATE TABLE Apply_Discount (
                     payment_id INT,
@@ -166,7 +174,7 @@ public class DBMigration {
                     FOREIGN KEY (discount_id) REFERENCES Discount(discount_id)
                 )
             """);
-            
+
             applyMigration(conn, "create_invoice_table", """
                 CREATE TABLE Invoice (
                     invoice_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -178,7 +186,6 @@ public class DBMigration {
                     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
                 )
             """);
-            
 
             System.out.println("All applicable migrations processed.");
 

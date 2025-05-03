@@ -1,47 +1,54 @@
 package car_rental;
 
 import com.formdev.flatlaf.FlatDarkLaf;
-import javax.swing.*;
 import views.LoginView;
 import migrations.DBMigration;
 import utils.MySQLConnection;
+
+import javax.swing.*;
 import java.sql.Connection;
 
 public class Main extends JFrame {
 
     public Main() {
-        // Set Up FlatLaf For Better UI
+        // Set Look and Feel
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (Exception e) {
+            System.err.println("Failed to set FlatLaf theme:");
             e.printStackTrace();
         }
 
-        // Application Frame Setup
+        // Basic JFrame setup
         setTitle("Car Rental System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
-        setLocationRelativeTo(null); // Center the window
+        setLocationRelativeTo(null);
+        setResizable(false);
 
-        // Create and add the LoginView as the starting point
+        // Load Login View
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); // Ensure layout manager
         LoginView loginView = new LoginView(this);
         add(loginView);
+        revalidate();
+        repaint();
     }
 
     public static void main(String[] args) {
-        // Uncomment the following lines to run migrations
-    
-        // try (Connection conn = MySQLConnection.getInstance().getConnection()) {
-        //     DBMigration.migrate(conn);
-        // } catch (Exception e) {
-        //     System.err.println("Failed to run migrations:");
-        //     e.printStackTrace();
-        // }
+        // Optional: Run database migrations once
+        /*
+        try (Connection conn = MySQLConnection.getInstance().getConnection()) {
+            DBMigration.migrate(conn);
+        } catch (Exception e) {
+            System.err.println("Failed to run DB migrations:");
+            e.printStackTrace();
+        }
+        */
 
-        // Start the application
+        // Launch the application
         SwingUtilities.invokeLater(() -> {
-            Main main = new Main();
-            main.setVisible(true);
+            Main mainApp = new Main();
+            mainApp.setVisible(true);
         });
     }
 }
