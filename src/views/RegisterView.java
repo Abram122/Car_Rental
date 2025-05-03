@@ -1,6 +1,7 @@
 package views;
 
 import car_rental.Main;
+import controllers.OtpService;
 import controllers.RegisterController;
 import utils.AppColors;
 import utils.ValidationException;
@@ -45,14 +46,14 @@ public class RegisterView extends JPanel {
         add(new JLabel("Password", JLabel.RIGHT)).setForeground(AppColors.LIGHT_TEXT);
         add(passwordField, "wrap, growx, gapbottom 10");
 
-        // email field
+        // Email field
         emailField = new JTextField(20);
         emailField.setBackground(AppColors.DIVIDER_DARK_GRAY);
         emailField.setForeground(AppColors.LIGHT_TEXT);
         emailField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         add(new JLabel("Email", JLabel.RIGHT)).setForeground(AppColors.LIGHT_TEXT);
         add(emailField, "wrap, growx, gapbottom 10");
-        
+
         // Phone field
         phoneField = new JTextField(20);
         phoneField.setBackground(AppColors.DIVIDER_DARK_GRAY);
@@ -60,7 +61,7 @@ public class RegisterView extends JPanel {
         phoneField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         add(new JLabel("Phone", JLabel.RIGHT)).setForeground(AppColors.LIGHT_TEXT);
         add(phoneField, "wrap, growx, gapbottom 10");
-        
+
         // License number field
         licenseField = new JTextField(20);
         licenseField.setBackground(AppColors.DIVIDER_DARK_GRAY);
@@ -82,10 +83,12 @@ public class RegisterView extends JPanel {
                 RegisterController registerController = new RegisterController();
                 boolean success = registerController.register(username, password, email, phone, licenseNumber);
                 if (success) {
-                    JOptionPane.showMessageDialog(this, "Registration successful!");
-                    // Switch to LoginView by replacing the content pane
+                    // Generate and send OTP
+                    OtpService.generateAndSendOtp(username, email);
+                    JOptionPane.showMessageDialog(this, "Registration successful! Please verify your email.");
+                    // Switch to VerificationView
                     mainFrame.getContentPane().removeAll();
-                    mainFrame.add(new LoginView(mainFrame));
+                    mainFrame.add(new VerificationView(mainFrame, username, email));
                     mainFrame.revalidate();
                     mainFrame.repaint();
                 } else {
@@ -93,6 +96,8 @@ public class RegisterView extends JPanel {
                 }
             } catch (ValidationException ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error sending OTP: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
         add(registerButton, "span, center, gapbottom 10");
@@ -104,7 +109,7 @@ public class RegisterView extends JPanel {
         switchToLoginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Switch to LoginView by replacing the content pane
+                // Switch to LoginView
                 mainFrame.getContentPane().removeAll();
                 mainFrame.add(new LoginView(mainFrame));
                 mainFrame.revalidate();

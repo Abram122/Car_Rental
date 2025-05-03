@@ -1,0 +1,61 @@
+package controllers;
+
+import utils.EmailUtil;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+public class OtpService {
+    private static final int OTP_LENGTH = 6;
+    private static final int EXPIRY_MINUTES = 5;
+    private static final Map<String, Object[]> otpStorage = new HashMap<>();
+
+    public static void generateAndSendOtp(String username, String email) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        Random rnd = new Random();
+        for (int i = 0; i < OTP_LENGTH; i++) {
+            sb.append(rnd.nextInt(10));
+        }
+        String otp = sb.toString();
+
+        Timestamp expiry = Timestamp.from(Instant.now().plusSeconds(EXPIRY_MINUTES * 60));
+
+        // Store OTP in memory
+        otpStorage.put(username, new Object[]{otp, expiry});
+
+        // Log OTP
+        System.out.println("OTP for " + username + ": " + otp);
+
+        // Send OTP via email
+        EmailUtil.sendOtpEmail(email, otp);  
+    }
+
+    public static boolean verifyOtp(String username, String otp) throws Exception {
+        Object[] otpData = otpStorage.get(username);
+        if (otpData == null) {
+            throw new Exception("No OTP found for user: " + username);
+        }
+
+        String storedOtp = (String) otpData[0];
+        Timestamp expiry = (Timestamp) otpData[1];
+
+        if (expiry.before(Timestamp.from(Instant.now()))) {
+            otpStorage.remove(username);
+            throw new Exception("OTP has expired");
+        }
+
+        if (!storedOtp.equals(otp)) {
+            throw new Exception("Invalid OTP");
+        }
+
+        otpStorage.remove(username);
+        return true;
+    }
+
+    public static void resendOtp(String username, String email) throws Exception {
+        generateAndSendOtp(username, email);
+    }
+}

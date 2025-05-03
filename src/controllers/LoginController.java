@@ -3,7 +3,7 @@ package controllers;
 import dao.UserDAO;
 import dao.AdminDAO;
 import utils.ValidationException;
-import utils.OtpService;
+import controllers.OtpService;
 
 public class LoginController {
     private UserDAO userDAO;
@@ -14,38 +14,33 @@ public class LoginController {
         this.adminDAO = new AdminDAO();
     }
 
-  
     public boolean login(String username, String password, boolean isAdmin)
             throws ValidationException {
-     
+
         if (username == null || username.isEmpty() ||
-            password == null || password.isEmpty()) {
+                password == null || password.isEmpty()) {
             throw new ValidationException(
-                "All fields are required! Please fill in both username and password."
-            );
+                    "All fields are required! Please fill in both username and password.");
         }
 
         if (isAdmin) {
-         
+
             if (!adminDAO.login(username, password)) {
                 return false;
             }
 
-          
             if (adminDAO.isOtpEnabled(username)) {
-                
+
                 String email = adminDAO.getEmailByUsername(username);
                 try {
                     OtpService.generateAndSendOtp(username, email);
                 } catch (Exception e) {
                     throw new ValidationException(
-                        "Failed to send OTP email: " + e.getMessage()
-                    );
+                            "Failed to send OTP email: " + e.getMessage());
                 }
 
                 throw new ValidationException("OTP_REQUIRED");
             }
-
 
             return true;
         } else {
