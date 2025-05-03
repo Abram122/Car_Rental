@@ -20,8 +20,6 @@ public class CustomerDAO {
             pstmt.setString(2, username);
             pstmt.setString(3, password);  //the controller now passes in the hash i hope so 😂😂
 
-            // Check it Abram an give me you feedback 
-
             pstmt.setString(4, email);
             pstmt.setString(5, phone);
             pstmt.setString(6, licenseNumber);
