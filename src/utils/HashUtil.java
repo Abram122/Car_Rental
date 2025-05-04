@@ -16,13 +16,3 @@ public class HashUtil {
   }
 }
 
-/* Some of the docs and repos i have looked at to implement this so you can also have a look on it because you have to search a lot 
-  
-  
-  https://gist.github.com/craSH/5217757
-  https://github.com/quarkusio/quarkus/blob/main/extensions/elytron-security-common/runtime/src/main/java/io/quarkus/elytron/security/common/BcryptUtil.java
-  www.baeldung.com/java-password-hashing
-  
-  
- 
-*/

@@ -21,13 +21,11 @@ public class OtpService {
         }
         String otp = sb.toString();
 
+        // to get the expiry time
         Timestamp expiry = Timestamp.from(Instant.now().plusSeconds(EXPIRY_MINUTES * 60));
 
-        // Store OTP in memory
+        // Store OTP in memory (something as cache or local storage)
         otpStorage.put(email, new Object[]{otp, expiry});
-
-        // Log OTP
-        System.out.println("OTP for " + email + ": " + otp);
 
         // Send OTP via email
         EmailUtil.sendOtpEmail(email, otp);  
@@ -60,6 +58,6 @@ public class OtpService {
     }
 
     public static void resendOtp( String email) throws Exception {
-        generateAndSendOtp( email);
+        generateAndSendOtp(email);
     }
 }

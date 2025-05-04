@@ -11,7 +11,7 @@ import java.sql.Connection;
 public class Main extends JFrame {
 
     public Main() {
-        // Set Look and Feel
+        // For better UI, set the FlatLaf theme
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (Exception e) {
@@ -26,8 +26,8 @@ public class Main extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
 
-        // Load Login View
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); // Ensure layout manager
+        // Load Login View as a default view
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
         LoginView loginView = new LoginView(this);
         add(loginView);
         revalidate();
@@ -35,7 +35,7 @@ public class Main extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Optional: Run database migrations once
+        // Optional: Uncomment the following lines to run DB migrations on startup
 
         // try (Connection conn = MySQLConnection.getInstance().getConnection()) {
         //     DBMigration.migrate(conn);

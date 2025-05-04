@@ -58,7 +58,6 @@ public class VerificationView extends JPanel {
         verifyButton.addActionListener(_ -> {
             String otp = otpField.getText();
             try {
-                // Assuming OtpService has a verifyOtp method
                 boolean success = OtpService.verifyOtp(email, otp);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Verification successful!");

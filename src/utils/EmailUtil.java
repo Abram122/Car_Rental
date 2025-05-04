@@ -19,7 +19,7 @@ public class EmailUtil {
         }
     }
 
-    public static void sendOtpEmail(String email,String otp) throws MessagingException {
+    public static void sendOtpEmail(String email, String otp) throws MessagingException {
         String host = config.getProperty("smtp.host");
         String user = config.getProperty("smtp.user");
         String pass = config.getProperty("smtp.pass");
@@ -49,10 +49,26 @@ public class EmailUtil {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(user));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-            msg.setSubject("Your Admin Login OTP");
-            msg.setText("Your one-time login code is: " + otp + "\nIt expires in 5 minutes.");
+            msg.setSubject("Your OTP To Login");
+
+            // HTML email body with colors for more professional look
+            String htmlMessage = """
+                    <html>
+                    <body style="background-color:#121212; color:#F2F2F2; font-family:Arial, sans-serif; padding:20px;">
+                        <h2 style="color:#03DAC5;">Your OTP To Login</h2>
+                        <p>Your one-time login code is:</p>
+                        <p style="font-size:20px; font-weight:bold; color:#BB86FC;">%s</p>
+                        <p style="color:#F2F2F2;">It expires in <span style="color:#CF6679;">5 minutes</span>.</p>
+                        <hr style="border:1px solid #1f1f1f;">
+                        <p style="font-size:12px; color:#F2F2F2;">If you did not request this code, please ignore this email.</p>
+                    </body>
+                    </html>
+                    """
+                    .formatted(otp);
+            msg.setContent(htmlMessage, "text/html; charset=utf-8");
             Transport.send(msg);
             System.out.println("OTP email sent successfully.");
+
         } catch (MessagingException ex) {
             System.err.println("Failed to send OTP email: " + ex.getMessage());
             throw new MessagingException("Failed to send OTP email: " + ex.getMessage(), ex);

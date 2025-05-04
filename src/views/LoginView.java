@@ -10,9 +10,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-/**
- * DashboardView: package-private class to display a welcome message.
- */
 class DashboardView extends JPanel {
     public DashboardView(Main mainFrame, String email, boolean isAdmin) {
         setLayout(new BorderLayout());
@@ -25,9 +22,7 @@ class DashboardView extends JPanel {
     }
 }
 
-/**
- * LoginView: handles login functionality.
- */
+
 public class LoginView extends JPanel {
     private JTextField emailField;
     private JPasswordField passwordField;
