@@ -19,12 +19,16 @@ public class Main extends JFrame {
             e.printStackTrace();
         }
 
+
+        // set icon 
+        ImageIcon icon = new ImageIcon("src/assets/logo.png");
         // Basic JFrame setup
         setTitle("Car Rental System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
         setResizable(false);
+        setIconImage(icon.getImage());
 
         // Load Login View as a default view
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
