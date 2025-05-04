@@ -1,7 +1,6 @@
 package views;
 
 import car_rental.Main;
-import controllers.OtpService;
 import controllers.RegisterController;
 import utils.AppColors;
 import utils.ValidationException;
@@ -83,12 +82,10 @@ public class RegisterView extends JPanel {
                 RegisterController registerController = new RegisterController();
                 boolean success = registerController.register(username, password, email, phone, licenseNumber);
                 if (success) {
-                    // Generate and send OTP
-                    OtpService.generateAndSendOtp(username, email);
                     JOptionPane.showMessageDialog(this, "Registration successful! Please verify your email.");
                     // Switch to VerificationView
                     mainFrame.getContentPane().removeAll();
-                    mainFrame.add(new VerificationView(mainFrame, username, email));
+                    mainFrame.add(new VerificationView(mainFrame, email));
                     mainFrame.revalidate();
                     mainFrame.repaint();
                 } else {

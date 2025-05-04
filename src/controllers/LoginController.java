@@ -2,57 +2,38 @@ package controllers;
 
 import dao.UserDAO;
 import dao.AdminDAO;
+import dao.CustomerDAO;
 import utils.ValidationException;
-import controllers.OtpService;
 
 public class LoginController {
     private UserDAO userDAO;
     private AdminDAO adminDAO;
-
+    private CustomerDAO customerDAO;
+    
     public LoginController() {
         this.userDAO = new UserDAO();
         this.adminDAO = new AdminDAO();
+        this.customerDAO = new CustomerDAO();
     }
 
-    public boolean login(String username, String password, boolean isAdmin)
+    public boolean login(String email, String password, boolean isAdmin)
             throws ValidationException {
 
-        if (username == null || username.isEmpty() ||
+        if (email == null || email.isEmpty() ||
                 password == null || password.isEmpty()) {
             throw new ValidationException(
-                    "All fields are required! Please fill in both username and password.");
+                    "All fields are required! Please fill in both email and password.");
+        }
+
+        if (!customerDAO.is_verified(email)) {
+
+            throw new ValidationException("NOT_VERIFIED"); 
         }
 
         if (isAdmin) {
-
-            if (!adminDAO.login(username, password)) {
-                return false;
-            }
-
-            if (adminDAO.isOtpEnabled(username)) {
-
-                String email = adminDAO.getEmailByUsername(username);
-                try {
-                    OtpService.generateAndSendOtp(username, email);
-                } catch (Exception e) {
-                    throw new ValidationException(
-                            "Failed to send OTP email: " + e.getMessage());
-                }
-
-                throw new ValidationException("OTP_REQUIRED");
-            }
-
-            return true;
+            return adminDAO.login(email, password);
         } else {
-
-            return userDAO.login(username, password);
+            return userDAO.login(email, password);
         }
-    }
-
-    /**
-     * Called by the UI when the admin submits their OTP code.
-     */
-    public boolean verifyAdminOtp(String username, String code) {
-        return adminDAO.verifyOtp(username, code);
     }
 }

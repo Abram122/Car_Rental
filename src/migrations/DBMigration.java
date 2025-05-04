@@ -21,6 +21,7 @@ public class DBMigration {
                     address TEXT,
                     license_number VARCHAR(50),
                     last_login TIMESTAMP,
+                    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )

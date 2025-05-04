@@ -1,7 +1,7 @@
 package controllers;
 
 import utils.EmailUtil;
-
+import dao.CustomerDAO;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.HashMap;
@@ -13,7 +13,7 @@ public class OtpService {
     private static final int EXPIRY_MINUTES = 5;
     private static final Map<String, Object[]> otpStorage = new HashMap<>();
 
-    public static void generateAndSendOtp(String username, String email) throws Exception {
+    public static void generateAndSendOtp( String email) throws Exception {
         StringBuilder sb = new StringBuilder();
         Random rnd = new Random();
         for (int i = 0; i < OTP_LENGTH; i++) {
@@ -24,26 +24,26 @@ public class OtpService {
         Timestamp expiry = Timestamp.from(Instant.now().plusSeconds(EXPIRY_MINUTES * 60));
 
         // Store OTP in memory
-        otpStorage.put(username, new Object[]{otp, expiry});
+        otpStorage.put(email, new Object[]{otp, expiry});
 
         // Log OTP
-        System.out.println("OTP for " + username + ": " + otp);
+        System.out.println("OTP for " + email + ": " + otp);
 
         // Send OTP via email
         EmailUtil.sendOtpEmail(email, otp);  
     }
 
-    public static boolean verifyOtp(String username, String otp) throws Exception {
-        Object[] otpData = otpStorage.get(username);
+    public static boolean verifyOtp(String email, String otp) throws Exception {
+        Object[] otpData = otpStorage.get(email);
         if (otpData == null) {
-            throw new Exception("No OTP found for user: " + username);
+            throw new Exception("No OTP found for user: " + email);
         }
 
         String storedOtp = (String) otpData[0];
         Timestamp expiry = (Timestamp) otpData[1];
 
         if (expiry.before(Timestamp.from(Instant.now()))) {
-            otpStorage.remove(username);
+            otpStorage.remove(email);
             throw new Exception("OTP has expired");
         }
 
@@ -51,11 +51,15 @@ public class OtpService {
             throw new Exception("Invalid OTP");
         }
 
-        otpStorage.remove(username);
+        otpStorage.remove(email);
+        CustomerDAO customerDAO = new CustomerDAO();
+        if (!customerDAO.verify_user(email)) {
+            throw new Exception("Failed to verify user with OTP");
+        }
         return true;
     }
 
-    public static void resendOtp(String username, String email) throws Exception {
-        generateAndSendOtp(username, email);
+    public static void resendOtp( String email) throws Exception {
+        generateAndSendOtp( email);
     }
 }

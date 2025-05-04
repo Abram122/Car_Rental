@@ -2,11 +2,11 @@ package car_rental;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 import views.LoginView;
+import javax.swing.*;
 import migrations.DBMigration;
 import utils.MySQLConnection;
-
-import javax.swing.*;
 import java.sql.Connection;
+
 
 public class Main extends JFrame {
 
@@ -36,14 +36,13 @@ public class Main extends JFrame {
 
     public static void main(String[] args) {
         // Optional: Run database migrations once
-        /*
-        try (Connection conn = MySQLConnection.getInstance().getConnection()) {
-            DBMigration.migrate(conn);
-        } catch (Exception e) {
-            System.err.println("Failed to run DB migrations:");
-            e.printStackTrace();
-        }
-        */
+
+        // try (Connection conn = MySQLConnection.getInstance().getConnection()) {
+        //     DBMigration.migrate(conn);
+        // } catch (Exception e) {
+        //     System.err.println("Failed to run DB migrations:");
+        //     e.printStackTrace();
+        // }
 
         // Launch the application
         SwingUtilities.invokeLater(() -> {

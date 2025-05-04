@@ -14,23 +14,22 @@ import java.awt.event.MouseEvent;
  * DashboardView: package-private class to display a welcome message.
  */
 class DashboardView extends JPanel {
-    public DashboardView(Main mainFrame, String username, boolean isAdmin) {
+    public DashboardView(Main mainFrame, String email, boolean isAdmin) {
         setLayout(new BorderLayout());
         String role = isAdmin ? "Admin" : "User";
         JLabel label = new JLabel(
-            "Welcome " + username + "! Logged in as " + role + ".",
-            SwingConstants.CENTER
-        );
+                "Welcome " + email + "! Logged in as " + role + ".",
+                SwingConstants.CENTER);
         label.setFont(new Font("Segoe UI", Font.BOLD, 20));
         add(label, BorderLayout.CENTER);
     }
 }
 
 /**
- * LoginView: handles login and optional 2FA OTP prompt.
+ * LoginView: handles login functionality.
  */
 public class LoginView extends JPanel {
-    private JTextField usernameField;
+    private JTextField emailField;
     private JPasswordField passwordField;
     private JCheckBox adminCheckBox;
     private JButton loginButton;
@@ -51,15 +50,15 @@ public class LoginView extends JPanel {
         titleLabel.setForeground(AppColors.LIGHT_TEXT);
         add(titleLabel, "span, center, gapbottom 20");
 
-        // Username field
-        usernameField = new JTextField(20);
-        usernameField.setBackground(AppColors.DIVIDER_DARK_GRAY);
-        usernameField.setForeground(AppColors.LIGHT_TEXT);
-        usernameField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JLabel userLabel = new JLabel("Username", JLabel.RIGHT);
+        // email field
+        emailField = new JTextField(20);
+        emailField.setBackground(AppColors.DIVIDER_DARK_GRAY);
+        emailField.setForeground(AppColors.LIGHT_TEXT);
+        emailField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        JLabel userLabel = new JLabel("email", JLabel.RIGHT);
         userLabel.setForeground(AppColors.LIGHT_TEXT);
         add(userLabel);
-        add(usernameField, "wrap, growx, gapbottom 10");
+        add(emailField, "wrap, growx, gapbottom 10");
 
         // Password field
         passwordField = new JPasswordField(20);
@@ -95,10 +94,12 @@ public class LoginView extends JPanel {
                 mainFrame.revalidate();
                 mainFrame.repaint();
             }
+
             @Override
             public void mouseEntered(MouseEvent e) {
                 switchToRegisterLabel.setForeground(AppColors.ACCENT_PURPLE);
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 switchToRegisterLabel.setForeground(AppColors.ACCENT_TIFFANY);
@@ -108,62 +109,38 @@ public class LoginView extends JPanel {
     }
 
     private void onLogin() {
-        String username = usernameField.getText().trim();
+        String email = emailField.getText().trim();
         String password = new String(passwordField.getPassword());
         boolean isAdmin = adminCheckBox.isSelected();
 
         try {
-            boolean success = loginController.login(username, password, isAdmin);
+            boolean success = loginController.login(email, password, isAdmin);
             if (success) {
                 JOptionPane.showMessageDialog(this, "Login successful!");
                 mainFrame.getContentPane().removeAll();
-                mainFrame.add(new DashboardView(mainFrame, username, isAdmin));
+                mainFrame.add(new DashboardView(mainFrame, email, isAdmin));
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {
                 JOptionPane.showMessageDialog(
-                    this,
-                    "Invalid credentials!",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-                );
+                        this,
+                        "Invalid credentials!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (ValidationException ve) {
-            if ("OTP_REQUIRED".equals(ve.getMessage())) {
-                promptForOtp(username);
-            } else {
-                JOptionPane.showMessageDialog(
-                    this,
-                    ve.getMessage(),
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE
-                );
-            }
-        }
-    }
-
-    private void promptForOtp(String username) {
-        String code = JOptionPane.showInputDialog(
-            this,
-            "Enter the 6-digit code sent to your email:",
-            "Two-Factor Authentication",
-            JOptionPane.PLAIN_MESSAGE
-        );
-        if (code != null && !code.trim().isEmpty()) {
-            boolean verified = loginController.verifyAdminOtp(username, code.trim());
-            if (verified) {
-                JOptionPane.showMessageDialog(this, "Login successful!");
+            if ("NOT_VERIFIED".equals(ve.getMessage())) {
+                // Open the verification view
                 mainFrame.getContentPane().removeAll();
-                mainFrame.add(new DashboardView(mainFrame, username, true));
+                mainFrame.add(new VerificationView(mainFrame, email)); 
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {
                 JOptionPane.showMessageDialog(
-                    this,
-                    "Invalid or expired code. Please try again.",
-                    "OTP Verification Failed",
-                    JOptionPane.ERROR_MESSAGE
-                );
+                        this,
+                        ve.getMessage(),
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -179,6 +156,7 @@ public class LoginView extends JPanel {
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(AppColors.ACCENT_PURPLE);
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(AppColors.ACCENT_TIFFANY);

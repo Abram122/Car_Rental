@@ -15,14 +15,14 @@ public class UserDAO {
         this.conn = MySQLConnection.getInstance().getConnection();
     }
 
-    public boolean login(String username, String password) {
-    String sql = "SELECT password_hash FROM user WHERE username = ?";
+    public boolean login(String email, String password) {
+    String sql = "SELECT password_hash FROM user WHERE email = ?";
     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-    stmt.setString(1, username);
+    stmt.setString(1, email);
     ResultSet rs = stmt.executeQuery();
     if (rs.next()) {
     String storedHash = rs.getString("password_hash");
-   
+
                         return HashUtil.verifyPassword(password, storedHash);
                     }
                 } catch (Exception e) {
@@ -31,4 +31,8 @@ public class UserDAO {
 
                 return false;
             }
-         }
+        }
+    
+
+
+    

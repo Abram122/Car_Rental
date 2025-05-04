@@ -13,14 +13,30 @@ public class VerificationView extends JPanel {
     private JTextField otpField;
     private JButton verifyButton;
     private JLabel switchToLoginLabel;
-    private String username;
     private String email;
 
-    public VerificationView(Main mainFrame, String username, String email) {
-        this.username = username;
+    public VerificationView(Main mainFrame, String email) {
         this.email = email;
         setBackground(AppColors.MAIN_BG);
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
+
+        // Send OTP when the view is instantiated
+        try {
+            OtpService.generateAndSendOtp(email); 
+            JOptionPane.showMessageDialog(
+                this,
+                "An OTP has been sent to your email: " + email,
+                "OTP Sent",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Failed to send OTP: " + ex.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+            );
+        }
 
         // Title
         JLabel titleLabel = new JLabel("Verify Your Email");
@@ -43,7 +59,7 @@ public class VerificationView extends JPanel {
             String otp = otpField.getText();
             try {
                 // Assuming OtpService has a verifyOtp method
-                boolean success = OtpService.verifyOtp(username, otp);
+                boolean success = OtpService.verifyOtp(email, otp);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Verification successful!");
                     // Switch to LoginView
@@ -60,18 +76,30 @@ public class VerificationView extends JPanel {
         });
         add(verifyButton, "span, center, gapbottom 10");
 
-        // Switch to Login label
-        switchToLoginLabel = new JLabel("Return to Login");
+        // Resend OTP label
+        switchToLoginLabel = new JLabel("Resend OTP");
         switchToLoginLabel.setForeground(AppColors.ACCENT_TIFFANY);
         switchToLoginLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         switchToLoginLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Switch to LoginView
-                mainFrame.getContentPane().removeAll();
-                mainFrame.add(new LoginView(mainFrame));
-                mainFrame.revalidate();
-                mainFrame.repaint();
+                try {
+                    // Resend the OTP using OtpService
+                    OtpService.resendOtp(email);
+                    JOptionPane.showMessageDialog(
+                        VerificationView.this,
+                        "A new OTP has been sent to your email.",
+                        "OTP Resent",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(
+                        VerificationView.this,
+                        "Failed to resend OTP: " + ex.getMessage(),
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                    );
+                }
             }
 
             @Override

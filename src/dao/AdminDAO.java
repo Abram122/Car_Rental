@@ -17,7 +17,7 @@ public class AdminDAO {
 
 
     public boolean login(String username, String password) {
-        String sql = "SELECT password_hash FROM admin WHERE username = ?";
+        String sql = "SELECT password_hash FROM admin WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
