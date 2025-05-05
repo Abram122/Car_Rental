@@ -198,7 +198,3 @@ See the [LICENSE](LICENSE) file for details.
 
 ---
 ```
-
----
-
- 🐱‍👤🐱‍👤
