@@ -2,7 +2,7 @@ package models;
 import java.time.LocalDateTime;
 
 public class Car {
-    private int carID, year,rentedDays;
+    private int carID, year,rentedDays, categoryID;
     private String brand, model, registration, imageURL;
     private boolean availability;
     private float mileAge, rentalPrice;
@@ -80,6 +80,12 @@ public class Car {
     public void setRentalPrice(float rentalPrice) {
         this.rentalPrice = rentalPrice;
     }
+    public void setCategoryID(int categoryID) {
+        this.categoryID = categoryID;
+    }
+    public int getCategoryID() {
+        return categoryID;
+    }
 
     public Car() {
     }
@@ -109,15 +115,15 @@ public class Car {
     public String getDetails(){
         return """
                --- Car Details ---
-               Car ID: """ + carID+
-               "Brand: " + brand +
-               "Model: " +model+
-               "Year: " +year+
-               "Registration: " +registration+
-               "Availability: " +(availability?"Yes":"No")+
-               "Mile Age: " +mileAge+
-               "Rental Days: " +rentedDays+
-               "Rental Price: " +rentalPrice+" $"+
+               Car ID: """ + carID+"\n"+
+               "Brand: " + brand +"\n"+
+               "Model: " +model+"\n"+
+               "Year: " +year+"\n"+
+               "Registration: " +registration+"\n"+
+               "Availability: " +(availability?"Yes":"No")+"\n"+
+               "Mile Age: " +mileAge+"\n"+
+               "Rental Days: " +rentedDays+"\n"+
+               "Rental Price: " +rentalPrice+" $\n"+
                "Image URL: " + imageURL;
     }
 
