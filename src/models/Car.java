@@ -80,6 +80,25 @@ public class Car {
     public void setRentalPrice(float rentalPrice) {
         this.rentalPrice = rentalPrice;
     }
+
+    public Car() {
+    }
+
+    public Car(int carID, int year, int rentedDays, String brand, String model, String registration, String imageURL, boolean availability, float mileAge, float rentalPrice, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.carID = carID;
+        this.year = year;
+        this.rentedDays = rentedDays;
+        this.brand = brand;
+        this.model = model;
+        this.registration = registration;
+        this.imageURL = imageURL;
+        this.availability = availability;
+        this.mileAge = mileAge;
+        this.rentalPrice = rentalPrice;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+    
     
 
     public void updateAvailability (){
