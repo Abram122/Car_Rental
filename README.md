@@ -42,6 +42,7 @@ It follows a modular MVC-inspired architecture, with database migrations, DAOs, 
 - **Database**: MySQL
 - **Build Tool**: Maven (optional)
 - **JDBC**: MySQL Connector/J
+- **Version Control**: Git + GitHub
 
 ---
 
