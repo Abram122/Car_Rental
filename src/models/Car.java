@@ -2,7 +2,7 @@ package models;
 import java.time.LocalDateTime;
 
 public class Car {
-    private int carID, year;
+    private int carID, year,rentedDays;
     private String brand, model, registration, imageURL;
     private boolean availability;
     private float mileAge, rentalPrice;
@@ -41,6 +41,12 @@ public class Car {
     public int getYear() {
         return year;
     }
+    public int getRentedDays() {
+        return rentedDays;
+    }
+    public void setRentedDays(int rentedDays) {
+        this.rentedDays = rentedDays;
+    }
     public void setAvailability(boolean availability) {
         this.availability = availability;
     }
@@ -77,7 +83,8 @@ public class Car {
     
 
     public void updateAvailability (){
-        
+        this.availability = false;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public String getDetails(){
@@ -90,13 +97,13 @@ public class Car {
                "Registration: " +registration+
                "Availability: " +(availability?"Yes":"No")+
                "Mile Age: " +mileAge+
+               "Rental Days: " +rentedDays+
                "Rental Price: " +rentalPrice+" $"+
                "Image URL: " + imageURL;
     }
 
     public float calculateRentalPrice(){
-        
-
+        return rentalPrice * rentedDays;
     }
 
     public boolean isCarAvailable(){
