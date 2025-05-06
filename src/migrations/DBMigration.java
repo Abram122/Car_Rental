@@ -182,6 +182,7 @@ public class DBMigration {
                     payment_id INT,
                     invoice_date DATE,
                     total_price DECIMAL(10, 2),
+                    details TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                     FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
