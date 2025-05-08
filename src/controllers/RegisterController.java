@@ -11,6 +11,7 @@ public class RegisterController {
 
     public RegisterController() {
         this.customerDAO = new CustomerDAO();
+        this.adminDAO = new AdminDAO();
     }
 
     public boolean register(String username, String password, String email, String phone, String licenseNumber)
@@ -29,8 +30,14 @@ public class RegisterController {
         String hashed = HashUtil.hashPassword(password);
 
         // pass the hash (not plain text) to the DAO
+        
         return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
-        // return adminDAO.register(userId,username, hashed, email); 
 
+        // return adminDAO.register(userId, username, hashed, email); // if you need to register admin
+    
+    }
+
+    public boolean delete(String email) {
+        return customerDAO.delete(email);
     }
 }

@@ -102,7 +102,14 @@ public class LoginView extends JPanel {
             if (success) {
                 JOptionPane.showMessageDialog(this, "Login successful!");
                 mainFrame.getContentPane().removeAll();
-                mainFrame.add(new AdminDashboard(mainFrame));
+                // Check if the user is an admin
+                if (isAdmin) {
+                    // Open the admin dashboard
+                    mainFrame.add(new AdminDashboard(mainFrame));
+                } else {
+                    // Open the user dashboard
+                    mainFrame.add(new AppView(mainFrame));
+                }
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {

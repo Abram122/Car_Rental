@@ -52,6 +52,17 @@ public class CustomerDAO {
         return false;
     }
 
+    public boolean delete(String email) {
+        String sql = "DELETE FROM user WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     public boolean is_verified(String email) {
         String sql = "Select is_verified FROM user WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

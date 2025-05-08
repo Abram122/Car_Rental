@@ -7,9 +7,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class AdminDashboard extends JPanel {
+public class AppView extends JPanel {
 
-    public AdminDashboard(Main mainFrame) {
+    public AppView(Main mainFrame) {
         // Set background color
         setBackground(AppColors.MAIN_BG);
 
@@ -110,7 +110,7 @@ public class AdminDashboard extends JPanel {
         });
         backButton.addActionListener(e -> {
             mainFrame.getContentPane().removeAll();
-            mainFrame.add(new AdminDashboard(mainFrame));
+            mainFrame.add(new AppView(mainFrame));
             mainFrame.revalidate();
             mainFrame.repaint();
         });

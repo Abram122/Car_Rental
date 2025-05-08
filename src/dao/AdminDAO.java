@@ -31,12 +31,13 @@ public class AdminDAO {
     }
 
     public boolean register(int admin_id,String username, String password, String email) {
-        String sql = "INSERT INTO admin (admin_id,username, password_hash, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO admin (admin_id,username, password_hash, email) VALUES (?, ?, ?,?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, email);
+            stmt.setInt(1, admin_id);
+            stmt.setString(2, username);
+            stmt.setString(3, password);
+            stmt.setString(4, email);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0; 
