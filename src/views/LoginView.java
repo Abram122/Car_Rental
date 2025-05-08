@@ -10,17 +10,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-class DashboardView extends JPanel {
-    public DashboardView(Main mainFrame, String email, boolean isAdmin) {
-        setLayout(new BorderLayout());
-        String role = isAdmin ? "Admin" : "User";
-        JLabel label = new JLabel(
-                "Welcome " + email + "! Logged in as " + role + ".",
-                SwingConstants.CENTER);
-        label.setFont(new Font("Segoe UI", Font.BOLD, 20));
-        add(label, BorderLayout.CENTER);
-    }
-}
 
 
 public class LoginView extends JPanel {
@@ -113,7 +102,7 @@ public class LoginView extends JPanel {
             if (success) {
                 JOptionPane.showMessageDialog(this, "Login successful!");
                 mainFrame.getContentPane().removeAll();
-                mainFrame.add(new DashboardView(mainFrame, email, isAdmin));
+                mainFrame.add(new AdminDashboard(mainFrame));
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {

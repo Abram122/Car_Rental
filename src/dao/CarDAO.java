@@ -9,14 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarDAO {
+    private Connection conn;
 
+    public CarDAO() {
+        this.conn = MySQLConnection.getInstance().getConnection();
+    }
     // Insert a new car into the database
     public boolean insertCar(Car car) {
         String sql = "INSERT INTO cars (year, rented_days, brand, model, registration, image_url, availability, mileage, rental_price, created_at, updated_at, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = MySQLConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {    
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
             stmt.setString(3, car.getBrand());
@@ -30,9 +32,10 @@ public class CarDAO {
             stmt.setTimestamp(11, Timestamp.valueOf(car.getUpdatedAt()));
             stmt.setInt(12, car.getCategoryID());
 
-            return stmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; 
+    }
+        catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -43,8 +46,7 @@ public class CarDAO {
         String sql = "SELECT * FROM cars WHERE car_id = ?";
         Car car = null;
 
-        try (Connection conn = MySQLConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, carId);
             ResultSet rs = stmt.executeQuery();
@@ -66,8 +68,8 @@ public class CarDAO {
         String sql = "SELECT * FROM cars";
 
         try (Connection conn = MySQLConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 carList.add(mapResultSetToCar(rs));
@@ -85,7 +87,7 @@ public class CarDAO {
         String sql = "UPDATE cars SET year=?, rented_days=?, brand=?, model=?, registration=?, image_url=?, availability=?, mileage=?, rental_price=?, updated_at=?, category_id=? WHERE car_id=?";
 
         try (Connection conn = MySQLConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
@@ -113,7 +115,7 @@ public class CarDAO {
         String sql = "DELETE FROM cars WHERE car_id = ?";
 
         try (Connection conn = MySQLConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, carId);
             return stmt.executeUpdate() > 0;

@@ -30,5 +30,20 @@ public class AdminDAO {
         return false;
     }
 
+    public boolean register(int admin_id,String username, String password, String email) {
+        String sql = "INSERT INTO admin (admin_id,username, password_hash, email) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, username);
+            stmt.setString(2, password);
+            stmt.setString(3, email);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 }

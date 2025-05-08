@@ -1,12 +1,13 @@
 package controllers;
 
 import utils.HashUtil;
-
+import dao.AdminDAO;
 import dao.CustomerDAO;
 import utils.ValidationException;
 
 public class RegisterController {
     private CustomerDAO customerDAO;
+    private AdminDAO adminDAO;
 
     public RegisterController() {
         this.customerDAO = new CustomerDAO();
@@ -29,6 +30,7 @@ public class RegisterController {
 
         // pass the hash (not plain text) to the DAO
         return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
+        // return adminDAO.register(userId,username, hashed, email); 
 
     }
 }

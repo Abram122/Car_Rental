@@ -133,6 +133,7 @@ public class RegisterView extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         button.addMouseListener(new MouseAdapter() {
+            
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(AppColors.ACCENT_PURPLE);
