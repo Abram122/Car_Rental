@@ -55,22 +55,6 @@ public class Category {
         return updatedAt;
     }
     
-    public void assignToCar(Car car){
-        car.setCategoryID(this.categoryID);
-        System.out.println("Category "+this.name+" is assigned to Car ID "+car.getCategoryID());
-    }
 
-    public void removeFromCategory(Car car){
-        car.setCategoryID(0);
-        System.out.println("Category removed from Car ID "+car.getCategoryID());
-    }
-
-    public void updateCategory(String name, String description, String categoryIMG) {
-        this.name = name;
-        this.description = description;
-        this.categoryIMG = categoryIMG;
-        this.updatedAt = LocalDateTime.now();
-        System.out.println("Category updated: " + this.name);
-    }
 }
 
