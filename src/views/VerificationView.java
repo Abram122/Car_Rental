@@ -1,10 +1,11 @@
 package views;
 
 import car_rental.Main;
-import controllers.OtpService;
 import controllers.RegisterController;
 import utils.AppColors;
 import net.miginfocom.swing.MigLayout;
+import services.OtpService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;

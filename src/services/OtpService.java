@@ -1,4 +1,4 @@
-package controllers;
+package services;
 
 import utils.EmailUtil;
 import dao.CustomerDAO;
