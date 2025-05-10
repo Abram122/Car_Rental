@@ -1,6 +1,7 @@
 package views;
 
 import dao.CustomerDAO;
+import models.Booking;
 import models.Customer;
 import models.RentalHistory;
 
@@ -8,6 +9,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 import car_rental.Main;
+import controllers.ProfileController;
 
 import java.awt.*;
 import java.util.List;
@@ -101,5 +103,33 @@ public class ProfileView extends JPanel {
         mainFrame.add(new AppView(mainFrame, customer)); // Return to AppView
         mainFrame.revalidate();
         mainFrame.repaint();
+
+
+        
     }
+
+
+
+
+
+//     private JPanel createBookingsPanel() {
+//     String[] cols = { "Booking ID", "Start Date", "End Date", "Status" };
+//     DefaultTableModel model = new DefaultTableModel(cols, 0);
+
+//     List<Booking> bookings = new ProfileController().loadBookings(customer.getUserId());
+//     for (Booking b : bookings) {
+//         model.addRow(new Object[]{
+//             b.getBookingId(),
+//             b.getStartDate(),
+//             b.getEndDate(),
+//             b.getStatus()
+//         });
+//     }
+
+//     JTable table = new JTable(model);
+//     return new JPanel(new BorderLayout()) {{
+//         add(new JScrollPane(table), BorderLayout.CENTER);
+//     }};
+// }
+
 }

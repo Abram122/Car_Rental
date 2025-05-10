@@ -1,6 +1,8 @@
 package controllers;
 
+import dao.BookingDAO;
 import dao.CustomerDAO;
+import models.Booking;
 import models.Customer;
 import models.RentalHistory;
 
@@ -22,4 +24,8 @@ public class ProfileController {
     public List<RentalHistory> history(int userId) {
         return dao.getRentalHistory(userId);
     }
+//     public List<Booking> loadBookings(int userId) {
+//     return new BookingDAO().getBookingsByUserId(userId);
+// }
+
 }
