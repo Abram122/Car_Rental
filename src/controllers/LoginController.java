@@ -3,6 +3,7 @@ package controllers;
 import dao.AdminDAO;
 import dao.CustomerDAO;
 import utils.ValidationException;
+import utils.ValidationUtil;
 
 public class LoginController {
     private AdminDAO adminDAO;
@@ -15,23 +16,20 @@ public class LoginController {
 
     public boolean login(String email, String password, boolean isAdmin)
             throws ValidationException {
-        // simple validation
-        if (email == null || email.isEmpty() ||
-                password == null || password.isEmpty()) {
-            throw new ValidationException(
-                    "All fields are required! Please fill in both email and password.");
-        }
-        // check the email if belogs to admin or customer
+        // Validate input fields using ValidationUtil
+        ValidationUtil.isValidEmail(email); // Validate email
+        ValidationUtil.isValidPassword(password); // Validate password
+
+        // Check if the email belongs to admin or customer
         if (isAdmin) {
             return adminDAO.login(email, password);
-
         }
-        // check email verification
+
+        // Check email verification for customers
         if (!customerDAO.isVerified(email)) {
             throw new ValidationException("NOT_VERIFIED");
         } else {
             return customerDAO.login(email, password);
         }
-
     }
 }
