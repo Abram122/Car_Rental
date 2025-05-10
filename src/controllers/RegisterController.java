@@ -31,10 +31,10 @@ public class RegisterController {
         String hashed = HashUtil.hashPassword(password);
 
         // Pass the hash (not plain text) to the DAO
-        // return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
+        return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
 
         // Uncomment the following line if you need to register an admin
-        return adminDAO.register(userId, username, hashed, email);
+        // return adminDAO.register(userId, username, hashed, email);
     }
 
     public boolean delete(String email) {
