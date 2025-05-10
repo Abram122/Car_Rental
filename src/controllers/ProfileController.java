@@ -15,12 +15,11 @@ public class ProfileController {
         return dao.getByEmail(email);
     }
 
-   
     public boolean save(Customer c) {
+        
         return dao.updateProfile(c);
     }
 
-  
     public List<RentalHistory> history(int userId) {
         return dao.getRentalHistory(userId);
     }

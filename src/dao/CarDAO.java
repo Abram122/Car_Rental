@@ -4,7 +4,6 @@ import models.Car;
 import utils.MySQLConnection;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,11 +13,11 @@ public class CarDAO {
     public CarDAO() {
         this.conn = MySQLConnection.getInstance().getConnection();
     }
+
     // Insert a new car into the database
     public boolean insertCar(Car car) {
         String sql = "INSERT INTO cars (year, rented_days, brand, model, registration, image_url, availability, mileage, rental_price, created_at, updated_at, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {    
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
             stmt.setString(3, car.getBrand());
@@ -32,10 +31,8 @@ public class CarDAO {
             stmt.setTimestamp(11, Timestamp.valueOf(car.getUpdatedAt()));
             stmt.setInt(12, car.getCategoryID());
 
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; 
-    }
-        catch (SQLException e) {
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
@@ -47,14 +44,12 @@ public class CarDAO {
         Car car = null;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, carId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                car = mapResultSetToCar(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    car = mapResultSetToCar(rs);
+                }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -67,14 +62,12 @@ public class CarDAO {
         List<Car> carList = new ArrayList<>();
         String sql = "SELECT * FROM cars";
 
-        try (Connection conn = MySQLConnection.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 carList.add(mapResultSetToCar(rs));
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -85,10 +78,7 @@ public class CarDAO {
     // Update an existing car
     public boolean updateCar(Car car) {
         String sql = "UPDATE cars SET year=?, rented_days=?, brand=?, model=?, registration=?, image_url=?, availability=?, mileage=?, rental_price=?, updated_at=?, category_id=? WHERE car_id=?";
-
-        try (Connection conn = MySQLConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
             stmt.setString(3, car.getBrand());
@@ -103,7 +93,6 @@ public class CarDAO {
             stmt.setInt(12, car.getCarID());
 
             return stmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -113,13 +102,9 @@ public class CarDAO {
     // Delete a car by ID
     public boolean deleteCar(int carId) {
         String sql = "DELETE FROM cars WHERE car_id = ?";
-
-        try (Connection conn = MySQLConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, carId);
             return stmt.executeUpdate() > 0;
-
         } catch (SQLException e) {
             e.printStackTrace();
             return false;

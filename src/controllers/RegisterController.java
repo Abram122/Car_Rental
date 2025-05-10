@@ -4,6 +4,7 @@ import utils.HashUtil;
 import dao.AdminDAO;
 import dao.CustomerDAO;
 import utils.ValidationException;
+import utils.ValidationUtil;
 
 public class RegisterController {
     private CustomerDAO customerDAO;
@@ -16,25 +17,24 @@ public class RegisterController {
 
     public boolean register(String username, String password, String email, String phone, String licenseNumber)
             throws ValidationException {
-        // Validate input just simple validation for empty fields
-        if (username == null || username.isEmpty() ||
-                password == null || password.isEmpty() ||
-                phone == null || phone.isEmpty() ||
-                licenseNumber == null || licenseNumber.isEmpty()) {
-            throw new ValidationException("All fields are required! Please fill in all fields.");
-        }
-        // create a userID as in mongoDB system 
+        // Validate input fields using ValidationUtil
+        ValidationUtil.isValidName(username); // Validate username
+        ValidationUtil.isValidEmail(email); // Validate email
+        ValidationUtil.isValidEgyptianPhone(phone); // Validate phone number
+        ValidationUtil.isValidLicenseNumber(licenseNumber); // Validate license number
+        ValidationUtil.isValidPassword(password); // Validate password
+
+        // Create a userID (similar to MongoDB system)
         int userId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
 
-        // hash password
+        // Hash password
         String hashed = HashUtil.hashPassword(password);
 
-        // pass the hash (not plain text) to the DAO
-        
+        // Pass the hash (not plain text) to the DAO
         return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
 
-        // return adminDAO.register(userId, username, hashed, email); // if you need to register admin
-    
+        // Uncomment the following line if you need to register an admin
+        // return adminDAO.register(userId, username, hashed, email);
     }
 
     public boolean delete(String email) {

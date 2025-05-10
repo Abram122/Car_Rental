@@ -13,8 +13,9 @@ public class DiscountDAO {
     }
 
     public boolean addDiscount(Discount discount) {
-        String sql = "INSERT INTO Discount (discount_percent) VALUES (?)";
+        String sql = "INSERT INTO Discount (discount_id,discount_percent) VALUES (?,?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, discount.getDiscountId());
             stmt.setDouble(1, discount.getDiscountPrecantage());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
