@@ -84,7 +84,6 @@ public class CustomerDAO {
         return false;
     }
 
-  
     public Customer getByEmail(String email) {
         String sql = "SELECT user_id, username, email, phone, license_number FROM user WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -92,12 +91,11 @@ public class CustomerDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Customer(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    null,
-                    rs.getString("phone"),
-                    rs.getString("license_number")
-                );
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        null,
+                        rs.getString("phone"),
+                        rs.getString("license_number"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,17 +118,16 @@ public class CustomerDAO {
 
     public List<RentalHistory> getRentalHistory(int userId) {
         List<RentalHistory> list = new ArrayList<>();
-        String sql = "SELECT rental_id, actual_return_date, comments, created_at, updated_at " +
-                     "FROM Rental_History WHERE user_id = ? ORDER BY created_at DESC";
+        String sql = "SELECT rental_id, return_date, comments, created_at, updated_at " +
+                "FROM Rental_History WHERE user_id = ? ORDER BY created_at DESC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 RentalHistory rh = new RentalHistory(
-                    rs.getInt("rental_id"),
-                    rs.getTimestamp("actual_return_date").toLocalDateTime(),
-                    rs.getString("comments")
-                );
+                        rs.getInt("rental_id"),
+                        rs.getTimestamp("return_date").toLocalDateTime(),
+                        rs.getString("comments"));
                 rh.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 rh.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                 list.add(rh);
