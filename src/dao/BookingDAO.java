@@ -49,27 +49,25 @@ public class BookingDAO {
         return null;
     }
 
-// Abra i will try to make this method but you can remove it if it is not what you want
-
-//     public List<Booking> getBookingsByUserId(int userId) {
-//     List<Booking> bookings = new ArrayList<>();
-//     String sql = "SELECT * FROM Booking WHERE user_id = ? ORDER BY start_date DESC";
-//     try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-//         stmt.setInt(1, userId);
-//         ResultSet rs = stmt.executeQuery();
-//         while (rs.next()) {
-//             Booking b = new Booking(
-//                 rs.getInt("booking_id"),
-//                 rs.getDate("start_date"),
-//                 rs.getDate("end_date"),
-//                 rs.getString("status")
-//             );
-//             bookings.add(b);
-//         }
-//     } catch (SQLException e) {
-//         e.printStackTrace();
-//     }
-//     return bookings;
-// }
+    public List<Booking> getBookingsByUserId(int userId) {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = "SELECT * FROM Booking WHERE user_id = ? ORDER BY start_date DESC";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Booking b = new Booking(
+                    rs.getInt("booking_id"),
+                    rs.getDate("start_date"),
+                    rs.getDate("end_date"),
+                    rs.getString("status")
+                );
+                bookings.add(b);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookings;
+    }
 }
 

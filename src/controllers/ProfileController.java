@@ -18,13 +18,12 @@ public class ProfileController {
     public boolean save(Customer c) {
         
         return dao.updateProfile(c);
-    }
-
-    public List<RentalHistory> history(int userId) {
+    }    public List<RentalHistory> history(int userId) {
         return dao.getRentalHistory(userId);
     }
-//     public List<Booking> loadBookings(int userId) {
-//     return new BookingDAO().getBookingsByUserId(userId);
-// }
+    
+    public List<Booking> loadBookings(int userId) {
+        return new BookingDAO().getBookingsByUserId(userId);
+    }
 
 }
