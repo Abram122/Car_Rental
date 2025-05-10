@@ -4,18 +4,74 @@ import car_rental.Main;
 import utils.AppColors;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AdminDashboard extends JPanel {
 
     public AdminDashboard(Main mainFrame) {
-        // Set background color
         setBackground(AppColors.MAIN_BG);
+        setLayout(new BorderLayout(0, 10));
+
+        // Add header panel
+        add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
+
+        // Add main content panel with cards
+        add(createMainContentPanel(mainFrame), BorderLayout.CENTER);
+
+        // Add footer panel
+        add(createFooterPanel(), BorderLayout.SOUTH);
+    }
+
+    private JPanel createHeaderPanel(Main mainFrame) {
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(AppColors.ACCENT_TIFFANY);
+        headerPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
+
+        // Title
+        JLabel titleLabel = new JLabel("Admin Dashboard");
+        titleLabel.setForeground(AppColors.LIGHT_TEXT);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        headerPanel.add(titleLabel, BorderLayout.WEST);
+
+        // Logout button
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.setBackground(AppColors.ACCENT_PURPLE);
+        logoutButton.setForeground(AppColors.LIGHT_TEXT);
+        logoutButton.setFocusPainted(false);
+        logoutButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        logoutButton.addActionListener(_ -> logout(mainFrame));
+        headerPanel.add(logoutButton, BorderLayout.EAST);
+
+        return headerPanel;
+    }
+
+    private void logout(Main mainFrame) {
+        int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to logout?",
+                "Confirm Logout",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            mainFrame.getContentPane().removeAll();
+            mainFrame.add(new LoginView(mainFrame));
+            mainFrame.revalidate();
+            mainFrame.repaint();
+        }
+    }
+
+    private JPanel createMainContentPanel(Main mainFrame) {
+        JPanel contentPanel = new JPanel();
+        contentPanel.setBackground(AppColors.MAIN_BG);
+        contentPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         // Use a GridBagLayout for cards (3 columns, dynamic rows)
-        setLayout(new GridBagLayout());
+        contentPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 15, 15); // Spacing between cards
         gbc.fill = GridBagConstraints.BOTH;
@@ -25,6 +81,7 @@ public class AdminDashboard extends JPanel {
         // Admin actions as cards
         String[] adminActions = {
                 "Manage Users", "Manage Bookings", "Manage Cars",
+                "Manage Categories",
                 "Manage Payments", "Manage Maintenance", "Moderate Reviews",
                 "View Rental History", "Generate Invoices", "Manage Discounts"
         };
@@ -36,7 +93,7 @@ public class AdminDashboard extends JPanel {
             JPanel card = createCard(action, mainFrame);
             gbc.gridx = gridX;
             gbc.gridy = gridY;
-            add(card, gbc);
+            contentPanel.add(card, gbc);
 
             // Update grid position (3 cards per row)
             gridX++;
@@ -45,6 +102,28 @@ public class AdminDashboard extends JPanel {
                 gridY++;
             }
         }
+
+        return contentPanel;
+    }
+
+    private JPanel createFooterPanel() {
+        JPanel footerPanel = new JPanel(new BorderLayout());
+        footerPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
+        footerPanel.setBorder(new EmptyBorder(10, 15, 10, 15));
+
+        // Current date
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
+        JLabel dateLabel = new JLabel(now.format(formatter));
+        dateLabel.setForeground(AppColors.LIGHT_TEXT);
+        footerPanel.add(dateLabel, BorderLayout.WEST);
+
+        // Support contact info
+        JLabel supportLabel = new JLabel("Support: admin@carrentalsystem.com");
+        supportLabel.setForeground(AppColors.LIGHT_TEXT);
+        footerPanel.add(supportLabel, BorderLayout.EAST);
+
+        return footerPanel;
     }
 
     private JPanel createCard(String action, Main mainFrame) {
@@ -87,31 +166,34 @@ public class AdminDashboard extends JPanel {
         // Dynamically instantiate the target page based on the action
         switch (action) {
             case "Manage Users":
-                // page = new ManageUsersView(mainFrame); 
+                // page = new ManageUsersView(mainFrame);
                 break;
             case "Manage Bookings":
-                // page = new ManageBookingsView(mainFrame); 
+                // page = new ManageBookingsView(mainFrame);
                 break;
             case "Manage Cars":
-                // page = new ManageCarsView(mainFrame); 
+                // page = new ManageCarsView(mainFrame);
+                break;
+            case "Manage Categories":
+                page = new ManageCategoryView(mainFrame);
                 break;
             case "Manage Payments":
-                // page = new ManagePaymentsView(mainFrame); 
+                // page = new ManagePaymentsView(mainFrame);
                 break;
             case "Manage Maintenance":
-                // page = new ManageMaintenanceView(mainFrame); 
+                // page = new ManageMaintenanceView(mainFrame);
                 break;
             case "Moderate Reviews":
-                // page = new ModerateReviewsView(mainFrame); 
+                // page = new ModerateReviewsView(mainFrame);
                 break;
             case "View Rental History":
-                // page = new RentalHistoryView(mainFrame); 
+                // page = new RentalHistoryView(mainFrame);
                 break;
             case "Generate Invoices":
-                // page = new GenerateInvoicesView(mainFrame); 
+                // page = new GenerateInvoicesView(mainFrame);
                 break;
             case "Manage Discounts":
-                // page = new ManageDiscountsView(mainFrame); 
+                // page = new ManageDiscountsView(mainFrame);
                 break;
             default:
                 // Placeholder for unknown actions
@@ -141,7 +223,7 @@ public class AdminDashboard extends JPanel {
                 backButton.setBackground(AppColors.ACCENT_TIFFANY);
             }
         });
-        backButton.addActionListener(e -> {
+        backButton.addActionListener(_ -> {
             mainFrame.getContentPane().removeAll();
             mainFrame.add(new AdminDashboard(mainFrame));
             mainFrame.revalidate();

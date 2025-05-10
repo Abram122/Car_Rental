@@ -42,9 +42,24 @@ public class ValidationUtil {
         }
     }
 
-        public static boolean isValidPassword(String password) throws ValidationException {
+    public static boolean isValidPassword(String password) throws ValidationException {
         if (password == null || !password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=]).{8,}$")) {
-            throw new ValidationException("Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a digit, and a special character.");
+            throw new ValidationException(
+                    "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a digit, and a special character.");
+        }
+        return true;
+    }
+
+    public static boolean isValidDescription(String description) throws ValidationException {
+        if (description == null || description.trim().isEmpty()) {
+            throw new ValidationException("Description cannot be empty.");
+        }
+        return true;
+    }
+
+    public static boolean isValidURL(String url) throws ValidationException {
+        if (url == null || !url.matches("^(http|https)://.*$")) {
+            throw new ValidationException(url + " is not a valid URL");
         }
         return true;
     }

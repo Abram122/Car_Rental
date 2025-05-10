@@ -4,6 +4,7 @@ import models.Customer;
 import models.RentalHistory;
 import utils.HashUtil;
 import utils.MySQLConnection;
+import utils.ValidationException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class CustomerDAO {
     }
 
     public boolean register(int userId, String username, String password, String email, String phone,
-            String licenseNumber) {
+            String licenseNumber) throws ValidationException {
         String sql = "INSERT INTO user (user_id, username, password_hash, email, phone, license_number) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
@@ -28,6 +29,9 @@ public class CustomerDAO {
             pstmt.setString(6, licenseNumber);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
+            if (e.getMessage().contains("Duplicate entry"))  {
+                throw new ValidationException("Error: Duplicate entry for username or email.");
+            }
             e.printStackTrace();
             return false;
         }
