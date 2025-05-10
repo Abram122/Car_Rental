@@ -12,8 +12,6 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-
-
 public class LoginView extends JPanel {
     private JTextField emailField;
     private JPasswordField passwordField;
@@ -94,59 +92,58 @@ public class LoginView extends JPanel {
         add(switchToRegisterLabel, "span, center");
     }
 
-   private void onLogin() {
-    String email = emailField.getText().trim();
-    String password = new String(passwordField.getPassword());
-    boolean isAdmin = adminCheckBox.isSelected();
+    private void onLogin() {
+        String email = emailField.getText().trim();
+        String password = new String(passwordField.getPassword());
+        boolean isAdmin = adminCheckBox.isSelected();
 
-    try {
-        boolean success = loginController.login(email, password, isAdmin);
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Login successful!");
-            mainFrame.getContentPane().removeAll();
+        try {
+            boolean success = loginController.login(email, password, isAdmin);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Login successful!");
+                mainFrame.getContentPane().removeAll();
 
-            // Get the customer object after successful login
-            CustomerDAO dao = new CustomerDAO();
-            Customer customer = dao.getByEmail(email);
+                // Get the customer object after successful login
+                CustomerDAO dao = new CustomerDAO();
+                Customer customer = dao.getByEmail(email);
 
-            if (customer != null) {
-                if (isAdmin) {
-                    // Open the admin dashboard
-                    mainFrame.add(new AdminDashboard(mainFrame));
+                if (customer != null) {
+                    if (isAdmin) {
+                        // Open the admin dashboard
+                        mainFrame.add(new AdminDashboard(mainFrame));
+                    } else {
+                        // Open the user profile view
+                        AppView appView = new AppView(mainFrame,customer);
+                        mainFrame.add(appView);
+                    }
+                    mainFrame.revalidate();
+                    mainFrame.repaint();
                 } else {
-                    // Open the user profile view
-                    ProfileView profileView = new ProfileView(customer);
-                    mainFrame.add(profileView);
+                    JOptionPane.showMessageDialog(this, "Customer not found.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Invalid credentials!",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (ValidationException ve) {
+            if ("NOT_VERIFIED".equals(ve.getMessage())) {
+                // Open the verification view
+                mainFrame.getContentPane().removeAll();
+                mainFrame.add(new VerificationView(mainFrame, email));
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {
-                JOptionPane.showMessageDialog(this, "Customer not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(
+                        this,
+                        ve.getMessage(),
+                        "Validation Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Invalid credentials!",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    } catch (ValidationException ve) {
-        if ("NOT_VERIFIED".equals(ve.getMessage())) {
-            // Open the verification view
-            mainFrame.getContentPane().removeAll();
-            mainFrame.add(new VerificationView(mainFrame, email)); 
-            mainFrame.revalidate();
-            mainFrame.repaint();
-        } else {
-            JOptionPane.showMessageDialog(
-                    this,
-                    ve.getMessage(),
-                    "Validation Error",
-                    JOptionPane.ERROR_MESSAGE);
         }
     }
-}
-
 
     private void styleButton(JButton button) {
         button.setBackground(AppColors.ACCENT_TIFFANY);

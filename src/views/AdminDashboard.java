@@ -2,6 +2,7 @@ package views;
 
 import car_rental.Main;
 import utils.AppColors;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -25,7 +26,7 @@ public class AdminDashboard extends JPanel {
         String[] adminActions = {
                 "Manage Users", "Manage Bookings", "Manage Cars",
                 "Manage Payments", "Manage Maintenance", "Moderate Reviews",
-                "View Rental History", "Generate Invoices", "Manage Discounts" // adjust these as needed
+                "View Rental History", "Generate Invoices", "Manage Discounts"
         };
 
         // Add cards dynamically
@@ -81,15 +82,47 @@ public class AdminDashboard extends JPanel {
     }
 
     private void navigateToPage(String action, Main mainFrame) {
-        // Create a new JPanel for the action
-        JPanel page = new JPanel(new BorderLayout());
-        page.setBackground(AppColors.MAIN_BG);
+        JPanel page = null;
 
-        // Add placeholder content
-        JLabel contentLabel = new JLabel("Page for: " + action, SwingConstants.CENTER);
-        contentLabel.setForeground(AppColors.LIGHT_TEXT);
-        contentLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        page.add(contentLabel, BorderLayout.CENTER);
+        // Dynamically instantiate the target page based on the action
+        switch (action) {
+            case "Manage Users":
+                // page = new ManageUsersView(mainFrame); 
+                break;
+            case "Manage Bookings":
+                // page = new ManageBookingsView(mainFrame); 
+                break;
+            case "Manage Cars":
+                // page = new ManageCarsView(mainFrame); 
+                break;
+            case "Manage Payments":
+                // page = new ManagePaymentsView(mainFrame); 
+                break;
+            case "Manage Maintenance":
+                // page = new ManageMaintenanceView(mainFrame); 
+                break;
+            case "Moderate Reviews":
+                // page = new ModerateReviewsView(mainFrame); 
+                break;
+            case "View Rental History":
+                // page = new RentalHistoryView(mainFrame); 
+                break;
+            case "Generate Invoices":
+                // page = new GenerateInvoicesView(mainFrame); 
+                break;
+            case "Manage Discounts":
+                // page = new ManageDiscountsView(mainFrame); 
+                break;
+            default:
+                // Placeholder for unknown actions
+                page = new JPanel(new BorderLayout());
+                page.setBackground(AppColors.MAIN_BG);
+                JLabel placeholder = new JLabel("Page for: " + action, SwingConstants.CENTER);
+                placeholder.setForeground(AppColors.LIGHT_TEXT);
+                placeholder.setFont(new Font("Arial", Font.PLAIN, 16));
+                page.add(placeholder, BorderLayout.CENTER);
+                break;
+        }
 
         // Add a back button to return to the dashboard
         JButton backButton = new JButton("Back to Dashboard");

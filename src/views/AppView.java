@@ -1,6 +1,7 @@
 package views;
 
 import car_rental.Main;
+import models.Customer;
 import utils.AppColors;
 import javax.swing.*;
 import java.awt.*;
@@ -9,8 +10,10 @@ import java.awt.event.MouseEvent;
 
 public class AppView extends JPanel {
 
-    public AppView(Main mainFrame) {
-        // Set background color
+    private Customer customer;
+
+    public AppView(Main mainFrame, Customer customer) {
+        this.customer = customer; // Store the customer object
         setBackground(AppColors.MAIN_BG);
 
         // Use a GridBagLayout for cards (3 columns, dynamic rows)
@@ -21,17 +24,15 @@ public class AppView extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        // Admin actions as cards
-        String[] adminActions = {
-                "Manage Users", "Manage Bookings", "Manage Cars",
-                "Manage Payments", "Manage Maintenance", "Moderate Reviews",
-                "View Rental History", "Generate Invoices", "Manage Discounts" // adjust these as needed
+        // User actions as cards
+        String[] userActions = {
+                "Your Profile", "Available Cars"
         };
 
         // Add cards dynamically
         int gridX = 0;
         int gridY = 0;
-        for (String action : adminActions) {
+        for (String action : userActions) {
             JPanel card = createCard(action, mainFrame);
             gbc.gridx = gridX;
             gbc.gridy = gridY;
@@ -81,15 +82,26 @@ public class AppView extends JPanel {
     }
 
     private void navigateToPage(String action, Main mainFrame) {
-        // Create a new JPanel for the action
-        JPanel page = new JPanel(new BorderLayout());
-        page.setBackground(AppColors.MAIN_BG);
+        JPanel page = null;
 
-        // Add placeholder content
-        JLabel contentLabel = new JLabel("Page for: " + action, SwingConstants.CENTER);
-        contentLabel.setForeground(AppColors.LIGHT_TEXT);
-        contentLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        page.add(contentLabel, BorderLayout.CENTER);
+        // Dynamically instantiate the target page based on the action
+        switch (action) {
+            case "Your Profile":
+                page = new ProfileView(mainFrame, customer); 
+                break;
+            case "Available Cars":
+                // page = new AvailableCarsView(mainFrame, customer); 
+                break;
+            default:
+                // Placeholder for unknown actions
+                page = new JPanel(new BorderLayout());
+                page.setBackground(AppColors.MAIN_BG);
+                JLabel placeholder = new JLabel("Page for: " + action, SwingConstants.CENTER);
+                placeholder.setForeground(AppColors.LIGHT_TEXT);
+                placeholder.setFont(new Font("Arial", Font.PLAIN, 16));
+                page.add(placeholder, BorderLayout.CENTER);
+                break;
+        }
 
         // Add a back button to return to the dashboard
         JButton backButton = new JButton("Back to Dashboard");
@@ -110,7 +122,7 @@ public class AppView extends JPanel {
         });
         backButton.addActionListener(e -> {
             mainFrame.getContentPane().removeAll();
-            mainFrame.add(new AppView(mainFrame));
+            mainFrame.add(new AppView(mainFrame, customer));
             mainFrame.revalidate();
             mainFrame.repaint();
         });

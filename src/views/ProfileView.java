@@ -15,13 +15,15 @@ import java.util.List;
 public class ProfileView extends JPanel {
     private final Customer customer;
     private final CustomerDAO customerDAO = new CustomerDAO();
+    private final Main mainFrame;
 
     private JTextField phoneField;
     private JTextField licenseField;
     private JTable historyTable;
 
-    public ProfileView(Customer customer) {
-        this.customer = customer;
+    public ProfileView(Main mainFrame, Customer customer) {
+        this.mainFrame = mainFrame; // Store the main frame reference
+        this.customer = customer; // Store the customer object
         setLayout(new BorderLayout());
         initUI();
     }
@@ -94,12 +96,10 @@ public class ProfileView extends JPanel {
     }
 
     private void goBack() {
-        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        topFrame.getContentPane().removeAll();
-       topFrame.getContentPane().add(new LoginView((Main) topFrame));
-     
-
-        topFrame.revalidate();
-        topFrame.repaint();
+        // Navigate back to the previous page using mainFrame
+        mainFrame.getContentPane().removeAll();
+        mainFrame.add(new AppView(mainFrame, customer)); // Return to AppView
+        mainFrame.revalidate();
+        mainFrame.repaint();
     }
 }
