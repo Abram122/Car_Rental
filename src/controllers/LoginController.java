@@ -27,7 +27,7 @@ public class LoginController {
 
         }
         // check email verification
-        if (!customerDAO.is_verified(email)) {
+        if (!customerDAO.isVerified(email)) {
             throw new ValidationException("NOT_VERIFIED");
         } else {
             return customerDAO.login(email, password);

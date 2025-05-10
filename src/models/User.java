@@ -1,6 +1,7 @@
 package models;
 
-import java.util.Date;//check do you want it in date format or not 
+import java.util.Date;
+
 
 public abstract class User {
     protected int userId;
@@ -19,4 +20,15 @@ public abstract class User {
         this.updatedAt = new Date();
     }
 
+    public int getUserId() { return userId; }
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public String getPhone() { return phone; }
+    public Date getCreatedAt() { return createdAt; }
+    public Date getUpdatedAt() { return updatedAt; }
+
+    public void setUsername(String username) { this.username = username; }
+    public void setPassword(String password) { this.password = password; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
 }

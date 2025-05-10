@@ -2,6 +2,8 @@ package views;
 
 import car_rental.Main;
 import controllers.LoginController;
+import dao.CustomerDAO;
+import models.Customer;
 import utils.AppColors;
 import utils.ValidationException;
 import net.miginfocom.swing.MigLayout;
@@ -21,8 +23,8 @@ public class LoginView extends JPanel {
     private LoginController loginController;
     private Main mainFrame;
 
-    public LoginView(Main mainFrame) {
-        this.mainFrame = mainFrame;
+    public LoginView(Main topFrame) {
+        this.mainFrame = topFrame;
         this.loginController = new LoginController();
 
         setBackground(AppColors.MAIN_BG);
@@ -73,10 +75,10 @@ public class LoginView extends JPanel {
         switchToRegisterLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                mainFrame.getContentPane().removeAll();
-                mainFrame.add(new RegisterView(mainFrame));
-                mainFrame.revalidate();
-                mainFrame.repaint();
+                topFrame.getContentPane().removeAll();
+                topFrame.add(new RegisterView(topFrame));
+                topFrame.revalidate();
+                topFrame.repaint();
             }
 
             @Override
@@ -92,49 +94,59 @@ public class LoginView extends JPanel {
         add(switchToRegisterLabel, "span, center");
     }
 
-    private void onLogin() {
-        String email = emailField.getText().trim();
-        String password = new String(passwordField.getPassword());
-        boolean isAdmin = adminCheckBox.isSelected();
+   private void onLogin() {
+    String email = emailField.getText().trim();
+    String password = new String(passwordField.getPassword());
+    boolean isAdmin = adminCheckBox.isSelected();
 
-        try {
-            boolean success = loginController.login(email, password, isAdmin);
-            if (success) {
-                JOptionPane.showMessageDialog(this, "Login successful!");
-                mainFrame.getContentPane().removeAll();
-                // Check if the user is an admin
+    try {
+        boolean success = loginController.login(email, password, isAdmin);
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Login successful!");
+            mainFrame.getContentPane().removeAll();
+
+            // Get the customer object after successful login
+            CustomerDAO dao = new CustomerDAO();
+            Customer customer = dao.getByEmail(email);
+
+            if (customer != null) {
                 if (isAdmin) {
                     // Open the admin dashboard
                     mainFrame.add(new AdminDashboard(mainFrame));
                 } else {
-                    // Open the user dashboard
-                    mainFrame.add(new AppView(mainFrame));
+                    // Open the user profile view
+                    ProfileView profileView = new ProfileView(customer);
+                    mainFrame.add(profileView);
                 }
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Invalid credentials!",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Customer not found.", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (ValidationException ve) {
-            if ("NOT_VERIFIED".equals(ve.getMessage())) {
-                // Open the verification view
-                mainFrame.getContentPane().removeAll();
-                mainFrame.add(new VerificationView(mainFrame, email)); 
-                mainFrame.revalidate();
-                mainFrame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(
-                        this,
-                        ve.getMessage(),
-                        "Validation Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Invalid credentials!",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    } catch (ValidationException ve) {
+        if ("NOT_VERIFIED".equals(ve.getMessage())) {
+            // Open the verification view
+            mainFrame.getContentPane().removeAll();
+            mainFrame.add(new VerificationView(mainFrame, email)); 
+            mainFrame.revalidate();
+            mainFrame.repaint();
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    ve.getMessage(),
+                    "Validation Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
+}
+
 
     private void styleButton(JButton button) {
         button.setBackground(AppColors.ACCENT_TIFFANY);

@@ -51,7 +51,7 @@ public class OtpService {
 
         otpStorage.remove(email);
         CustomerDAO customerDAO = new CustomerDAO();
-        if (!customerDAO.verify_user(email)) {
+        if (!customerDAO.verifyUser(email)) {
             throw new Exception("Failed to verify user with OTP");
         }
         return true;
