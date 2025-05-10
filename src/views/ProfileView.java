@@ -122,36 +122,51 @@ public class ProfileView extends JPanel {
         // Make main frame larger to accommodate all content
         mainFrame.setSize(650, 700);
     }
-    
-    private void saveProfile() {
+      private void saveProfile() {
         String newPhone = phoneField.getText();
         String newLicense = licenseField.getText();
 
-        customer.setPhone(newPhone);
-        customer.setLicenseNumber(newLicense);
+        try {
+            // Validate the input fields
+            utils.ValidationUtil.isValidEgyptianPhone(newPhone);
+            utils.ValidationUtil.isValidLicenseNumber(newLicense);
+            
+            // If validation passes, update the customer object
+            customer.setPhone(newPhone);
+            customer.setLicenseNumber(newLicense);
 
-        boolean success = customerDAO.updateProfile(customer);
-        if (success) {
-            JOptionPane.showMessageDialog(this, "Profile updated successfully!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to update profile.");
+            boolean success = customerDAO.updateProfile(customer);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Profile updated successfully!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to update profile.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (utils.ValidationException e) {
+            // Show the validation error to the user
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void loadRentalHistory() {
+    }private void loadRentalHistory() {
         List<RentalHistory> history = customerDAO.getRentalHistory(customer.getUserId());
 
         DefaultTableModel model = new DefaultTableModel(new Object[]{"Rental ID", "Return Date", "Comments"}, 0);
-        for (RentalHistory rh : history) {
-            model.addRow(new Object[]{
-                rh.getRentalId(),
-                rh.getActualReturnDate(),
-                rh.getComments()
-            });
+        
+        if (history == null || history.isEmpty()) {
+            // Show a message in the table when there's no history
+            model.addRow(new Object[]{"No rental history found", "", ""});
+            historyTable.setEnabled(false);
+        } else {
+            for (RentalHistory rh : history) {
+                model.addRow(new Object[]{
+                    rh.getRentalId(),
+                    rh.getActualReturnDate(),
+                    rh.getComments()
+                });
+            }
+            historyTable.setEnabled(true);
         }
 
         historyTable.setModel(model);
-    }    private void goBack() {
+    }private void goBack() {
         // Make the window back to original size
         mainFrame.setSize(600, 400);
         
@@ -160,45 +175,66 @@ public class ProfileView extends JPanel {
         mainFrame.add(new AppView(mainFrame, customer)); // Return to AppView
         mainFrame.revalidate();
         mainFrame.repaint();
-    }
-
-    private void refreshData() {
-        // Reload customer data
-        Customer refreshedCustomer = new ProfileController().load(customer.getUsername());
-        if (refreshedCustomer != null) {
-            // Update the form fields
-            phoneField.setText(refreshedCustomer.getPhone());
-            licenseField.setText(refreshedCustomer.getLicenseNumber());
+    }    private void refreshData() {
+        try {
+            // Show loading message
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             
-            // Reload tables
-            loadRentalHistory();
-            
-            // Refresh bookings panel
-            JPanel bookingsPanel = createBookingsPanel();
-            bookingsPanel.setPreferredSize(new Dimension(550, 150));
-            
-            // Find and replace the old bookings panel
-            Component[] components = ((JPanel)getComponent(2)).getComponents();
-            if (components.length >= 3) {
-                ((JPanel)getComponent(2)).remove(2);
-                ((JPanel)getComponent(2)).add(bookingsPanel);
+            // Reload customer data
+            Customer refreshedCustomer = new ProfileController().load(customer.getUsername());
+            if (refreshedCustomer != null) {
+                // Update the form fields
+                phoneField.setText(refreshedCustomer.getPhone());
+                licenseField.setText(refreshedCustomer.getLicenseNumber());
+                
+                // Reload tables
+                loadRentalHistory();
+                
+                // Refresh bookings panel
+                JPanel bookingsPanel = createBookingsPanel();
+                bookingsPanel.setPreferredSize(new Dimension(550, 150));
+                
+                // Find and replace the old bookings panel
+                Component[] components = ((JPanel)getComponent(2)).getComponents();
+                if (components.length >= 3) {
+                    ((JPanel)getComponent(2)).remove(2);
+                    ((JPanel)getComponent(2)).add(bookingsPanel);
+                }
+                
+                // Repaint the UI
+                revalidate();
+                repaint();
+                
+                JOptionPane.showMessageDialog(this, "Data refreshed successfully!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to refresh data - user not found", "Error", JOptionPane.ERROR_MESSAGE);
             }
-            
-            // Repaint the UI
-            revalidate();
-            repaint();
-            
-            JOptionPane.showMessageDialog(this, "Data refreshed successfully!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to refresh data", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            // Handle any unexpected errors
+            JOptionPane.showMessageDialog(this, "Error refreshing data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } finally {
+            // Reset cursor back to normal
+            setCursor(Cursor.getDefaultCursor());
         }
-    }
-
-    private JPanel createBookingsPanel() {
+    }private JPanel createBookingsPanel() {
         String[] cols = { "Booking ID", "Start Date", "End Date", "Status" };
         DefaultTableModel model = new DefaultTableModel(cols, 0);
 
         List<Booking> bookings = new ProfileController().loadBookings(customer.getUserId());
+        
+        if (bookings == null || bookings.isEmpty()) {
+            // Show a message in the table when there are no bookings
+            model.addRow(new Object[]{"No bookings found", "", "", ""});
+            JTable table = new JTable(model);
+            table.setEnabled(false);
+            JPanel panel = new JPanel(new BorderLayout());
+            panel.add(new JScrollPane(table), BorderLayout.CENTER);
+            panel.setBorder(BorderFactory.createTitledBorder("Your Bookings"));
+            return panel;
+        }
+        
+        // If we have bookings, display them
         for (Booking b : bookings) {
             model.addRow(new Object[]{
                 b.getBookingId(),
