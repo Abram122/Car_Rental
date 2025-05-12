@@ -100,27 +100,34 @@ public class LoginView extends JPanel {
         try {
             boolean success = loginController.login(email, password, isAdmin);
             if (success) {
-                JOptionPane.showMessageDialog(this, "Login successful!");
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Login successful!",
+                        "Success",
+                        JOptionPane.INFORMATION_MESSAGE);
+
                 mainFrame.getContentPane().removeAll();
 
-                // Get the customer object after successful login
-                CustomerDAO dao = new CustomerDAO();
-                Customer customer = dao.getByEmail(email);
-
-                if (customer != null) {
-                    if (isAdmin) {
-                        // Open the admin dashboard
-                        mainFrame.add(new AdminDashboard(mainFrame));
-                    } else {
-                        // Open the user profile view
-                        AppView appView = new AppView(mainFrame,customer);
-                        mainFrame.add(appView);
-                    }
-                    mainFrame.revalidate();
-                    mainFrame.repaint();
+                if (isAdmin) {
+                    mainFrame.add(new AdminDashboard(mainFrame));
                 } else {
-                    JOptionPane.showMessageDialog(this, "Customer not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                    CustomerDAO dao = new CustomerDAO();
+                    Customer customer = dao.getByEmail(email);
+
+                    if (customer != null) {
+                        mainFrame.add(new AppView(mainFrame, customer));
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                this,
+                                "Customer not found.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                        return; // Exit the method to prevent showing anything else
+                    }
                 }
+
+                mainFrame.revalidate();
+                mainFrame.repaint();
             } else {
                 JOptionPane.showMessageDialog(
                         this,
@@ -130,7 +137,12 @@ public class LoginView extends JPanel {
             }
         } catch (ValidationException ve) {
             if ("NOT_VERIFIED".equals(ve.getMessage())) {
-                // Open the verification view
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Your email is not verified. Please verify your email.",
+                        "Email Not Verified",
+                        JOptionPane.WARNING_MESSAGE);
+
                 mainFrame.getContentPane().removeAll();
                 mainFrame.add(new VerificationView(mainFrame, email));
                 mainFrame.revalidate();
@@ -142,6 +154,12 @@ public class LoginView extends JPanel {
                         "Validation Error",
                         JOptionPane.ERROR_MESSAGE);
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "An unexpected error occurred: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
