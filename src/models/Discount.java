@@ -1,14 +1,15 @@
-// filepath: c:\Users\Zodem\OneDrive\Desktop\OOP Project\Car_Rental\src\models\Discount.java
 package models;
 
 public class Discount {
     private int discountId;
+    private String promotionCode; // New field for promotion code
     private double discountPercentage;
 
     public Discount() {}
 
-    public Discount(int discountId, double discountPercentage) {
+    public Discount(int discountId, String promotionCode, double discountPercentage) {
         this.discountId = discountId;
+        this.promotionCode = promotionCode;
         this.discountPercentage = discountPercentage;
     }
 
@@ -20,6 +21,14 @@ public class Discount {
         this.discountId = discountId;
     }
 
+    public String getPromotionCode() {
+        return promotionCode;
+    }
+
+    public void setPromotionCode(String promotionCode) {
+        this.promotionCode = promotionCode;
+    }
+
     public double getDiscountPercentage() {
         return discountPercentage;
     }
@@ -27,6 +36,4 @@ public class Discount {
     public void setDiscountPercentage(double discountPercentage) {
         this.discountPercentage = discountPercentage;
     }
-
-    
 }

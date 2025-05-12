@@ -159,7 +159,8 @@ public class DBMigration {
             applyMigration(conn, "create_discount_table", """
                 CREATE TABLE Discount (
                     discount_id INT PRIMARY KEY AUTO_INCREMENT,
-                    discount_percent DECIMAL(5,2),
+                    promotion_code VARCHAR(30) UNIQUE,
+                    discount_percent int,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )

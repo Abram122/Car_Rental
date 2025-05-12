@@ -3,6 +3,8 @@ package views;
 import controllers.DiscountController;
 import models.Discount;
 import utils.AppColors;
+import utils.ValidationException;
+import utils.ValidationUtil;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -64,7 +66,7 @@ public class MangageDiscountView extends JPanel {
     private JPanel createTablePanel() {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Percentage"}, 0);
+        tableModel = new DefaultTableModel(new Object[] { "ID", "Promotion Code", "Percentage" }, 0);
         discountTable = new JTable(tableModel);
         discountTable.setFillsViewportHeight(true);
         discountTable.setRowHeight(30);
@@ -116,12 +118,13 @@ public class MangageDiscountView extends JPanel {
         tableModel.setRowCount(0);
         List<Discount> discounts = discountController.getAllDiscounts();
         if (discounts == null || discounts.isEmpty()) {
-            tableModel.addRow(new Object[]{"No discounts found", ""});
+            tableModel.addRow(new Object[] { "No discounts found", "", "" });
             discountTable.setEnabled(false);
         } else {
             for (Discount discount : discounts) {
-                tableModel.addRow(new Object[]{
+                tableModel.addRow(new Object[] {
                         discount.getDiscountId(),
+                        discount.getPromotionCode(),
                         discount.getDiscountPercentage()
                 });
             }
@@ -130,27 +133,30 @@ public class MangageDiscountView extends JPanel {
     }
 
     private void showAddDiscountDialog() {
-        JTextField idField = new JTextField();
+        JTextField promotionCodeField = new JTextField();
         JTextField percentageField = new JTextField();
         Object[] fields = {
-                "Discount ID:", idField,
+                "Promotion Code:", promotionCodeField,
                 "Discount Percentage:", percentageField
         };
         int option = JOptionPane.showConfirmDialog(this, fields, "Add Discount", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
+                ValidationUtil.isNumeric(percentageField.getText()); // Validate percentage is numeric
                 boolean success = discountController.addDiscount(
-                        Integer.parseInt(idField.getText()),
-                        Double.parseDouble(percentageField.getText())
-                );
+                        promotionCodeField.getText(),
+                        Integer.parseInt(percentageField.getText()));
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Discount added successfully!");
                     loadDiscounts();
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add discount.");
                 }
-            } catch (Exception e) {
+            } catch (ValidationException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -161,28 +167,37 @@ public class MangageDiscountView extends JPanel {
             JOptionPane.showMessageDialog(this, "Please select a discount to update.");
             return;
         }
-        int discountId = (int) tableModel.getValueAt(selectedRow, 0);
-        double currentPercentage = (double) tableModel.getValueAt(selectedRow, 1);
 
-        JTextField percentageField = new JTextField(String.valueOf(currentPercentage));
+        int discountId = (int) tableModel.getValueAt(selectedRow, 0);
+        String currentPromotionCode = (String) tableModel.getValueAt(selectedRow, 1);
+        double currentPercentage = (double) tableModel.getValueAt(selectedRow, 2); // Cast to double
+
+        JTextField promotionCodeField = new JTextField(currentPromotionCode);
+        JTextField percentageField = new JTextField(String.valueOf((int) currentPercentage)); // Convert to int for
+                                                                                              // display
         Object[] fields = {
+                "Promotion Code:", promotionCodeField,
                 "Discount Percentage:", percentageField
         };
         int option = JOptionPane.showConfirmDialog(this, fields, "Update Discount", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
+                ValidationUtil.isNumeric(percentageField.getText()); // Validate percentage is numeric
                 boolean success = discountController.updateDiscount(
                         discountId,
-                        Double.parseDouble(percentageField.getText())
-                );
+                        promotionCodeField.getText(),
+                        Integer.parseInt(percentageField.getText()));
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Discount updated successfully!");
                     loadDiscounts();
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to update discount.");
                 }
-            } catch (Exception e) {
+            } catch (ValidationException e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -194,7 +209,8 @@ public class MangageDiscountView extends JPanel {
             return;
         }
         int discountId = (int) tableModel.getValueAt(selectedRow, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this discount?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this discount?",
+                "Confirm Delete", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             boolean success = discountController.deleteDiscount(discountId);
             if (success) {

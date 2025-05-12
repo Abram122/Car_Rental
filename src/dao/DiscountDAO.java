@@ -16,10 +16,11 @@ public class DiscountDAO {
 
     // Create a new discount
     public boolean addDiscount(Discount discount) {
-        String sql = "INSERT INTO Discount (discount_id, discount_percent) VALUES (?, ?)";
+        String sql = "INSERT INTO Discount (discount_id, promotion_code, discount_percent) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, discount.getDiscountId());
-            stmt.setDouble(2, discount.getDiscountPercentage());
+            stmt.setString(2, discount.getPromotionCode());
+            stmt.setDouble(3, discount.getDiscountPercentage());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -36,6 +37,7 @@ public class DiscountDAO {
             if (rs.next()) {
                 return new Discount(
                     rs.getInt("discount_id"),
+                    rs.getString("promotion_code"),
                     rs.getDouble("discount_percent")
                 );
             }
@@ -47,10 +49,11 @@ public class DiscountDAO {
 
     // Update an existing discount
     public boolean updateDiscount(Discount discount) {
-        String sql = "UPDATE Discount SET discount_percent = ? WHERE discount_id = ?";
+        String sql = "UPDATE Discount SET promotion_code = ?, discount_percent = ? WHERE discount_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setDouble(1, discount.getDiscountPercentage());
-            stmt.setInt(2, discount.getDiscountId());
+            stmt.setString(1, discount.getPromotionCode());
+            stmt.setDouble(2, discount.getDiscountPercentage());
+            stmt.setInt(3, discount.getDiscountId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -79,6 +82,7 @@ public class DiscountDAO {
             while (rs.next()) {
                 discounts.add(new Discount(
                     rs.getInt("discount_id"),
+                    rs.getString("promotion_code"),
                     rs.getDouble("discount_percent")
                 ));
             }
