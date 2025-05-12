@@ -2,6 +2,8 @@ package views;
 
 import car_rental.Main;
 import controllers.LoginController;
+import dao.CustomerDAO;
+import models.Customer;
 import utils.AppColors;
 import utils.ValidationException;
 import net.miginfocom.swing.MigLayout;
@@ -9,8 +11,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-
 
 public class LoginView extends JPanel {
     private JTextField emailField;
@@ -21,8 +21,8 @@ public class LoginView extends JPanel {
     private LoginController loginController;
     private Main mainFrame;
 
-    public LoginView(Main mainFrame) {
-        this.mainFrame = mainFrame;
+    public LoginView(Main topFrame) {
+        this.mainFrame = topFrame;
         this.loginController = new LoginController();
 
         setBackground(AppColors.MAIN_BG);
@@ -73,10 +73,10 @@ public class LoginView extends JPanel {
         switchToRegisterLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                mainFrame.getContentPane().removeAll();
-                mainFrame.add(new RegisterView(mainFrame));
-                mainFrame.revalidate();
-                mainFrame.repaint();
+                topFrame.getContentPane().removeAll();
+                topFrame.add(new RegisterView(topFrame));
+                topFrame.revalidate();
+                topFrame.repaint();
             }
 
             @Override
@@ -102,9 +102,25 @@ public class LoginView extends JPanel {
             if (success) {
                 JOptionPane.showMessageDialog(this, "Login successful!");
                 mainFrame.getContentPane().removeAll();
-                mainFrame.add(new AdminDashboard(mainFrame));
-                mainFrame.revalidate();
-                mainFrame.repaint();
+
+                // Get the customer object after successful login
+                CustomerDAO dao = new CustomerDAO();
+                Customer customer = dao.getByEmail(email);
+
+                if (customer != null) {
+                    if (isAdmin) {
+                        // Open the admin dashboard
+                        mainFrame.add(new AdminDashboard(mainFrame));
+                    } else {
+                        // Open the user profile view
+                        AppView appView = new AppView(mainFrame,customer);
+                        mainFrame.add(appView);
+                    }
+                    mainFrame.revalidate();
+                    mainFrame.repaint();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Customer not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
                 JOptionPane.showMessageDialog(
                         this,
@@ -116,7 +132,7 @@ public class LoginView extends JPanel {
             if ("NOT_VERIFIED".equals(ve.getMessage())) {
                 // Open the verification view
                 mainFrame.getContentPane().removeAll();
-                mainFrame.add(new VerificationView(mainFrame, email)); 
+                mainFrame.add(new VerificationView(mainFrame, email));
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {

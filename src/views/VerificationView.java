@@ -1,9 +1,11 @@
 package views;
 
 import car_rental.Main;
-import controllers.OtpService;
+import controllers.RegisterController;
 import utils.AppColors;
 import net.miginfocom.swing.MigLayout;
+import services.OtpService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -20,7 +22,7 @@ public class VerificationView extends JPanel {
         setBackground(AppColors.MAIN_BG);
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
-        // Send OTP when the view is instantiated
+        // Check OTP sending in constructor
         try {
             OtpService.generateAndSendOtp(email); 
             JOptionPane.showMessageDialog(
@@ -30,12 +32,20 @@ public class VerificationView extends JPanel {
                 JOptionPane.INFORMATION_MESSAGE
             );
         } catch (Exception ex) {
+            // Delete user and navigate to RegisterView on error
+            RegisterController registerController = new RegisterController();
+            registerController.delete(email);
             JOptionPane.showMessageDialog(
                 this,
-                "Failed to send OTP: " + ex.getMessage(),
+                "Failed to send OTP: " + ex.getMessage() + ". User deleted, please register again.",
                 "Error",
                 JOptionPane.ERROR_MESSAGE
             );
+            mainFrame.getContentPane().removeAll();
+            mainFrame.add(new RegisterView(mainFrame));
+            mainFrame.revalidate();
+            mainFrame.repaint();
+            return; // Exit constructor if error occurs
         }
 
         // Title
@@ -67,7 +77,7 @@ public class VerificationView extends JPanel {
                     mainFrame.revalidate();
                     mainFrame.repaint();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Invalid or expired OTP!", "Error", JOptionPane.ERROR_MESSAGE);
+                    throw new Exception("Invalid or expired OTP!");
                 }
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

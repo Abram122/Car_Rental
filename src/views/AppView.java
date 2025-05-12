@@ -1,8 +1,8 @@
 package views;
 
 import car_rental.Main;
+import models.Customer;
 import utils.AppColors;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -11,57 +11,82 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class AdminDashboard extends JPanel {
+public class AppView extends JPanel {
 
-    public AdminDashboard(Main mainFrame) {
+    private Customer customer;
+
+    public AppView(Main mainFrame, Customer customer) {
+        this.customer = customer; // Store the customer object
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
-
+        
         // Add header panel
-        add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
-
+        add(createHeaderPanel(), BorderLayout.NORTH);
+        
         // Add main content panel with cards
         add(createMainContentPanel(mainFrame), BorderLayout.CENTER);
-
+        
         // Add footer panel
-        add(createFooterPanel(), BorderLayout.SOUTH);
+        add(createFooterPanel(mainFrame), BorderLayout.SOUTH);
     }
 
-    private JPanel createHeaderPanel(Main mainFrame) {
+    private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(AppColors.ACCENT_TIFFANY);
         headerPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
-
-        // Title
-        JLabel titleLabel = new JLabel("Admin Dashboard");
-        titleLabel.setForeground(AppColors.LIGHT_TEXT);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        headerPanel.add(titleLabel, BorderLayout.WEST);
-
-        // Logout button
+        
+        // Create welcome message with customer name
+        String greeting = getGreeting();
+        JLabel welcomeLabel = new JLabel(greeting + ", " + customer.getUsername() + "!");
+        welcomeLabel.setForeground(AppColors.LIGHT_TEXT);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        headerPanel.add(welcomeLabel, BorderLayout.WEST);
+          // Add logout button
         JButton logoutButton = new JButton("Logout");
         logoutButton.setBackground(AppColors.ACCENT_PURPLE);
         logoutButton.setForeground(AppColors.LIGHT_TEXT);
         logoutButton.setFocusPainted(false);
         logoutButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        logoutButton.addActionListener(_ -> logout(mainFrame));
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                logout(logoutButton);
+            }
+        });
         headerPanel.add(logoutButton, BorderLayout.EAST);
-
+        
         return headerPanel;
     }
-
-    private void logout(Main mainFrame) {
+    
+    private String getGreeting() {
+        int hour = LocalDateTime.now().getHour();
+        if (hour >= 5 && hour < 12) {
+            return "Good Morning";
+        } else if (hour >= 12 && hour < 17) {
+            return "Good Afternoon";
+        } else {
+            return "Good Evening";
+        }
+    }
+    
+    private void logout(Component component) {
         int confirm = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to logout?",
-                "Confirm Logout",
-                JOptionPane.YES_NO_OPTION);
-
+            component,
+            "Are you sure you want to logout?",
+            "Confirm Logout",
+            JOptionPane.YES_NO_OPTION
+        );
+        
         if (confirm == JOptionPane.YES_OPTION) {
-            mainFrame.getContentPane().removeAll();
-            mainFrame.add(new LoginView(mainFrame));
-            mainFrame.revalidate();
-            mainFrame.repaint();
+            // Get parent frame (Main)
+            Window window = SwingUtilities.getWindowAncestor(this);
+            if (window instanceof Main) {
+                Main mainFrame = (Main) window;
+                mainFrame.getContentPane().removeAll();
+                mainFrame.add(new LoginView(mainFrame));
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            }
         }
     }
 
@@ -69,7 +94,7 @@ public class AdminDashboard extends JPanel {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(AppColors.MAIN_BG);
         contentPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
-
+        
         // Use a GridBagLayout for cards (3 columns, dynamic rows)
         contentPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -78,51 +103,48 @@ public class AdminDashboard extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        // Admin actions as cards
-        String[] adminActions = {
-                "Manage Users", "Manage Bookings", "Manage Cars",
-                "Manage Categories",
-                "Manage Payments", "Manage Maintenance", "Moderate Reviews",
-                "View Rental History", "Generate Invoices", "Manage Discounts"
+        // User actions as cards
+        String[] userActions = {
+                "Your Profile", "Available Cars", "Book a Car", "Your Reservations"
         };
 
         // Add cards dynamically
         int gridX = 0;
         int gridY = 0;
-        for (String action : adminActions) {
+        for (String action : userActions) {
             JPanel card = createCard(action, mainFrame);
             gbc.gridx = gridX;
             gbc.gridy = gridY;
             contentPanel.add(card, gbc);
 
-            // Update grid position (3 cards per row)
+            // Update grid position (2 cards per row)
             gridX++;
-            if (gridX > 2) {
+            if (gridX > 1) {
                 gridX = 0;
                 gridY++;
             }
         }
-
+        
         return contentPanel;
     }
-
-    private JPanel createFooterPanel() {
+    
+    private JPanel createFooterPanel(Main mainFrame) {
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
         footerPanel.setBorder(new EmptyBorder(10, 15, 10, 15));
-
+        
         // Current date
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
         JLabel dateLabel = new JLabel(now.format(formatter));
         dateLabel.setForeground(AppColors.LIGHT_TEXT);
         footerPanel.add(dateLabel, BorderLayout.WEST);
-
+        
         // Support contact info
-        JLabel supportLabel = new JLabel("Support: admin@carrentalsystem.com");
+        JLabel supportLabel = new JLabel("Support: help@carrentalsystem.com");
         supportLabel.setForeground(AppColors.LIGHT_TEXT);
         footerPanel.add(supportLabel, BorderLayout.EAST);
-
+        
         return footerPanel;
     }
 
@@ -158,51 +180,32 @@ public class AdminDashboard extends JPanel {
         });
 
         return card;
-    }
-
-    private void navigateToPage(String action, Main mainFrame) {
+    }    private void navigateToPage(String action, Main mainFrame) {
         JPanel page = null;
 
         // Dynamically instantiate the target page based on the action
         switch (action) {
-            case "Manage Users":
-                // page = new ManageUsersView(mainFrame);
+            case "Your Profile":
+                page = new ProfileView(mainFrame, customer); 
                 break;
-            case "Manage Bookings":
-                // page = new ManageBookingsView(mainFrame);
+            case "Available Cars":
+                // page = new AvailableCarsView(mainFrame, customer); 
+                // For now, show a placeholder until this view is implemented
+                page = createPlaceholderPanel(action, "Browse our fleet of available cars");
                 break;
-            case "Manage Cars":
-                // page = new ManageCarsView(mainFrame);
+            case "Book a Car":
+                // page = new BookCarView(mainFrame, customer);
+                // For now, show a placeholder until this view is implemented
+                page = createPlaceholderPanel(action, "Make a new car booking");
                 break;
-            case "Manage Categories":
-                page = new ManageCategoryView(mainFrame);
-                break;
-            case "Manage Payments":
-                // page = new ManagePaymentsView(mainFrame);
-                break;
-            case "Manage Maintenance":
-                // page = new ManageMaintenanceView(mainFrame);
-                break;
-            case "Moderate Reviews":
-                // page = new ModerateReviewsView(mainFrame);
-                break;
-            case "View Rental History":
-                // page = new RentalHistoryView(mainFrame);
-                break;
-            case "Generate Invoices":
-                // page = new GenerateInvoicesView(mainFrame);
-                break;
-            case "Manage Discounts":
-                // page = new ManageDiscountsView(mainFrame);
+            case "Your Reservations":
+                // page = new ReservationsView(mainFrame, customer);
+                // For now, show a placeholder until this view is implemented
+                page = createPlaceholderPanel(action, "View and manage your current reservations");
                 break;
             default:
                 // Placeholder for unknown actions
-                page = new JPanel(new BorderLayout());
-                page.setBackground(AppColors.MAIN_BG);
-                JLabel placeholder = new JLabel("Page for: " + action, SwingConstants.CENTER);
-                placeholder.setForeground(AppColors.LIGHT_TEXT);
-                placeholder.setFont(new Font("Arial", Font.PLAIN, 16));
-                page.add(placeholder, BorderLayout.CENTER);
+                page = createPlaceholderPanel(action, "This feature is coming soon");
                 break;
         }
 
@@ -222,12 +225,14 @@ public class AdminDashboard extends JPanel {
             public void mouseExited(MouseEvent e) {
                 backButton.setBackground(AppColors.ACCENT_TIFFANY);
             }
-        });
-        backButton.addActionListener(_ -> {
-            mainFrame.getContentPane().removeAll();
-            mainFrame.add(new AdminDashboard(mainFrame));
-            mainFrame.revalidate();
-            mainFrame.repaint();
+        });        backButton.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent e) {
+                mainFrame.getContentPane().removeAll();
+                mainFrame.add(new AppView(mainFrame, customer));
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            }
         });
         page.add(backButton, BorderLayout.SOUTH);
 
@@ -236,5 +241,36 @@ public class AdminDashboard extends JPanel {
         mainFrame.add(page);
         mainFrame.revalidate();
         mainFrame.repaint();
+    }
+
+    private JPanel createPlaceholderPanel(String title, String description) {
+        JPanel panel = new JPanel(new BorderLayout(0, 20));
+        panel.setBackground(AppColors.MAIN_BG);
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        
+        // Title
+        JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
+        titleLabel.setForeground(AppColors.LIGHT_TEXT);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        panel.add(titleLabel, BorderLayout.NORTH);
+        
+        // Description and placeholder content
+        JPanel contentPanel = new JPanel(new BorderLayout());
+        contentPanel.setBackground(AppColors.MAIN_BG);
+        
+        JLabel descLabel = new JLabel(description, SwingConstants.CENTER);
+        descLabel.setForeground(AppColors.LIGHT_TEXT);
+        descLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        
+        JLabel comingSoonLabel = new JLabel("Under Development", SwingConstants.CENTER);
+        comingSoonLabel.setForeground(AppColors.ACCENT_PURPLE);
+        comingSoonLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        
+        contentPanel.add(descLabel, BorderLayout.NORTH);
+        contentPanel.add(comingSoonLabel, BorderLayout.CENTER);
+        
+        panel.add(contentPanel, BorderLayout.CENTER);
+        
+        return panel;
     }
 }

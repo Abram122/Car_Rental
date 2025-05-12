@@ -1,44 +1,66 @@
-
-## 🚗 Car Rental Management System (CRMS) Application
+# 🚗 Car Rental Management System (CRMS)
 
 A desktop application for managing car rentals, built with Java Swing and MySQL.  
-It follows a modular MVC-inspired architecture, with database migrations, DAOs, and domain models.
+It follows a modular MVC-inspired architecture with migrations, DAOs, domain models, and a Swing GUI.
 
 ---
 
-## Table of Contents
+## 📈 Project Stats
+[![Repo Stats](https://github-readme-stats.vercel.app/api/pin/?username=Abram122&repo=Car_Rental&show_owner=false&title_color=blue&icon_color=yellow&bg_color=0d1117)](https://github.com/Abram122/Car_Rental)
 
+![Lines of Code](https://tokei.rs/b1/github/Abram122/Car_Rental)
+![Total Commits](https://img.shields.io/github/commit-activity/y/Abram122/Car_Rental)
+![Last Commit](https://img.shields.io/github/last-commit/Abram122/Car_Rental)
+
+
+---
+
+## 📑 Table of Contents
+
+- [About](#about)
 - [Features](#features)
-- [Technologies](#technologies)
+- [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
-- [Installation & Setup](#installation--setup)
+- [Installation](#installation)
 - [Configuration](#configuration)
 - [Database Migrations](#database-migrations)
-- [Running the Application](#running-the-application)
+- [Usage](#usage)
 - [Project Structure](#project-structure)
-- [Future Improvements](#future-improvements)
+- [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
+- [Contact](#contact)
+- [Acknowledgements](#acknowledgements)
 
 ---
 
-## Features
+## 📝 About
 
-- **User & Admin Authentication**: Secure login for users and admins.
-- **Customer Registration**: Register new customers with license details.
-- **Car Management**: CRUD operations for car inventory and categories.
-- **Booking System**: Reserve cars for specific dates.
-- **Payments & Invoices**: Manage payments, apply discounts, generate invoices.
-- **Rental History**: Track returns with comments and extra charges.
-- **Reviews**: Collect user feedback and ratings.
-- **Maintenance Tracking**: Log maintenance events and costs.
+CRMS is a Java Swing-based desktop application using MySQL for persistence. It implements an MVC-inspired modular architecture:
+
+- DAO pattern for data access
+- Domain models for business logic
+- Database migrations for setup
 
 ---
 
-## Technologies
+## ✨ Features
+
+- ✅ User & Admin authentication
+- 🧾 Customer registration with license info
+- 🚘 Car inventory management (CRUD + categories)
+- 📅 Booking system with date validation
+- 💳 Payment handling and invoice generation
+- 📊 Rental history and returns tracking
+- ⭐ Customer reviews and ratings
+- 🔧 Maintenance logging and cost tracking
+
+---
+
+## 💻 Tech Stack
 
 - **Language**: Java SE
-- **GUI Framework**: Swing
+- **GUI**: Java Swing
 - **Database**: MySQL
 - **Build Tool**: Maven (optional)
 - **JDBC**: MySQL Connector/J
@@ -46,53 +68,35 @@ It follows a modular MVC-inspired architecture, with database migrations, DAOs, 
 
 ---
 
-## Prerequisites
+## 🛠 Prerequisites
 
-- Java Development Kit (JDK) 8 or higher
+- Java 8 or higher
 - MySQL Server
-- MySQL Connector/J (JDBC driver)
+- MySQL Connector/J
 - (Optional) Maven or Gradle
 
 ---
 
-## Installation & Setup
-
-### 1. Clone the repository
+## 🚀 Installation
 
 ```bash
+# 1. Clone the repo
 git clone https://github.com/Abram122/Car_Rental.git
 cd Car_Rental
-```
 
-### 2. Build the project (Optional if using Maven)
-
-```bash
+# 2. (Optional) Build with Maven
 mvn clean package
-```
-
-### 3. Add MySQL Connector/J to your IDE’s classpath
-
-If using Maven, add this dependency:
-
-```xml
-<dependency>
-  <groupId>mysql</groupId>
-  <artifactId>mysql-connector-java</artifactId>
-  <version>8.0.33</version>
-</dependency>
-```
+````
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
-Edit or create the file:
+Create or update:
 
 ```
 src/resources/DBPropFile.properties
 ```
-
-Add your database settings:
 
 ```properties
 MYSQL_DB_URL=jdbc:mysql://localhost:3306/car_rental_db
@@ -102,97 +106,86 @@ PASSWORD=your_db_password
 
 ---
 
-## Database Migrations
+## 🗄️ Database Migrations
 
 Run the migration script from:
-
-```
-src/migrations/DBMigration.java
-```
-
-Example code to apply migrations:
 
 ```java
 Connection conn = MySQLConnection.getInstance().getConnection();
 DBMigration.migrate(conn);
 ```
 
-- Migrations create all tables: `User`, `Admin`, `Category`, `Car_Model`, `Car`, `Manage_Car`, `Booking`, `Review`, `Payment`, `Rental_History`, `Discount`, `Apply_Discount`, `Invoice`, `Maintenance`
-- Migrations are tracked to prevent re-execution.
+Creates tables like `User`, `Admin`, `Car`, `Booking`, `Invoice`, `Review`, `Maintenance`, etc.
 
 ---
 
-## Running the Application
+## ▶️ Usage
 
-1. Start your MySQL server.
-2. Make sure database and tables exist (run migrations if needed).
-3. Run the app:
+1. Start MySQL server
+2. Run migration script (if not already)
+3. Launch the app:
 
 ```bash
 java -cp target/Car_Rental.jar Main
 ```
 
-Replace `target/Car_Rental.jar` with your compiled file path.
-
 ---
 
-## Project Structure
+## 📁 Project Structure
 
-```plaintext
+```
 Car_Rental/
 ├── src/
-│   ├── controllers/      # Controllers (UI & Service interaction)
+│   ├── controllers/      # Handles app logic and UI interaction
 │   ├── dao/              # Data Access Objects
-│   ├── migrations/       # Database Migration scripts
-│   ├── models/           # Domain models (User, Customer, RentalHistory, etc.)
-│   ├── utils/            # DB Connection and Utilities
-│   ├── views/            # Java Swing Views
-│   └── Main.java         # Main Application entry point
+│   ├── migrations/       # DB setup scripts
+│   ├── models/           # Domain/business logic
+│   ├── utils/            # Utilities & DB connection
+│   ├── views/            # Java Swing views
+│   └── Main.java         # App entry point
 └── resources/
-    └── DBPropFile.properties  # Database config (local only)
+    └── DBPropFile.properties
 ```
 
 ---
 
-## Future Improvements
+## 📸 Screenshots
 
-- Add full UI for all features.
-- Encrypt passwords (e.g., BCrypt).
-- Add better logging and error handling.
-- Create unit/integration tests.
-- Build CI/CD pipeline.
-- Support multi-language UI.
+> *(Add real screenshots here in a folder named `/screenshots/`)*
+
+```markdown
+![Login](screenshots/login.png)
+![Booking Form](screenshots/booking.png)
+![Invoice View](screenshots/invoice.png)
+```
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
-Pull requests are welcome!
-
-1. Fork the repo.
+1. Fork the repo
 2. Create a new branch:
 
-```bash
-git checkout -b feature/YourFeature
-```
-
+   ```bash
+   git checkout -b feature/YourFeature
+   ```
 3. Commit your changes:
 
-```bash
-git commit -m "Add YourFeature"
-```
+   ```bash
+   git commit -m "Add YourFeature"
+   ```
+4. Push and create a pull request
 
-4. Push to your branch:
-
-```bash
-git push origin feature/YourFeature
-```
-
-5. Open a pull request.
+   ```bash
+   git push origin feature/YourFeature
+   ```
 
 ---
 
-## License
+## 📜 License
 
-This project is licensed under the **MIT License**.  
+This project is licensed under the **MIT License**.
 See the [LICENSE](LICENSE) file for details.
+
+---
+

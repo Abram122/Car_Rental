@@ -43,7 +43,7 @@ public class CarDAO {
     public Car getCarById(int carId) {
         String sql = "SELECT * FROM cars WHERE car_id = ?";
         Car car = null;
-
+        
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, carId);

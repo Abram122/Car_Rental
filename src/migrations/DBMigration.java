@@ -33,9 +33,7 @@ public class DBMigration {
                     username VARCHAR(100) UNIQUE NOT NULL,
                     password_hash VARCHAR(255) NOT NULL,
                     email VARCHAR(150) UNIQUE NOT NULL,
-                    otp_enabled BOOLEAN NOT NULL DEFAULT FALSE,
-                    otp_code VARCHAR(6),
-                    otp_expiry TIMESTAMP,
+                    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )
@@ -46,6 +44,7 @@ public class DBMigration {
                     category_id INT PRIMARY KEY AUTO_INCREMENT,
                     name VARCHAR(100),
                     description TEXT,
+                    category_img TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                 )

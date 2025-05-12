@@ -61,7 +61,6 @@ public class ReviewDAO {
         }
         return reviews;
     }
-
     // Update an existing review
     public boolean updateReview(Review review) {
         String sql = "UPDATE review SET review_text = ? WHERE review_id = ?";
