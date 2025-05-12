@@ -1,12 +1,10 @@
 package dao;
 
-import models.Car;
-import utils.MySQLConnection;
-
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import models.Car;
+import utils.MySQLConnection;
 
 public class CarDAO {
     private Connection conn;
@@ -67,8 +65,7 @@ public class CarDAO {
         List<Car> carList = new ArrayList<>();
         String sql = "SELECT * FROM cars";
 
-        try (Connection conn = MySQLConnection.getConnection();
-                Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -86,9 +83,7 @@ public class CarDAO {
     public boolean updateCar(Car car) {
         String sql = "UPDATE cars SET year=?, rented_days=?, brand=?, model=?, registration=?, image_url=?, availability=?, mileage=?, rental_price=?, updated_at=?, category_id=? WHERE car_id=?";
 
-        try (Connection conn = MySQLConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
+        try (PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
             stmt.setString(3, car.getBrand());
@@ -114,8 +109,7 @@ public class CarDAO {
     public boolean deleteCar(int carId) {
         String sql = "DELETE FROM cars WHERE car_id = ?";
 
-        try (Connection conn = MySQLConnection.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, carId);
             return stmt.executeUpdate() > 0;
