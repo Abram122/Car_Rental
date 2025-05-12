@@ -1,30 +1,32 @@
+// filepath: c:\Users\Zodem\OneDrive\Desktop\OOP Project\Car_Rental\src\models\Discount.java
 package models;
 
-import java.util.Date;
-
 public class Discount {
-    private int discount_id;
-    private double discount_precantage;
-    private Date createdAt;
-    private Date updatedAt;
+    private int discountId;
+    private double discountPercentage;
 
-    public Discount(int discount_id, double discount_precantage) {
-        this.discount_id = discount_id;
-        this.discount_precantage = discount_precantage;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+    public Discount() {}
+
+    public Discount(int discountId, double discountPercentage) {
+        this.discountId = discountId;
+        this.discountPercentage = discountPercentage;
     }
 
     public int getDiscountId() {
-        return discount_id;
+        return discountId;
     }
-    public double getDiscountPrecantage() {
-        return discount_precantage;
+
+    public void setDiscountId(int discountId) {
+        this.discountId = discountId;
     }
-    public Date getCreatedAt() {
-        return createdAt;
+
+    public double getDiscountPercentage() {
+        return discountPercentage;
     }
-    public Date getUpdatedAt() {
-        return updatedAt;
+
+    public void setDiscountPercentage(double discountPercentage) {
+        this.discountPercentage = discountPercentage;
     }
+
+    
 }

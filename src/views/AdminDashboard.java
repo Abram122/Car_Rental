@@ -193,7 +193,7 @@ public class AdminDashboard extends JPanel {
                 // page = new GenerateInvoicesView(mainFrame);
                 break;
             case "Manage Discounts":
-                // page = new ManageDiscountsView(mainFrame);
+                page = new MangageDiscountView(mainFrame);
                 break;
             default:
                 // Placeholder for unknown actions

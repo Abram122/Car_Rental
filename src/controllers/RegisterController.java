@@ -18,11 +18,11 @@ public class RegisterController {
     public boolean register(String username, String password, String email, String phone, String licenseNumber)
             throws ValidationException {
         // Validate input fields using ValidationUtil
-        ValidationUtil.isValidName(username); // Validate username
-        ValidationUtil.isValidEmail(email); // Validate email
-        ValidationUtil.isValidEgyptianPhone(phone); // Validate phone number
-        ValidationUtil.isValidLicenseNumber(licenseNumber); // Validate license number
-        ValidationUtil.isValidPassword(password); // Validate password
+        // ValidationUtil.isValidName(username); // Validate username
+        // ValidationUtil.isValidEmail(email); // Validate email
+        // ValidationUtil.isValidEgyptianPhone(phone); // Validate phone number
+        // ValidationUtil.isValidLicenseNumber(licenseNumber); // Validate license number
+        // ValidationUtil.isValidPassword(password); // Validate password
 
         // Create a userID (similar to MongoDB system)
         int userId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
@@ -31,10 +31,10 @@ public class RegisterController {
         String hashed = HashUtil.hashPassword(password);
 
         // Pass the hash (not plain text) to the DAO
-        return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
+        // return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
 
         // Uncomment the following line if you need to register an admin
-        // return adminDAO.register(userId, username, hashed, email);
+        return adminDAO.register(userId, username, hashed, email);
     }
 
     public boolean delete(String email) {
