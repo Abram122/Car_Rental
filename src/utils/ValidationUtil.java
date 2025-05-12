@@ -31,16 +31,16 @@ public class ValidationUtil {
     }
 
     public static boolean isNumeric(String input) throws ValidationException {
-    if (input == null || input.trim().isEmpty()) {
-        throw new ValidationException("Input is null or empty and not numeric");
+        if (input == null || input.trim().isEmpty()) {
+            throw new ValidationException("Input is null or empty and not numeric");
+        }
+        try {
+            Integer.parseInt(input); // Attempt to parse the input as an integer
+            return true;
+        } catch (NumberFormatException e) {
+            throw new ValidationException(input + " is not numeric");
+        }
     }
-    try {
-        Integer.parseInt(input); // Attempt to parse the input as an integer
-        return true;
-    } catch (NumberFormatException e) {
-        throw new ValidationException(input + " is not numeric");
-    }
-}
 
     public static boolean isValidPassword(String password) throws ValidationException {
         if (password == null || !password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=]).{8,}$")) {
@@ -64,8 +64,24 @@ public class ValidationUtil {
         return true;
     }
 
-    public static void isValidPromotionCode(String promotionCode) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isValidPromotionCode'");
+    // Validate that discount percentage is numeric and <= 100
+    public static boolean isValidDiscountPercentage(String percentage) throws ValidationException {
+        isNumeric(percentage); // Validate that it is numeric
+        int value = Integer.parseInt(percentage);
+        if (value < 0 || value > 100) {
+            throw new ValidationException("Discount percentage must be between 0 and 100.");
+        }
+        return true;
+    }
+
+    // Validate that promotion code is alphanumeric and max 30 characters
+    public static boolean isValidPromotionCode(String promotionCode) throws ValidationException {
+        if (promotionCode == null || promotionCode.trim().isEmpty()) {
+            throw new ValidationException("Promotion code cannot be empty.");
+        }
+        if (!promotionCode.matches("^[a-zA-Z0-9]{1,30}$")) {
+            throw new ValidationException("Promotion code must be alphanumeric and up to 30 characters.");
+        }
+        return true;
     }
 }
