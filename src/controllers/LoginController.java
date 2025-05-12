@@ -18,7 +18,7 @@ public class LoginController {
             throws ValidationException {
         // Validate input fields using ValidationUtil
         ValidationUtil.isValidEmail(email); // Validate email
-        // ValidationUtil.isValidPassword(password); // Validate password
+        ValidationUtil.isValidPassword(password); // Validate password
 
         // Check if the email belongs to admin or customer
         if (isAdmin) {
