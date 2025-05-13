@@ -6,14 +6,32 @@ import java.util.List;
 
 public class Maintenance {
     private int maintenanceID;
+    private int carId; // Added car_id field as per DB schema
     private String status, details;
     private float cost;
-    private LocalDateTime maintenanceDate, createdAt,updatedAt;
+    private LocalDateTime maintenanceDate, createdAt, updatedAt;
+    
+    // Transient reference to Car object
+    private transient Car car;
 
-    private static List<Maintenance> maintenanceHistory=new ArrayList<>();
-
-    public void setMaintenanceDate(LocalDateTime maintenanceDate) {
+    private static List<Maintenance> maintenanceHistory=new ArrayList<>();    public void setMaintenanceDate(LocalDateTime maintenanceDate) {
         this.maintenanceDate = maintenanceDate;
+    }
+    
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
+    
+    public int getCarId() {
+        return carId;
+    }
+    
+    public Car getCar() {
+        return car;
+    }
+    
+    public void setCar(Car car) {
+        this.car = car;
     }
     public static void setMaintenanceHistory(List<Maintenance> maintenanceHistory) {
         Maintenance.maintenanceHistory = maintenanceHistory;

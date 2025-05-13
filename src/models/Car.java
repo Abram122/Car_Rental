@@ -14,6 +14,10 @@ public class Car {
     private String imageURL;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
+    // Transient references to related objects (not stored in database)
+    private transient CarModel carModel;
+    private transient Category category;
 
     public Car() {
     }
@@ -115,18 +119,40 @@ public class Car {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    }    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    @Override
+    
+    // Getters and setters for transient reference objects
+    public CarModel getCarModel() {
+        return carModel;
+    }
+    
+    public void setCarModel(CarModel carModel) {
+        this.carModel = carModel;
+    }
+    
+    public Category getCategory() {
+        return category;
+    }
+    
+    public void setCategory(Category category2) {
+        this.category = category2;
+    }
+    
+    // Helper methods to get full names
+    public String getFullModelName() {
+        return (carModel != null) ? carModel.getBrand() + " " + carModel.getModel() : "Unknown Model";
+    }
+    
+    public String getCategoryName() {
+        return (category != null) ? category.getName() : "Unknown Category";
+    }    @Override
     public String toString() {
         return "Car{" +
                 "carID=" + carID +
-                ", modelID=" + modelID +
-                ", categoryID=" + categoryID +
+                ", modelID=" + modelID + " (" + getFullModelName() + ")" +
+                ", categoryID=" + categoryID + " (" + getCategoryName() + ")" +
                 ", mileage=" + mileage +
                 ", availabilityStatus='" + availabilityStatus + '\'' +
                 ", rentalPrice=" + rentalPrice +
