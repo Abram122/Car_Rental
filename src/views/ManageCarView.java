@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import car_rental.Main;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ManageCarView extends JPanel {
@@ -22,10 +23,12 @@ public class ManageCarView extends JPanel {
     private JTable carTable;
     private DefaultTableModel tableModel;
     private final Main mainFrame;
+    private final CarModelDAO carModelDAO;
 
     public ManageCarView(Main mainFrame) {
         this.mainFrame = mainFrame;
         this.carController = new CarController();
+        this.carModelDAO = new CarModelDAO();
         setLayout(new BorderLayout(10, 10));
         setBackground(AppColors.MAIN_BG);
 
@@ -62,11 +65,13 @@ public class ManageCarView extends JPanel {
         return headerPanel;
     }
 
-    private JPanel createTablePanel() {        JPanel tablePanel = new JPanel(new BorderLayout());
+    private JPanel createTablePanel() {
+        JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);
-        tableModel = new DefaultTableModel(new Object[] { 
-                "ID", "Brand", "Model", "Registration", "Availability Status", 
-                "Mileage", "Rental Price", "Category", "Fuel Type" }, 0);
+        tableModel = new DefaultTableModel(new Object[] {
+                "ID", "Model",  "Name" , "Category", "Mileage", "Availability",
+                "Rental Price", "Fuel Type", "Plate No", "Image URL"
+        }, 0);
         carTable = new JTable(tableModel);
         carTable.setFillsViewportHeight(true);
         carTable.setRowHeight(30);
@@ -118,20 +123,25 @@ public class ManageCarView extends JPanel {
         tableModel.setRowCount(0);
         List<Car> cars = carController.getAllCars();
         if (cars == null || cars.isEmpty()) {
-            tableModel.addRow(new Object[] { "No cars found", "", "", "", "", "", "", "", "" });
+            tableModel.addRow(new Object[] { "No cars found", "", "", "", "", "", "", "", "", "" });
             carTable.setEnabled(false);
         } else {
             for (Car car : cars) {
+                CarModel carModel = carModelDAO.getCarModelById(car.getModelID());
+                String brand = carModel != null ? carModel.getBrand() : "Unknown";
+                String model = carModel != null ? carModel.getModel() : "Unknown";
+                String categoryName = getCategoryNameById(car.getCategoryID());
                 tableModel.addRow(new Object[] {
                         car.getCarID(),
-                        car.getCarModel() != null ? car.getCarModel().getBrand() : "Unknown",
-                        car.getCarModel() != null ? car.getCarModel().getModel() : "Unknown",
-                        car.getPlateNo(),
-                        car.getAvailabilityStatus(),
+                        brand,
+                        model,
+                        categoryName,
                         car.getMileage(),
+                        car.getAvailabilityStatus(),
                         car.getRentalPrice(),
-                        car.getCategoryName(),
-                        car.getFuelType()
+                        car.getFuelType(),
+                        car.getPlateNo(),
+                        car.getImageURL()
                 });
             }
             carTable.setEnabled(true);
@@ -154,7 +164,6 @@ public class ManageCarView extends JPanel {
 
     private JComboBox<String> loadCarModelOptions() {
         JComboBox<String> carModelComboBox = new JComboBox<>();
-        CarModelDAO carModelDAO = new CarModelDAO();
         List<CarModel> carModels = carModelDAO.getAllCarModels();
         if (carModels != null && !carModels.isEmpty()) {
             for (CarModel carModel : carModels) {
@@ -168,24 +177,25 @@ public class ManageCarView extends JPanel {
         return carModelComboBox;
     }
 
-    private void showAddCarDialog() {        JTextField registrationField = new JTextField();
-        JTextField imageURLField = new JTextField();
-        JTextField mileageField = new JTextField();
-        JTextField rentalPriceField = new JTextField();
-        JTextField fuelTypeField = new JTextField();
+    private void showAddCarDialog() {
         JComboBox<String> carModelComboBox = loadCarModelOptions();
         JComboBox<String> categoryComboBox = loadCategoryOptions();
-        JCheckBox availabilityCheckBox = new JCheckBox("Available");
+        JTextField mileageField = new JTextField();
+        JComboBox<String> availabilityComboBox = new JComboBox<>(new String[] { "Available", "Not Available" });
+        JTextField rentalPriceField = new JTextField();
+        JComboBox<String> fuelTypeComboBox = new JComboBox<>(new String[] { "Petrol", "Diesel", "Electric", "Hybrid" });
+        JTextField plateNoField = new JTextField();
+        JTextField imageURLField = new JTextField();
 
         Object[] fields = {
                 "Car Model:", carModelComboBox,
-                "Registration:", registrationField,
-                "Image URL:", imageURLField,
-                "Mileage:", mileageField,
-                "Rental Price:", rentalPriceField,
-                "Fuel Type:", fuelTypeField,
                 "Category:", categoryComboBox,
-                "Available:", availabilityCheckBox
+                "Mileage:", mileageField,
+                "Availability:", availabilityComboBox,
+                "Rental Price:", rentalPriceField,
+                "Fuel Type:", fuelTypeComboBox,
+                "Plate Number:", plateNoField,
+                "Image URL:", imageURLField
         };
 
         int option = JOptionPane.showConfirmDialog(this, fields, "Add Car", JOptionPane.OK_CANCEL_OPTION);
@@ -195,14 +205,21 @@ public class ManageCarView extends JPanel {
                 int carModelId = Integer.parseInt(selectedCarModel.split(" - ")[0]);
 
                 String selectedCategory = (String) categoryComboBox.getSelectedItem();
-                int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);                boolean success = carController.addCar(
-                        carModelId, categoryId, registrationField.getText(),
-                        imageURLField.getText(),
-                        availabilityCheckBox.isSelected(),
-                        Float.parseFloat(mileageField.getText()),
-                        Float.parseFloat(rentalPriceField.getText()),
-                        fuelTypeField.getText()
-                );
+                int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
+
+                Car car = new Car();
+                car.setModelID(carModelId);
+                car.setCategoryID(categoryId);
+                car.setMileage(Integer.parseInt(mileageField.getText()));
+                car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
+                car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
+                car.setFuelType((String) fuelTypeComboBox.getSelectedItem());
+                car.setPlateNo(plateNoField.getText());
+                car.setImageURL(imageURLField.getText());
+                car.setCreatedAt(LocalDateTime.now());
+                car.setUpdatedAt(LocalDateTime.now());
+
+                boolean success = carController.addCar(car);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Car added successfully!");
                     loadCars();
@@ -213,61 +230,42 @@ public class ManageCarView extends JPanel {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }    private void showUpdateCarDialog() {
+    }
+
+    private void showUpdateCarDialog() {
         int selectedRow = carTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a car to update.");
             return;
         }
-        
-        // Get car details from the selected row
+
         int carId = (int) tableModel.getValueAt(selectedRow, 0);
-        
-        // Fetch the complete car object to get all current values
         Car car = carController.getCarById(carId);
         if (car == null) {
-            JOptionPane.showMessageDialog(this, "Could not find the selected car.");
+            JOptionPane.showMessageDialog(this, "Car not found.");
             return;
         }
-        
-        // Create input fields
+
         JComboBox<String> carModelComboBox = loadCarModelOptions();
-        // Find and select the current car model
-        for (int i = 0; i < carModelComboBox.getItemCount(); i++) {
-            String item = carModelComboBox.getItemAt(i);
-            if (item.startsWith(car.getModelID() + " - ")) {
-                carModelComboBox.setSelectedIndex(i);
-                break;
-            }
-        }
-        
-        JTextField registrationField = new JTextField(car.getPlateNo());
-        JTextField imageURLField = new JTextField(car.getImageURL());
-        JTextField mileageField = new JTextField(String.valueOf(car.getMileage()));
-        JTextField rentalPriceField = new JTextField(String.valueOf(car.getRentalPrice()));
-        JTextField fuelTypeField = new JTextField(car.getFuelType());
-        
         JComboBox<String> categoryComboBox = loadCategoryOptions();
-        // Find and select the current category
-        for (int i = 0; i < categoryComboBox.getItemCount(); i++) {
-            String item = categoryComboBox.getItemAt(i);
-            if (item.startsWith(car.getCategoryID() + " - ")) {
-                categoryComboBox.setSelectedIndex(i);
-                break;
-            }
-        }
-        
-        JCheckBox availabilityCheckBox = new JCheckBox("Available", "Available".equals(car.getAvailabilityStatus()));
+        JTextField mileageField = new JTextField(String.valueOf(car.getMileage()));
+        JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
+        availabilityComboBox.setSelectedItem(car.getAvailabilityStatus());
+        JTextField rentalPriceField = new JTextField(String.valueOf(car.getRentalPrice()));
+        JComboBox<String> fuelTypeComboBox = new JComboBox<>(new String[] { "Petrol", "Diesel", "Electric", "Hybrid" });
+        fuelTypeComboBox.setSelectedItem(car.getFuelType());
+        JTextField plateNoField = new JTextField(car.getPlateNo());
+        JTextField imageURLField = new JTextField(car.getImageURL());
 
         Object[] fields = {
                 "Car Model:", carModelComboBox,
-                "Registration:", registrationField,
-                "Image URL:", imageURLField,
-                "Mileage:", mileageField,
-                "Rental Price:", rentalPriceField,
-                "Fuel Type:", fuelTypeField,
                 "Category:", categoryComboBox,
-                "Available:", availabilityCheckBox
+                "Mileage:", mileageField,
+                "Availability:", availabilityComboBox,
+                "Rental Price:", rentalPriceField,
+                "Fuel Type:", fuelTypeComboBox,
+                "Plate Number:", plateNoField,
+                "Image URL:", imageURLField
         };
 
         int option = JOptionPane.showConfirmDialog(this, fields, "Update Car", JOptionPane.OK_CANCEL_OPTION);
@@ -279,18 +277,17 @@ public class ManageCarView extends JPanel {
                 String selectedCategory = (String) categoryComboBox.getSelectedItem();
                 int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
 
-                boolean success = carController.updateCar(
-                        carId, 
-                        carModelId, 
-                        categoryId,
-                        registrationField.getText(), 
-                        imageURLField.getText(),
-                        availabilityCheckBox.isSelected(),
-                        Float.parseFloat(mileageField.getText()),
-                        Float.parseFloat(rentalPriceField.getText()),
-                        fuelTypeField.getText()
-                );
-                
+                car.setModelID(carModelId);
+                car.setCategoryID(categoryId);
+                car.setMileage(Integer.parseInt(mileageField.getText()));
+                car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
+                car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
+                car.setFuelType((String) fuelTypeComboBox.getSelectedItem());
+                car.setPlateNo(plateNoField.getText());
+                car.setImageURL(imageURLField.getText());
+                car.setUpdatedAt(LocalDateTime.now());
+
+                boolean success = carController.updateCar(car);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Car updated successfully!");
                     loadCars();
@@ -301,7 +298,19 @@ public class ManageCarView extends JPanel {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }    private void deleteSelectedCar() {
+    }
+
+    private String getCategoryNameById(int categoryId) {
+        List<Category> categories = new CategoryController().getAllCategories();
+        for (Category category : categories) {
+            if (category.getCategoryID() == categoryId) {
+                return category.getName();
+            }
+        }
+        return "Unknown";
+    }
+
+    private void deleteSelectedCar() {
         int selectedRow = carTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a car to delete.");

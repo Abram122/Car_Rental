@@ -3,10 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import models.Car;
-import models.CarModel;
-import models.Category;
 import utils.MySQLConnection;
 
 public class CarDAO {
@@ -24,7 +21,7 @@ public class CarDAO {
             stmt.setInt(1, car.getModelID());
             stmt.setInt(2, car.getCategoryID());
             stmt.setInt(3, car.getMileage());
-            stmt.setString(4, car.getAvailabilityStatus());
+            stmt.setBoolean(4, car.getAvailabilityStatus());
             stmt.setFloat(5, car.getRentalPrice());
             stmt.setString(6, car.getFuelType());
             stmt.setString(7, car.getPlateNo());
@@ -86,7 +83,7 @@ public class CarDAO {
             stmt.setInt(1, car.getModelID());
             stmt.setInt(2, car.getCategoryID());
             stmt.setInt(3, car.getMileage());
-            stmt.setString(4, car.getAvailabilityStatus());
+            stmt.setBoolean(4, car.getAvailabilityStatus());
             stmt.setFloat(5, car.getRentalPrice());
             stmt.setString(6, car.getFuelType());
             stmt.setString(7, car.getPlateNo());
@@ -114,63 +111,22 @@ public class CarDAO {
             System.err.println("Error deleting car: " + e.getMessage());
             return false;
         }
-    }    // Helper method: map SQL result to Car object
+    }
+
+    // Helper method: map SQL result to Car object
     private Car mapResultSetToCar(ResultSet rs) throws SQLException {
         Car car = new Car();
         car.setCarID(rs.getInt("car_id"));
         car.setModelID(rs.getInt("model_id"));
         car.setCategoryID(rs.getInt("category_id"));
         car.setMileage(rs.getInt("mileage"));
-        car.setAvailabilityStatus(rs.getString("availability_status"));
+        car.setAvailabilityStatus(rs.getBoolean("availability_status"));
         car.setRentalPrice(rs.getFloat("rental_price"));
         car.setFuelType(rs.getString("fuel_type"));
         car.setPlateNo(rs.getString("plate_no"));
         car.setImageURL(rs.getString("image_url"));
         car.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         car.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-        
-        // Load associated model and category
-        loadCarModelAndCategory(car);
-        
         return car;
-    }
-      // Load associated CarModel and Category for a Car
-    private void loadCarModelAndCategory(Car car) {
-        try {
-            // Load CarModel
-            CarModelDAO carModelDAO = new CarModelDAO();
-            CarModel carModel = carModelDAO.getCarModelById(car.getModelID());
-            car.setCarModel(carModel);
-            
-            // Load Category
-            CategoryDAO categoryDAO = new CategoryDAO();
-            Category category = categoryDAO.getCategoryById(car.getCategoryID());
-            car.setCategory(category);
-        } catch (Exception e) {
-            System.err.println("Error loading car model or category: " + e.getMessage());
-        }
-    }
-    
-    // Get category by ID
-    private Category getCategoryById(int categoryId) {
-        String sql = "SELECT * FROM category WHERE category_id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, categoryId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    Category category = new Category();
-                    category.setCategoryID(rs.getInt("category_id"));
-                    category.setName(rs.getString("name"));
-                    category.setDescription(rs.getString("description"));
-                    category.setCategoryIMG(rs.getString("category_img"));
-                    category.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                    category.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-                    return category;
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving category by ID: " + e.getMessage());
-        }
-        return null;
     }
 }

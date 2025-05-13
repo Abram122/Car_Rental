@@ -189,10 +189,12 @@ public class AppView extends JPanel {
                 page = new ProfileView(mainFrame, customer); 
                 break;
             case "Available Cars":
-                page = createAvailableCarsPanel(mainFrame);
+                page = new AvailableCarsView(mainFrame, customer); 
                 break;
             case "Book a Car":
-                page = createBookCarPanel(mainFrame);
+                // page = new BookCarView(mainFrame, customer);
+                // For now, show a placeholder until this view is implemented
+                page = createPlaceholderPanel(action, "Make a new car booking");
                 break;
             case "Your Reservations":
                 // page = new ReservationsView(mainFrame, customer);
@@ -268,156 +270,5 @@ public class AppView extends JPanel {
         panel.add(contentPanel, BorderLayout.CENTER);
         
         return panel;
-    }
-
-    private JPanel createAvailableCarsPanel(Main mainFrame) {
-        JPanel panel = new JPanel(new BorderLayout(0, 20));
-        panel.setBackground(AppColors.MAIN_BG);
-        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        
-        // Title
-        JLabel titleLabel = new JLabel("Available Cars", SwingConstants.CENTER);
-        titleLabel.setForeground(AppColors.LIGHT_TEXT);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        panel.add(titleLabel, BorderLayout.NORTH);
-        
-        // Cars grid panel
-        JPanel carsPanel = new JPanel();
-        carsPanel.setLayout(new BoxLayout(carsPanel, BoxLayout.Y_AXIS));
-        carsPanel.setBackground(AppColors.MAIN_BG);
-        
-        // Create a scroll pane in case there are many cars
-        JScrollPane scrollPane = new JScrollPane(carsPanel);
-        scrollPane.setBorder(null);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        panel.add(scrollPane, BorderLayout.CENTER);
-        
-        try {
-            // Get available cars from controller
-            controllers.CarController carController = new controllers.CarController();
-            java.util.List<models.Car> cars = carController.getAllCars().stream()
-                    .filter(car -> "Available".equals(car.getAvailabilityStatus()))
-                    .collect(java.util.stream.Collectors.toList());
-            
-            if (cars.isEmpty()) {
-                JLabel noCarsLabel = new JLabel("No cars available at the moment.", SwingConstants.CENTER);
-                noCarsLabel.setForeground(AppColors.LIGHT_TEXT);
-                noCarsLabel.setFont(new Font("Arial", Font.ITALIC, 16));
-                carsPanel.add(noCarsLabel);
-            } else {
-                // Add each car as a panel
-                for (models.Car car : cars) {
-                    JPanel carPanel = createCarListItemPanel(car, mainFrame);
-                    carsPanel.add(carPanel);
-                    carsPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Spacing between cars
-                }
-            }
-        } catch (Exception e) {
-            JLabel errorLabel = new JLabel("Error loading cars: " + e.getMessage(), SwingConstants.CENTER);
-            errorLabel.setForeground(Color.RED);
-            carsPanel.add(errorLabel);
-        }
-        
-        return panel;
-    }
-    
-    private JPanel createBookCarPanel(Main mainFrame) {
-        // Reuse the available cars panel, but with booking functionality
-        JPanel panel = createAvailableCarsPanel(mainFrame);
-        
-        // Change the title
-        Component titleComp = ((BorderLayout)panel.getLayout()).getLayoutComponent(BorderLayout.NORTH);
-        if (titleComp instanceof JLabel) {
-            ((JLabel) titleComp).setText("Book a Car");
-        }
-        
-        return panel;
-    }
-    
-    private JPanel createCarListItemPanel(models.Car car, Main mainFrame) {
-        JPanel carPanel = new JPanel(new BorderLayout(10, 0));
-        carPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
-        carPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        // Car image (left)
-        JLabel imageLabel = new JLabel();
-        imageLabel.setPreferredSize(new Dimension(100, 80));
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        
-        try {
-            // Try to load image
-            if (car.getImageURL() != null && !car.getImageURL().isEmpty()) {
-                ImageIcon icon = new ImageIcon(car.getImageURL());
-                Image img = icon.getImage().getScaledInstance(100, 70, Image.SCALE_SMOOTH);
-                imageLabel.setIcon(new ImageIcon(img));
-            } else {
-                imageLabel.setText("No Image");
-                imageLabel.setForeground(AppColors.LIGHT_TEXT);
-            }
-        } catch (Exception e) {
-            imageLabel.setText("No Image");
-            imageLabel.setForeground(AppColors.LIGHT_TEXT);
-        }
-        
-        carPanel.add(imageLabel, BorderLayout.WEST);
-        
-        // Car details (center)
-        JPanel detailsPanel = new JPanel();
-        detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
-        detailsPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
-        
-        JLabel nameLabel = new JLabel(car.getFullModelName());
-        nameLabel.setForeground(AppColors.LIGHT_TEXT);
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        JLabel categoryLabel = new JLabel("Category: " + car.getCategoryName());
-        categoryLabel.setForeground(AppColors.LIGHT_TEXT);
-        
-        JLabel priceLabel = new JLabel(String.format("$%.2f/day", car.getRentalPrice()));
-        priceLabel.setForeground(AppColors.LIGHT_TEXT);
-        priceLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        detailsPanel.add(nameLabel);
-        detailsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        detailsPanel.add(categoryLabel);
-        detailsPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        detailsPanel.add(priceLabel);
-        
-        carPanel.add(detailsPanel, BorderLayout.CENTER);
-        
-        // View details button (right)
-        JButton viewButton = new JButton("View Details");        viewButton.setBackground(AppColors.ACCENT_PURPLE);
-        viewButton.setForeground(AppColors.LIGHT_TEXT);
-        viewButton.setFocusPainted(false);
-        viewButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                CarDetailView.showCarDetails(mainFrame, car);
-            }
-        });
-        
-        carPanel.add(viewButton, BorderLayout.EAST);
-        
-        // Make the entire panel clickable to view details
-        carPanel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                carPanel.setBackground(AppColors.ACCENT_PURPLE.darker());
-                detailsPanel.setBackground(AppColors.ACCENT_PURPLE.darker());
-            }
-            
-            @Override
-            public void mouseExited(MouseEvent e) {
-                carPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
-                detailsPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
-            }
-            
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                CarDetailView.showCarDetails(mainFrame, car);
-            }
-        });
-        
-        return carPanel;
     }
 }

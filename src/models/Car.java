@@ -7,22 +7,18 @@ public class Car {
     private int modelID;
     private int categoryID;
     private int mileage;
-    private String availabilityStatus;
+    private Boolean availabilityStatus;
     private float rentalPrice;
     private String fuelType;
     private String plateNo;
     private String imageURL;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    
-    // Transient references to related objects (not stored in database)
-    private transient CarModel carModel;
-    private transient Category category;
 
     public Car() {
     }
 
-    public Car(int carID, int modelID, int categoryID, int mileage, String availabilityStatus, float rentalPrice,
+    public Car(int carID, int modelID, int categoryID, int mileage, Boolean availabilityStatus, float rentalPrice,
             String fuelType, String plateNo, String imageURL, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.carID = carID;
         this.modelID = modelID;
@@ -69,11 +65,11 @@ public class Car {
         this.mileage = mileage;
     }
 
-    public String getAvailabilityStatus() {
-        return availabilityStatus;
+    public boolean getAvailabilityStatus() {
+        return this.availabilityStatus;
     }
 
-    public void setAvailabilityStatus(String availabilityStatus) {
+    public void setAvailabilityStatus(Boolean availabilityStatus) {
         this.availabilityStatus = availabilityStatus;
     }
 
@@ -119,40 +115,18 @@ public class Car {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }    public void setUpdatedAt(LocalDateTime updatedAt) {
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
-    // Getters and setters for transient reference objects
-    public CarModel getCarModel() {
-        return carModel;
-    }
-    
-    public void setCarModel(CarModel carModel) {
-        this.carModel = carModel;
-    }
-    
-    public Category getCategory() {
-        return category;
-    }
-    
-    public void setCategory(Category category2) {
-        this.category = category2;
-    }
-    
-    // Helper methods to get full names
-    public String getFullModelName() {
-        return (carModel != null) ? carModel.getBrand() + " " + carModel.getModel() : "Unknown Model";
-    }
-    
-    public String getCategoryName() {
-        return (category != null) ? category.getName() : "Unknown Category";
-    }    @Override
+
+    @Override
     public String toString() {
         return "Car{" +
                 "carID=" + carID +
-                ", modelID=" + modelID + " (" + getFullModelName() + ")" +
-                ", categoryID=" + categoryID + " (" + getCategoryName() + ")" +
+                ", modelID=" + modelID +
+                ", categoryID=" + categoryID +
                 ", mileage=" + mileage +
                 ", availabilityStatus='" + availabilityStatus + '\'' +
                 ", rentalPrice=" + rentalPrice +
