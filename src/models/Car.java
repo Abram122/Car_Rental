@@ -7,7 +7,7 @@ public class Car {
     private int modelID;
     private int categoryID;
     private int mileage;
-    private String availabilityStatus;
+    private Boolean availabilityStatus;
     private float rentalPrice;
     private String fuelType;
     private String plateNo;
@@ -18,7 +18,7 @@ public class Car {
     public Car() {
     }
 
-    public Car(int carID, int modelID, int categoryID, int mileage, String availabilityStatus, float rentalPrice,
+    public Car(int carID, int modelID, int categoryID, int mileage, Boolean availabilityStatus, float rentalPrice,
             String fuelType, String plateNo, String imageURL, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.carID = carID;
         this.modelID = modelID;
@@ -65,11 +65,11 @@ public class Car {
         this.mileage = mileage;
     }
 
-    public String getAvailabilityStatus() {
-        return availabilityStatus;
+    public boolean getAvailabilityStatus() {
+        return this.availabilityStatus;
     }
 
-    public void setAvailabilityStatus(String availabilityStatus) {
+    public void setAvailabilityStatus(Boolean availabilityStatus) {
         this.availabilityStatus = availabilityStatus;
     }
 

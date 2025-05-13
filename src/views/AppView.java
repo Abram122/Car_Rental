@@ -189,9 +189,7 @@ public class AppView extends JPanel {
                 page = new ProfileView(mainFrame, customer); 
                 break;
             case "Available Cars":
-                // page = new AvailableCarsView(mainFrame, customer); 
-                // For now, show a placeholder until this view is implemented
-                page = createPlaceholderPanel(action, "Browse our fleet of available cars");
+                page = new AvailableCarsView(mainFrame, customer); 
                 break;
             case "Book a Car":
                 // page = new BookCarView(mainFrame, customer);

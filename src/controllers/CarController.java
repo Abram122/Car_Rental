@@ -14,36 +14,19 @@ public class CarController {
     }
 
     // Add a new car
-    public boolean addCar(int modelId, int categoryId, String plateNo, String imageURL, boolean availability,
-                          float mileage, float rentalPrice) {
-        Car car = new Car();
-        car.setModelID(modelId);
-        car.setCategoryID(categoryId);
-        car.setPlateNo(plateNo);
-        car.setImageURL(imageURL);
-        car.setAvailabilityStatus(availability ? "Available" : "Unavailable");
-        car.setMileage((int) mileage);
-        car.setRentalPrice(rentalPrice);
-        car.setCreatedAt(LocalDateTime.now());
-        car.setUpdatedAt(LocalDateTime.now());
-
+    public boolean addCar(Car car) {
+        if (car.getCreatedAt() == null) {
+            car.setCreatedAt(LocalDateTime.now());
+        }
+        if (car.getUpdatedAt() == null) {
+            car.setUpdatedAt(LocalDateTime.now());
+        }
         return carDAO.insertCar(car);
     }
 
     // Update an existing car
-    public boolean updateCar(int carId, int modelId, int categoryId, String plateNo, String imageURL,
-                             boolean availability, float mileage, float rentalPrice) {
-        Car car = new Car();
-        car.setCarID(carId);
-        car.setModelID(modelId);
-        car.setCategoryID(categoryId);
-        car.setPlateNo(plateNo);
-        car.setImageURL(imageURL);
-        car.setAvailabilityStatus(availability ? "Available" : "Unavailable");
-        car.setMileage((int) mileage);
-        car.setRentalPrice(rentalPrice);
+    public boolean updateCar(Car car) {
         car.setUpdatedAt(LocalDateTime.now());
-
         return carDAO.updateCar(car);
     }
 
@@ -60,11 +43,5 @@ public class CarController {
     // Retrieve all cars
     public List<Car> getAllCars() {
         return carDAO.getAllCars();
-    }
-
-    public boolean addCar(int carModelId, int categoryId, int int1, String string, float float1, String text,
-            String text2, String text3) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addCar'");
     }
 }

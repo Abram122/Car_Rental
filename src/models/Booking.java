@@ -1,39 +1,108 @@
 package models;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Booking {
-    private int booking_id;
-    private Date start_date;
-    private Date end_date;
+    private int bookingId;
+    private int userId;
+    private int carId;
     private String status;
-    private Date createdAt;
-    private Date updatedAt;
+    private Date startDate;
+    private Date endDate;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public Booking(int booking_id, Date start_date, Date end_date, String status) {
-        this.booking_id = booking_id;
-        this.start_date = start_date;
-        this.end_date = end_date;
+    public Booking() {
+    }
+
+    public Booking(int bookingId, int userId, int carId, String status, Date startDate, Date endDate,
+            LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.bookingId = bookingId;
+        this.userId = userId;
+        this.carId = carId;
         this.status = status;
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
+
     public int getBookingId() {
-        return booking_id;
+        return bookingId;
     }
-    public Date getStartDate() {
-        return start_date;
+
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
     }
-    public Date getEndDate() {
-        return end_date;
+
+    public int getUserId() {
+        return userId;
     }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getCarId() {
+        return carId;
+    }
+
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
+
     public String getStatus() {
         return status;
     }
-    public Date getCreatedAt() {
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-    public Date getUpdatedAt() {
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingId=" + bookingId +
+                ", userId=" + userId +
+                ", carId=" + carId +
+                ", status='" + status + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

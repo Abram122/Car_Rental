@@ -21,7 +21,7 @@ public class CarDAO {
             stmt.setInt(1, car.getModelID());
             stmt.setInt(2, car.getCategoryID());
             stmt.setInt(3, car.getMileage());
-            stmt.setString(4, car.getAvailabilityStatus());
+            stmt.setBoolean(4, car.getAvailabilityStatus());
             stmt.setFloat(5, car.getRentalPrice());
             stmt.setString(6, car.getFuelType());
             stmt.setString(7, car.getPlateNo());
@@ -83,7 +83,7 @@ public class CarDAO {
             stmt.setInt(1, car.getModelID());
             stmt.setInt(2, car.getCategoryID());
             stmt.setInt(3, car.getMileage());
-            stmt.setString(4, car.getAvailabilityStatus());
+            stmt.setBoolean(4, car.getAvailabilityStatus());
             stmt.setFloat(5, car.getRentalPrice());
             stmt.setString(6, car.getFuelType());
             stmt.setString(7, car.getPlateNo());
@@ -120,7 +120,7 @@ public class CarDAO {
         car.setModelID(rs.getInt("model_id"));
         car.setCategoryID(rs.getInt("category_id"));
         car.setMileage(rs.getInt("mileage"));
-        car.setAvailabilityStatus(rs.getString("availability_status"));
+        car.setAvailabilityStatus(rs.getBoolean("availability_status"));
         car.setRentalPrice(rs.getFloat("rental_price"));
         car.setFuelType(rs.getString("fuel_type"));
         car.setPlateNo(rs.getString("plate_no"));
