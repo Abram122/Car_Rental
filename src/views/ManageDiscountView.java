@@ -15,13 +15,13 @@ import car_rental.Main;
 import java.awt.*;
 import java.util.List;
 
-public class MangageDiscountView extends JPanel {
+public class ManageDiscountView extends JPanel {
     private final DiscountController discountController;
     private JTable discountTable;
     private DefaultTableModel tableModel;
     private final Main mainFrame;
 
-    public MangageDiscountView(Main mainFrame) {
+    public ManageDiscountView(Main mainFrame) {
         this.mainFrame = mainFrame;
         this.discountController = new DiscountController();
         setLayout(new BorderLayout(10, 10));

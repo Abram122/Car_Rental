@@ -15,21 +15,19 @@ public class CarDAO {
 
     // Create - Insert a new car
     public boolean insertCar(Car car) {
-        String sql = "INSERT INTO cars (year, rented_days, brand, model, registration, image_url, availability, mileage, rental_price, created_at, updated_at, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO car (model_id, category_id, mileage, availability_status, rental_price, fuel_type, plate_no, image_url, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, car.getYear());
-            stmt.setInt(2, car.getRentedDays());
-            stmt.setString(3, car.getBrand());
-            stmt.setString(4, car.getModel());
-            stmt.setString(5, car.getRegistration());
-            stmt.setString(6, car.getImageURL());
-            stmt.setBoolean(7, car.getAvailability());
-            stmt.setFloat(8, car.getMileAge());
-            stmt.setFloat(9, car.getRentalPrice());
-            stmt.setTimestamp(10, Timestamp.valueOf(car.getCreatedAt()));
-            stmt.setTimestamp(11, Timestamp.valueOf(car.getUpdatedAt()));
-            stmt.setInt(12, car.getCategoryID());
+            stmt.setInt(1, car.getModelID());
+            stmt.setInt(2, car.getCategoryID());
+            stmt.setInt(3, car.getMileage());
+            stmt.setString(4, car.getAvailabilityStatus());
+            stmt.setFloat(5, car.getRentalPrice());
+            stmt.setString(6, car.getFuelType());
+            stmt.setString(7, car.getPlateNo());
+            stmt.setString(8, car.getImageURL());
+            stmt.setTimestamp(9, Timestamp.valueOf(car.getCreatedAt()));
+            stmt.setTimestamp(10, Timestamp.valueOf(car.getUpdatedAt()));
 
             return stmt.executeUpdate() > 0;
 
@@ -41,7 +39,7 @@ public class CarDAO {
 
     // Read - Retrieve a car by ID
     public Car getCarById(int carId) {
-        String sql = "SELECT * FROM cars WHERE car_id = ?";
+        String sql = "SELECT * FROM car WHERE car_id = ?";
         Car car = null;
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -61,10 +59,10 @@ public class CarDAO {
     // Read - Retrieve all cars
     public List<Car> getAllCars() {
         List<Car> carList = new ArrayList<>();
-        String sql = "SELECT * FROM cars";
+        String sql = "SELECT * FROM car";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 carList.add(mapResultSetToCar(rs));
@@ -79,21 +77,19 @@ public class CarDAO {
 
     // Update - Modify an existing car
     public boolean updateCar(Car car) {
-        String sql = "UPDATE cars SET year=?, rented_days=?, brand=?, model=?, registration=?, image_url=?, availability=?, mileage=?, rental_price=?, updated_at=?, category_id=? WHERE car_id=?";
+        String sql = "UPDATE car SET model_id=?, category_id=?, mileage=?, availability_status=?, rental_price=?, fuel_type=?, plate_no=?, image_url=?, updated_at=? WHERE car_id=?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, car.getYear());
-            stmt.setInt(2, car.getRentedDays());
-            stmt.setString(3, car.getBrand());
-            stmt.setString(4, car.getModel());
-            stmt.setString(5, car.getRegistration());
-            stmt.setString(6, car.getImageURL());
-            stmt.setBoolean(7, car.getAvailability());
-            stmt.setFloat(8, car.getMileAge());
-            stmt.setFloat(9, car.getRentalPrice());
-            stmt.setTimestamp(10, Timestamp.valueOf(car.getUpdatedAt()));
-            stmt.setInt(11, car.getCategoryID());
-            stmt.setInt(12, car.getCarID());
+            stmt.setInt(1, car.getModelID());
+            stmt.setInt(2, car.getCategoryID());
+            stmt.setInt(3, car.getMileage());
+            stmt.setString(4, car.getAvailabilityStatus());
+            stmt.setFloat(5, car.getRentalPrice());
+            stmt.setString(6, car.getFuelType());
+            stmt.setString(7, car.getPlateNo());
+            stmt.setString(8, car.getImageURL());
+            stmt.setTimestamp(9, Timestamp.valueOf(car.getUpdatedAt()));
+            stmt.setInt(10, car.getCarID());
 
             return stmt.executeUpdate() > 0;
 
@@ -105,7 +101,7 @@ public class CarDAO {
 
     // Delete - Remove a car by ID
     public boolean deleteCar(int carId) {
-        String sql = "DELETE FROM cars WHERE car_id = ?";
+        String sql = "DELETE FROM car WHERE car_id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, carId);
@@ -121,18 +117,16 @@ public class CarDAO {
     private Car mapResultSetToCar(ResultSet rs) throws SQLException {
         Car car = new Car();
         car.setCarID(rs.getInt("car_id"));
-        car.setYear(rs.getInt("year"));
-        car.setRentedDays(rs.getInt("rented_days"));
-        car.setBrand(rs.getString("brand"));
-        car.setModel(rs.getString("model"));
-        car.setRegistration(rs.getString("registration"));
-        car.setImageURL(rs.getString("image_url"));
-        car.setAvailability(rs.getBoolean("availability"));
-        car.setMileAge(rs.getFloat("mileage"));
+        car.setModelID(rs.getInt("model_id"));
+        car.setCategoryID(rs.getInt("category_id"));
+        car.setMileage(rs.getInt("mileage"));
+        car.setAvailabilityStatus(rs.getString("availability_status"));
         car.setRentalPrice(rs.getFloat("rental_price"));
+        car.setFuelType(rs.getString("fuel_type"));
+        car.setPlateNo(rs.getString("plate_no"));
+        car.setImageURL(rs.getString("image_url"));
         car.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
         car.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
-        car.setCategoryID(rs.getInt("category_id"));
         return car;
     }
 }

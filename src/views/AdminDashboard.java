@@ -80,7 +80,7 @@ public class AdminDashboard extends JPanel {
 
         // Admin actions as cards
         String[] adminActions = {
-                "Manage Users", "Manage Bookings", "Manage Cars",
+                "Manage Users", "Manage Bookings", "Manage Cars", "Manage Car Models",
                 "Manage Categories",
                 "Manage Payments", "Manage Maintenance", "Moderate Reviews",
                 "View Rental History", "Generate Invoices", "Manage Discounts"
@@ -172,7 +172,10 @@ public class AdminDashboard extends JPanel {
                 // page = new ManageBookingsView(mainFrame);
                 break;
             case "Manage Cars":
-                 page = new ManageCarView(mainFrame);
+                page = new ManageCarView(mainFrame);
+                break;
+            case "Manage Car Models":
+                page = new ManageCarModelView(mainFrame);
                 break;
             case "Manage Categories":
                 page = new ManageCategoryView(mainFrame);
@@ -193,7 +196,7 @@ public class AdminDashboard extends JPanel {
                 // page = new GenerateInvoicesView(mainFrame);
                 break;
             case "Manage Discounts":
-                page = new MangageDiscountView(mainFrame);
+                page = new ManageDiscountView(mainFrame);
                 break;
             default:
                 // Placeholder for unknown actions
