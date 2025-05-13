@@ -1,16 +1,15 @@
 package utils;
 
-public class ValidationUtil {
-
-    public static boolean isValidName(String name) throws ValidationException {
+public class ValidationUtil {    public static boolean isValidName(String name) throws ValidationException {
         if (name == null || !name.matches("^[\\p{L} ]{2,}$")) {
             throw new ValidationException(name + " is not a valid name");
         }
         return true;
     }
-
+    
     public static boolean isValidEmail(String email) throws ValidationException {
-        if (email == null || !email.matches("^[\\w.-]+@[\\w.-]+\\.\\w{2,}$")) {
+        
+        if (email == null || !email.matches("^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$")) {
             throw new ValidationException(email + " is not a valid email");
         }
         return true;
