@@ -15,10 +15,11 @@ public class CarModelDAO {
     }
 
     public boolean addCarModel(CarModel carModel) {
-        String sql = "INSERT INTO Car_Model (brand, model) VALUES (?, ?)";
+        String sql = "INSERT INTO Car_Model (brand_id, model_name, fuel_type) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, carModel.getBrand());
-            stmt.setString(2, carModel.getModel());
+            stmt.setInt(1, carModel.getBrandId());
+            stmt.setString(2, carModel.getModelName());
+            stmt.setString(3, carModel.getFuelType());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -27,11 +28,12 @@ public class CarModelDAO {
     }
 
     public boolean updateCarModel(CarModel carModel) {
-        String sql = "UPDATE Car_Model SET brand = ?, model = ? WHERE model_id = ?";
+        String sql = "UPDATE Car_Model SET brand_id = ?, model_name = ?, fuel_type = ? WHERE model_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, carModel.getBrand());
-            stmt.setString(2, carModel.getModel());
-            stmt.setInt(3, carModel.getModelId());
+            stmt.setInt(1, carModel.getBrandId());
+            stmt.setString(2, carModel.getModelName());
+            stmt.setString(3, carModel.getFuelType());
+            stmt.setInt(4, carModel.getModelId());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -58,8 +60,9 @@ public class CarModelDAO {
                 if (rs.next()) {
                     return new CarModel(
                             rs.getInt("model_id"),
-                            rs.getString("brand"),
-                            rs.getString("model"));
+                            rs.getInt("brand_id"),
+                            rs.getString("model_name"),
+                            rs.getString("fuel_type"));
                 }
             }
         } catch (SQLException e) {
@@ -76,8 +79,9 @@ public class CarModelDAO {
             while (rs.next()) {
                 carModels.add(new CarModel(
                         rs.getInt("model_id"),
-                        rs.getString("brand"),
-                        rs.getString("model")));
+                        rs.getInt("brand_id"),
+                        rs.getString("model_name"),
+                        rs.getString("fuel_type")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

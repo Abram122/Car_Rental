@@ -2,16 +2,18 @@ package models;
 
 public class CarModel {
     private int modelId;
-    private String brand;
-    private String model;
+    private int brandId;
+    private String modelName;
+    private String fuelType;
 
     public CarModel() {
     }
 
-    public CarModel(int modelId, String brand, String model) {
+    public CarModel(int modelId, int brandId, String modelName, String fuelType) {
         this.modelId = modelId;
-        this.brand = brand;
-        this.model = model;
+        this.brandId = brandId;
+        this.modelName = modelName;
+        this.fuelType = fuelType;
     }
 
     public int getModelId() {
@@ -22,28 +24,37 @@ public class CarModel {
         this.modelId = modelId;
     }
 
-    public String getBrand() {
-        return brand;
+    public int getBrandId() {
+        return brandId;
     }
 
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setBrandId(int brandId) {
+        this.brandId = brandId;
     }
 
-    public String getModel() {
-        return model;
+    public String getModelName() {
+        return modelName;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getFuelType() {
+        return fuelType;
+    }
+
+    public void setFuelType(String fuelType) {
+        this.fuelType = fuelType;
     }
 
     @Override
     public String toString() {
         return "CarModel{" +
                 "modelId=" + modelId +
-                ", brand='" + brand + '\'' +
-                ", model='" + model + '\'' +
+                ", brandId=" + brandId +
+                ", modelName='" + modelName + '\'' +
+                ", fuelType='" + fuelType + '\'' +
                 '}';
     }
 }

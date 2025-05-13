@@ -126,8 +126,8 @@ public class AvailableCarsView extends JPanel {
             } else {
                 for (Car car : availableCars) {
                     CarModel carModel = carModelDAO.getCarModelById(car.getModelID());
-                    String brand = carModel != null ? carModel.getBrand() : "Unknown";
-                    String model = carModel != null ? carModel.getModel() : "Unknown";
+                    int brand = carModel != null ? carModel.getBrandId() : 0;
+                    int model = carModel != null ? carModel.getModelId() : 0;
                     String categoryName = getCategoryNameById(car.getCategoryID());
                     tableModel.addRow(new Object[] {
                             car.getCarID(),

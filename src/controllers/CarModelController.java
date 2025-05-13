@@ -12,18 +12,20 @@ public class CarModelController {
         this.carModelDAO = new CarModelDAO();
     }
 
-    public boolean addCarModel(String brand, String model) {
+    public boolean addCarModel(int brandId, String modelName, String fuelType) {
         CarModel carModel = new CarModel();
-        carModel.setBrand(brand);
-        carModel.setModel(model);
+        carModel.setBrandId(brandId);
+        carModel.setModelName(modelName);
+        carModel.setFuelType(fuelType);
         return carModelDAO.addCarModel(carModel);
     }
 
-    public boolean updateCarModel(int modelId, String brand, String model) {
+    public boolean updateCarModel(int modelId, int brandId, String modelName, String fuelType) {
         CarModel carModel = new CarModel();
         carModel.setModelId(modelId);
-        carModel.setBrand(brand);
-        carModel.setModel(model);
+        carModel.setBrandId(brandId);
+        carModel.setModelName(modelName);
+        carModel.setFuelType(fuelType);
         return carModelDAO.updateCarModel(carModel);
     }
 

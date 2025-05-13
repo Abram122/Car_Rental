@@ -1,6 +1,8 @@
 package views;
 
+import controllers.BrandController;
 import controllers.CarModelController;
+import models.CarBrand;
 import models.CarModel;
 import utils.AppColors;
 
@@ -11,17 +13,22 @@ import javax.swing.table.DefaultTableModel;
 import car_rental.Main;
 
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ManageCarModelView extends JPanel {
-    private final CarModelController carModelController;
+    private final BrandController brandController;
     private JTable carModelTable;
     private DefaultTableModel tableModel;
     private final Main mainFrame;
+    private Map<String, Integer> brandNameToIdMap;
+    private CarModelController carModelController;
 
     public ManageCarModelView(Main mainFrame) {
         this.mainFrame = mainFrame;
         this.carModelController = new CarModelController();
+        this.brandController = new BrandController();
         setLayout(new BorderLayout(10, 10));
         setBackground(AppColors.MAIN_BG);
 
@@ -61,7 +68,7 @@ public class ManageCarModelView extends JPanel {
     private JPanel createTablePanel() {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Brand", "Model"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Brand", "Model", "Fuel Type"}, 0);
         carModelTable = new JTable(tableModel);
         carModelTable.setFillsViewportHeight(true);
         carModelTable.setRowHeight(30);
@@ -112,15 +119,26 @@ public class ManageCarModelView extends JPanel {
     private void loadCarModels() {
         tableModel.setRowCount(0);
         List<CarModel> carModels = carModelController.getAllCarModels();
+        List<CarBrand> brands = brandController.getAllBrands();
+        brandNameToIdMap = new HashMap<>();
+        for (CarBrand brand : brands) {
+            brandNameToIdMap.put(brand.getBrandName(), brand.getBrandId());
+        }
         if (carModels == null || carModels.isEmpty()) {
-            tableModel.addRow(new Object[]{"No car models found", "", ""});
+            tableModel.addRow(new Object[]{"No car models found", "", "", ""});
             carModelTable.setEnabled(false);
         } else {
             for (CarModel carModel : carModels) {
+                String brandName = brands.stream()
+                        .filter(b -> b.getBrandId() == carModel.getBrandId())
+                        .map(CarBrand::getBrandName)
+                        .findFirst()
+                        .orElse("Unknown");
                 tableModel.addRow(new Object[]{
                         carModel.getModelId(),
-                        carModel.getBrand(),
-                        carModel.getModel()
+                        brandName,
+                        carModel.getModelName(),
+                        carModel.getFuelType()
                 });
             }
             carModelTable.setEnabled(true);
@@ -128,17 +146,32 @@ public class ManageCarModelView extends JPanel {
     }
 
     private void showAddCarModelDialog() {
-        JTextField brandField = new JTextField();
-        JTextField modelField = new JTextField();
+        List<CarBrand> brands = brandController.getAllBrands();
+        if (brands == null || brands.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No brands available. Please add a brand first.");
+            return;
+        }
+        String[] brandNames = brands.stream().map(CarBrand::getBrandName).toArray(String[]::new);
+        JComboBox<String> brandComboBox = new JComboBox<>(brandNames);
+        JTextField modelNameField = new JTextField();
+        JTextField fuelTypeField = new JTextField();
         Object[] fields = {
-                "Brand:", brandField,
-                "Model:", modelField
+                "Brand:", brandComboBox,
+                "Model Name:", modelNameField,
+                "Fuel Type:", fuelTypeField
         };
         int option = JOptionPane.showConfirmDialog(this, fields, "Add Car Model", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
+            String selectedBrandName = (String) brandComboBox.getSelectedItem();
+            int brandId = brandNameToIdMap.getOrDefault(selectedBrandName, -1);
+            if (brandId == -1) {
+                JOptionPane.showMessageDialog(this, "Invalid brand selected.");
+                return;
+            }
             boolean success = carModelController.addCarModel(
-                    brandField.getText(),
-                    modelField.getText()
+                    brandId,
+                    modelNameField.getText(),
+                    fuelTypeField.getText()
             );
             if (success) {
                 JOptionPane.showMessageDialog(this, "Car model added successfully!");
@@ -156,21 +189,38 @@ public class ManageCarModelView extends JPanel {
             return;
         }
         int modelId = (int) tableModel.getValueAt(selectedRow, 0);
-        String currentBrand = (String) tableModel.getValueAt(selectedRow, 1);
-        String currentModel = (String) tableModel.getValueAt(selectedRow, 2);
+        String currentBrandName = (String) tableModel.getValueAt(selectedRow, 1);
+        String currentModelName = (String) tableModel.getValueAt(selectedRow, 2);
+        String currentFuelType = (String) tableModel.getValueAt(selectedRow, 3);
 
-        JTextField brandField = new JTextField(currentBrand);
-        JTextField modelField = new JTextField(currentModel);
+        List<CarBrand> brands = brandController.getAllBrands();
+        if (brands == null || brands.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No brands available. Please add a brand first.");
+            return;
+        }
+        String[] brandNames = brands.stream().map(CarBrand::getBrandName).toArray(String[]::new);
+        JComboBox<String> brandComboBox = new JComboBox<>(brandNames);
+        brandComboBox.setSelectedItem(currentBrandName);
+        JTextField modelNameField = new JTextField(currentModelName);
+        JTextField fuelTypeField = new JTextField(currentFuelType);
         Object[] fields = {
-                "Brand:", brandField,
-                "Model:", modelField
+                "Brand:", brandComboBox,
+                "Model Name:", modelNameField,
+                "Fuel Type:", fuelTypeField
         };
         int option = JOptionPane.showConfirmDialog(this, fields, "Update Car Model", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
+            String selectedBrandName = (String) brandComboBox.getSelectedItem();
+            int brandId = brandNameToIdMap.getOrDefault(selectedBrandName, -1);
+            if (brandId == -1) {
+                JOptionPane.showMessageDialog(this, "Invalid brand selected.");
+                return;
+            }
             boolean success = carModelController.updateCarModel(
                     modelId,
-                    brandField.getText(),
-                    modelField.getText()
+                    brandId,
+                    modelNameField.getText(),
+                    fuelTypeField.getText()
             );
             if (success) {
                 JOptionPane.showMessageDialog(this, "Car model updated successfully!");

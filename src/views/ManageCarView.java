@@ -128,8 +128,8 @@ public class ManageCarView extends JPanel {
         } else {
             for (Car car : cars) {
                 CarModel carModel = carModelDAO.getCarModelById(car.getModelID());
-                String brand = carModel != null ? carModel.getBrand() : "Unknown";
-                String model = carModel != null ? carModel.getModel() : "Unknown";
+                int brand = carModel != null ? carModel.getBrandId() : 0;
+                int model = carModel != null ? carModel.getModelId() : 0;
                 String categoryName = getCategoryNameById(car.getCategoryID());
                 tableModel.addRow(new Object[] {
                         car.getCarID(),
@@ -168,7 +168,7 @@ public class ManageCarView extends JPanel {
         if (carModels != null && !carModels.isEmpty()) {
             for (CarModel carModel : carModels) {
                 carModelComboBox
-                        .addItem(carModel.getModelId() + " - " + carModel.getBrand() + " " + carModel.getModel());
+                        .addItem(carModel.getModelId() + " - " + carModel.getBrandId() + " " + carModel.getModelId());
             }
         } else {
             carModelComboBox.addItem("No car models available");
@@ -181,7 +181,7 @@ public class ManageCarView extends JPanel {
         JComboBox<String> carModelComboBox = loadCarModelOptions();
         JComboBox<String> categoryComboBox = loadCategoryOptions();
         JTextField mileageField = new JTextField();
-        JComboBox<String> availabilityComboBox = new JComboBox<>(new String[] { "Available", "Not Available" });
+        JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
         JTextField rentalPriceField = new JTextField();
         JComboBox<String> fuelTypeComboBox = new JComboBox<>(new String[] { "Petrol", "Diesel", "Electric", "Hybrid" });
         JTextField plateNoField = new JTextField();

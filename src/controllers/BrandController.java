@@ -1,0 +1,39 @@
+package controllers;
+
+import dao.CarBrandDAO;
+import models.CarBrand;
+
+import java.util.List;
+
+public class BrandController {
+    private final CarBrandDAO brandDAO;
+
+    public BrandController() {
+        this.brandDAO = new CarBrandDAO();
+    }
+
+    public boolean addBrand(String brandName) {
+        CarBrand brand = new CarBrand();
+        brand.setBrandName(brandName);
+        return brandDAO.addBrand(brand);
+    }
+
+    public boolean updateBrand(int brandId, String brandName) {
+        CarBrand brand = new CarBrand();
+        brand.setBrandId(brandId);
+        brand.setBrandName(brandName);
+        return brandDAO.updateBrand(brand);
+    }
+
+    public boolean deleteBrand(int brandId) {
+        return brandDAO.deleteBrand(brandId);
+    }
+
+    public CarBrand getBrandById(int brandId) {
+        return brandDAO.getBrandById(brandId);
+    }
+
+    public List<CarBrand> getAllBrands() {
+        return brandDAO.getAllBrands();
+    }
+}
