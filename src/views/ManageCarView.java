@@ -121,16 +121,17 @@ public class ManageCarView extends JPanel {
             tableModel.addRow(new Object[] { "No cars found", "", "", "", "", "", "", "", "" });
             carTable.setEnabled(false);
         } else {
-            for (Car car : cars) {                tableModel.addRow(new Object[] {
+            for (Car car : cars) {
+                tableModel.addRow(new Object[] {
                         car.getCarID(),
                         car.getCarModel() != null ? car.getCarModel().getBrand() : "Unknown",
                         car.getCarModel() != null ? car.getCarModel().getModel() : "Unknown",
                         car.getPlateNo(),
-                        car.getImageURL(),
                         car.getAvailabilityStatus(),
                         car.getMileage(),
                         car.getRentalPrice(),
-                        car.getCategoryName()
+                        car.getCategoryName(),
+                        car.getFuelType()
                 });
             }
             carTable.setEnabled(true);
@@ -300,19 +301,7 @@ public class ManageCarView extends JPanel {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    private String getCategoryNameById(int categoryId) {
-        List<Category> categories = new CategoryController().getAllCategories();
-        for (Category category : categories) {
-            if (category.getCategoryID() == categoryId) {
-                return category.getName();
-            }
-        }
-        return "Unknown";
-    }
-
-    private void deleteSelectedCar() {
+    }    private void deleteSelectedCar() {
         int selectedRow = carTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a car to delete.");
