@@ -9,48 +9,57 @@ public class Car {
     private float mileAge, rentalPrice;
     private LocalDateTime createdAt, updatedAt;
 
-    public boolean getAvailability() {
-        return availability;
+    public Car() {
     }
 
-    public String getBrand() {
-        return brand;
+    public Car(int carID, String brand, String model, int year, int rentedDays, int categoryID, float mileAge,
+               boolean availability, float rentalPrice, String registration, String imageURL,
+               LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.carID = carID;
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+        this.rentedDays = rentedDays;
+        this.categoryID = categoryID;
+        this.mileAge = mileAge;
+        this.availability = availability;
+        this.rentalPrice = rentalPrice;
+        this.registration = registration;
+        this.imageURL = imageURL;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getCarID() {
         return carID;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public void setCarID(int carID) {
+        this.carID = carID;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getBrand() {
+        return brand;
     }
 
-    public float getMileAge() {
-        return mileAge;
+    public void setBrand(String brand) {
+        this.brand = brand;
     }
 
     public String getModel() {
         return model;
     }
 
-    public String getRegistration() {
-        return registration;
-    }
-
-    public float getRentalPrice() {
-        return rentalPrice;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public int getYear() {
         return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
     }
 
     public int getRentedDays() {
@@ -61,74 +70,67 @@ public class Car {
         this.rentedDays = rentedDays;
     }
 
-    public void setAvailability(boolean availability) {
-        this.availability = availability;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public void setCarID(int carID) {
-        this.carID = carID;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public void setRegistration(String registration) {
-        this.registration = registration;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public void setMileAge(float mileAge) {
-        this.mileAge = mileAge;
-    }
-
-    public void setRentalPrice(float rentalPrice) {
-        this.rentalPrice = rentalPrice;
+    public int getCategoryID() {
+        return categoryID;
     }
 
     public void setCategoryID(int categoryID) {
         this.categoryID = categoryID;
     }
 
-    public int getCategoryID() {
-        return categoryID;
+    public float getMileAge() {
+        return mileAge;
     }
 
-    public Car() {
-    }
-
-    public Car(int carID, int year, int rentedDays, String brand, String model, String registration, String imageURL,
-            boolean availability, float mileAge, float rentalPrice, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.carID = carID;
-        this.year = year;
-        this.rentedDays = rentedDays;
-        this.brand = brand;
-        this.model = model;
-        this.registration = registration;
-        this.imageURL = imageURL;
-        this.availability = availability;
+    public void setMileAge(float mileAge) {
         this.mileAge = mileAge;
+    }
+
+    public boolean getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(boolean availability) {
+        this.availability = availability;
+    }
+
+    public float getRentalPrice() {
+        return rentalPrice;
+    }
+
+    public void setRentalPrice(float rentalPrice) {
         this.rentalPrice = rentalPrice;
+    }
+
+    public String getRegistration() {
+        return registration;
+    }
+
+    public void setRegistration(String registration) {
+        this.registration = registration;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -160,4 +162,7 @@ public class Car {
         return availability;
     }
 
+    public boolean isAvailability(boolean available) {
+        return available;
+    }
 }

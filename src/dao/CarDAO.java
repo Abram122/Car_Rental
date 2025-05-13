@@ -7,16 +7,17 @@ import models.Car;
 import utils.MySQLConnection;
 
 public class CarDAO {
-    private Connection conn;
+    private final Connection conn;
 
     public CarDAO() {
         this.conn = MySQLConnection.getInstance().getConnection();
     }
-    // Insert a new car into the database
+
+    // Create - Insert a new car
     public boolean insertCar(Car car) {
         String sql = "INSERT INTO cars (year, rented_days, brand, model, registration, image_url, availability, mileage, rental_price, created_at, updated_at, category_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {    
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
             stmt.setString(3, car.getBrand());
@@ -30,60 +31,57 @@ public class CarDAO {
             stmt.setTimestamp(11, Timestamp.valueOf(car.getUpdatedAt()));
             stmt.setInt(12, car.getCategoryID());
 
-            int rowsAffected = stmt.executeUpdate();
-            return rowsAffected > 0; 
-    }
-        catch (SQLException e) {
-            e.printStackTrace();
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error inserting car: " + e.getMessage());
             return false;
         }
     }
 
-    // Retrieve a car by ID
+    // Read - Retrieve a car by ID
     public Car getCarById(int carId) {
         String sql = "SELECT * FROM cars WHERE car_id = ?";
         Car car = null;
-        
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, carId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                car = mapResultSetToCar(rs);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    car = mapResultSetToCar(rs);
+                }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error retrieving car by ID: " + e.getMessage());
         }
 
         return car;
     }
 
-    // Retrieve all cars
+    // Read - Retrieve all cars
     public List<Car> getAllCars() {
         List<Car> carList = new ArrayList<>();
         String sql = "SELECT * FROM cars";
 
-        try (Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 carList.add(mapResultSetToCar(rs));
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error retrieving all cars: " + e.getMessage());
         }
 
         return carList;
     }
 
-    // Update an existing car
+    // Update - Modify an existing car
     public boolean updateCar(Car car) {
         String sql = "UPDATE cars SET year=?, rented_days=?, brand=?, model=?, registration=?, image_url=?, availability=?, mileage=?, rental_price=?, updated_at=?, category_id=? WHERE car_id=?";
 
-        try (PreparedStatement stmt = conn.prepareStatement(sql);) {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, car.getYear());
             stmt.setInt(2, car.getRentedDays());
             stmt.setString(3, car.getBrand());
@@ -100,27 +98,26 @@ public class CarDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error updating car: " + e.getMessage());
             return false;
         }
     }
 
-    // Delete a car by ID
+    // Delete - Remove a car by ID
     public boolean deleteCar(int carId) {
         String sql = "DELETE FROM cars WHERE car_id = ?";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setInt(1, carId);
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Error deleting car: " + e.getMessage());
             return false;
         }
     }
 
-    // Helper method to map result set to Car object
+    // Helper method: map SQL result to Car object
     private Car mapResultSetToCar(ResultSet rs) throws SQLException {
         Car car = new Car();
         car.setCarID(rs.getInt("car_id"));

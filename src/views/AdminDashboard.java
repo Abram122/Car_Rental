@@ -172,7 +172,7 @@ public class AdminDashboard extends JPanel {
                 // page = new ManageBookingsView(mainFrame);
                 break;
             case "Manage Cars":
-                // page = new ManageCarsView(mainFrame);
+                 page = new ManageCarView(mainFrame);
                 break;
             case "Manage Categories":
                 page = new ManageCategoryView(mainFrame);
