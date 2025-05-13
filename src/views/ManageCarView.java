@@ -123,7 +123,7 @@ public class ManageCarView extends JPanel {
                         car.getModel(),
                         car.getRegistration(),
                         car.getImageURL(),
-                        car.isAvailability(ava) ? "Available" : "Not Available",
+                        car.isAvailability(car.getAvailability()) ? "Available" : "Not Available",
                         car.getMileAge(),
                         car.getRentalPrice(),
                         car.getCategoryID()
@@ -272,3 +272,4 @@ public class ManageCarView extends JPanel {
         mainFrame.repaint();
     }
 }
+
