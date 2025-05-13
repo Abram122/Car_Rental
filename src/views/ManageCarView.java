@@ -62,7 +62,8 @@ public class ManageCarView extends JPanel {
         return headerPanel;
     }
 
-    private JPanel createTablePanel() {        JPanel tablePanel = new JPanel(new BorderLayout());
+    private JPanel createTablePanel() {
+        JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);
         tableModel = new DefaultTableModel(new Object[] { 
                 "ID", "Brand", "Model", "Registration", "Availability Status", 
@@ -71,6 +72,18 @@ public class ManageCarView extends JPanel {
         carTable.setFillsViewportHeight(true);
         carTable.setRowHeight(30);
         carTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        
+        // Set preferred column widths for better readability
+        carTable.getColumnModel().getColumn(0).setPreferredWidth(40);  // ID
+        carTable.getColumnModel().getColumn(1).setPreferredWidth(100); // Brand
+        carTable.getColumnModel().getColumn(2).setPreferredWidth(100); // Model
+        carTable.getColumnModel().getColumn(3).setPreferredWidth(100); // Registration
+        carTable.getColumnModel().getColumn(4).setPreferredWidth(120); // Availability
+        carTable.getColumnModel().getColumn(5).setPreferredWidth(70);  // Mileage
+        carTable.getColumnModel().getColumn(6).setPreferredWidth(80);  // Rental Price
+        carTable.getColumnModel().getColumn(7).setPreferredWidth(100); // Category
+        carTable.getColumnModel().getColumn(8).setPreferredWidth(80);  // Fuel Type
+        
         JScrollPane scrollPane = new JScrollPane(carTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Cars"));
         scrollPane.setPreferredSize(new Dimension(700, 400));
@@ -97,6 +110,11 @@ public class ManageCarView extends JPanel {
         deleteButton.setBackground(AppColors.ERROR_RED);
         deleteButton.addActionListener(_ -> deleteSelectedCar());
         footerPanel.add(deleteButton);
+        
+        JButton refreshButton = new JButton("Refresh");
+        styleButton(refreshButton);
+        refreshButton.addActionListener(_ -> loadCars());
+        footerPanel.add(refreshButton);
 
         JButton backButton = new JButton("Back to Dashboard");
         styleButton(backButton);
@@ -136,6 +154,22 @@ public class ManageCarView extends JPanel {
             }
             carTable.setEnabled(true);
         }
+        
+        // Setup tooltip for displaying additional information when hovering
+        carTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent e) {
+                int row = carTable.rowAtPoint(e.getPoint());
+                int col = carTable.columnAtPoint(e.getPoint());
+                if (row >= 0 && col >= 0) {
+                    Object value = carTable.getValueAt(row, col);
+                    if (value != null) {
+                        carTable.setToolTipText(value.toString());
+                    } else {
+                        carTable.setToolTipText(null);
+                    }
+                }
+            }
+        });
     }
 
     private JComboBox<String> loadCategoryOptions() {
@@ -168,7 +202,8 @@ public class ManageCarView extends JPanel {
         return carModelComboBox;
     }
 
-    private void showAddCarDialog() {        JTextField registrationField = new JTextField();
+    private void showAddCarDialog() {
+        JTextField registrationField = new JTextField();
         JTextField imageURLField = new JTextField();
         JTextField mileageField = new JTextField();
         JTextField rentalPriceField = new JTextField();
@@ -191,11 +226,16 @@ public class ManageCarView extends JPanel {
         int option = JOptionPane.showConfirmDialog(this, fields, "Add Car", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
+                if (!validateNumericFields(mileageField, rentalPriceField)) {
+                    return;
+                }
+
                 String selectedCarModel = (String) carModelComboBox.getSelectedItem();
                 int carModelId = Integer.parseInt(selectedCarModel.split(" - ")[0]);
 
                 String selectedCategory = (String) categoryComboBox.getSelectedItem();
-                int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);                boolean success = carController.addCar(
+                int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
+                boolean success = carController.addCar(
                         carModelId, categoryId, registrationField.getText(),
                         imageURLField.getText(),
                         availabilityCheckBox.isSelected(),
@@ -213,7 +253,9 @@ public class ManageCarView extends JPanel {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }    private void showUpdateCarDialog() {
+    }
+
+    private void showUpdateCarDialog() {
         int selectedRow = carTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a car to update.");
@@ -273,6 +315,10 @@ public class ManageCarView extends JPanel {
         int option = JOptionPane.showConfirmDialog(this, fields, "Update Car", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
+                if (!validateNumericFields(mileageField, rentalPriceField)) {
+                    return;
+                }
+
                 String selectedCarModel = (String) carModelComboBox.getSelectedItem();
                 int carModelId = Integer.parseInt(selectedCarModel.split(" - ")[0]);
 
@@ -301,7 +347,9 @@ public class ManageCarView extends JPanel {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }    private void deleteSelectedCar() {
+    }
+
+    private void deleteSelectedCar() {
         int selectedRow = carTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a car to delete.");
@@ -327,5 +375,27 @@ public class ManageCarView extends JPanel {
         mainFrame.add(new AdminDashboard(mainFrame));
         mainFrame.revalidate();
         mainFrame.repaint();
+    }
+
+    // Helper method to validate numeric input field
+    private boolean validateNumericFields(JTextField mileageField, JTextField rentalPriceField) {
+        try {
+            float mileage = Float.parseFloat(mileageField.getText());
+            if (mileage < 0) {
+                JOptionPane.showMessageDialog(this, "Mileage cannot be negative", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+            float rentalPrice = Float.parseFloat(rentalPriceField.getText());
+            if (rentalPrice <= 0) {
+                JOptionPane.showMessageDialog(this, "Rental price must be greater than zero", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+            return true;
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mileage and rental price must be valid numbers", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 }
