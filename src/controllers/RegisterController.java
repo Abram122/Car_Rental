@@ -36,8 +36,7 @@ public class RegisterController {
         // Pass the hash (not plain text) to the DAO
         return customerDAO.register(userId, username, hashed, email, phone, licenseNumber);
     }
-    
-    public boolean registerAdmin(String username, String password, String email, String role) 
+      public boolean registerAdmin(String username, String password, String email, String role) 
             throws ValidationException {
         // Validate input fields
         ValidationUtil.isValidName(username);
@@ -50,11 +49,10 @@ public class RegisterController {
         // Hash password
         String hashed = HashUtil.hashPassword(password);
         
-        // Register the admin with the hashed password
+        // Register the admin with the hashed password - role parameter isn't used in the DAO anymore
         return adminDAO.register(adminId, username, hashed, email, role);
     }
-    
-    public boolean registerAdmin(String username, String password, String email, String role, boolean storeOriginalPassword) 
+      public boolean registerAdmin(String username, String password, String email, String role, boolean storeOriginalPassword) 
             throws ValidationException {
         // Validate input fields
         ValidationUtil.isValidName(username);
@@ -74,7 +72,7 @@ public class RegisterController {
         // Hash password
         String hashed = HashUtil.hashPassword(password);
         
-        // Register the admin with the hashed password
+        // Register the admin with the hashed password - role parameter isn't used in the DAO anymore
         return adminDAO.register(adminId, username, hashed, email, role);
     }
     
@@ -139,5 +137,55 @@ public class RegisterController {
     
     public List<Customer> getAllCustomers() {
         return customerDAO.getAllCustomers();
+    }    public boolean promoteCustomerToAdmin(int userId, String email, String username, String role) 
+            throws ValidationException {
+        // Create a more secure default password that satisfies the password requirements
+        String defaultPassword = username + "_Admin123!"; 
+        return promoteCustomerToAdmin(userId, email, username, role, defaultPassword);
+    }    public boolean promoteCustomerToAdmin(int userId, String email, String username, String role, String password) 
+            throws ValidationException {
+        try {
+            // We don't need to get the customer here since we already have all the information we need
+            // Just validate the inputs directly
+            
+            // Validate the username, email and password
+            ValidationUtil.isValidName(username);
+            ValidationUtil.isValidEmail(email);
+            ValidationUtil.isValidPassword(password);
+            
+            System.out.println("Promoting user: " + username + " with email: " + email + " to role: " + role);
+            
+            // Generate a random adminId
+            int adminId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
+            
+            // Hash password
+            String hashedPassword = HashUtil.hashPassword(password);
+            
+            // Register as admin - role parameter isn't used in the DAO anymore
+            boolean success = adminDAO.register(adminId, username, hashedPassword, email, role);
+            
+            if (!success) {
+                System.out.println("Failed to register admin in database");
+                return false;
+            }
+            
+            // Store the default password for later viewing
+            savePasswordForAdmin(email, password);
+            
+            // Delete the customer account
+            boolean deleteSuccess = customerDAO.delete(email);
+            if (!deleteSuccess) {
+                System.out.println("Failed to delete customer account after promotion");
+                // If we can't delete the customer, we should roll back the admin creation
+                adminDAO.deleteAdmin(adminId);
+                return false;
+            }
+            
+            return true;
+        } catch (Exception e) {
+            System.out.println("Exception during promotion: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }

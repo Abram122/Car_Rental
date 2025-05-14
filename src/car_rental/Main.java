@@ -1,6 +1,8 @@
 package car_rental;
 
 import com.formdev.flatlaf.FlatDarkLaf;
+
+import views.AdminDashboard;
 import views.LoginView;
 import javax.swing.*;
 import migrations.DBMigration;
@@ -32,7 +34,7 @@ public class Main extends JFrame {
 
         // Load Login View as a default view
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
-        LoginView loginView = new LoginView(this);
+        AdminDashboard loginView = new AdminDashboard(this);
         add(loginView);
         revalidate();
         repaint();

@@ -168,7 +168,7 @@ public class AdminDashboard extends JPanel {
         JPanel page = null;        // Dynamically instantiate the target page based on the action
         switch (action) {
             case "Manage Users":
-                page = new ManageUsersView(mainFrame);
+                page = new ManageUsersView(mainFrame, adminEmail);
                 break;
             case "Manage Admins":
                 page = new ManageAdminsView(mainFrame, adminEmail);

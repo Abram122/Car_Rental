@@ -58,11 +58,11 @@ public class ManageAdminsView extends JPanel {
         // Admins table
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);        // Create table model with column names
-        String[] columnNames = {"ID", "Username", "Email", "Role", "View Password", "Actions"};
+        String[] columnNames = {"ID", "Username", "Email", "View Password", "Actions"};
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 4 || column == 5; // Password and Actions columns are editable
+                return column == 3 || column == 4; // Password and Actions columns are editable
             }
         };
 
@@ -108,9 +108,7 @@ public class ManageAdminsView extends JPanel {
         }
         // For testing - assume super admin if email not provided
         return true;
-    }
-
-    private JPanel createNewAdminForm() {
+    }    private JPanel createNewAdminForm() {
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(AppColors.MAIN_BG);
         formPanel.setBorder(BorderFactory.createTitledBorder(
@@ -167,24 +165,9 @@ public class ManageAdminsView extends JPanel {
         styleTextField(passwordField);
         formPanel.add(passwordField, gbc);
         
-        // Role field        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.weightx = 0.0;
-        JLabel roleLabel = new JLabel("Role:");
-        roleLabel.setForeground(AppColors.LIGHT_TEXT);
-        formPanel.add(roleLabel, gbc);
-        
-        gbc.gridx = 1;
-        gbc.weightx = 1.0;
-        String[] roles = {"ADMIN", "SUPER_ADMIN"};
-        JComboBox<String> roleComboBox = new JComboBox<>(roles);
-        roleComboBox.setBackground(AppColors.DIVIDER_DARK_GRAY);
-        roleComboBox.setForeground(AppColors.LIGHT_TEXT);
-        formPanel.add(roleComboBox, gbc);
-        
         // Checkbox to store original password
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         JCheckBox storePasswordCheckBox = new JCheckBox("Store original password (for testing only)");
         storePasswordCheckBox.setBackground(AppColors.MAIN_BG);
@@ -193,16 +176,17 @@ public class ManageAdminsView extends JPanel {
         
         // Add button
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER;
         JButton addButton = new JButton("Add Admin");
         styleButton(addButton, AppColors.ACCENT_TIFFANY);
         addButton.addActionListener(e -> {
-            try {                String username = usernameField.getText();
+            try {
+                String username = usernameField.getText();
                 String email = emailField.getText();
                 String password = new String(passwordField.getPassword());
-                String role = (String) roleComboBox.getSelectedItem();
+                String role = "ADMIN"; // Default role as we're not using role column
                 boolean storePassword = storePasswordCheckBox.isSelected();
                 
                 boolean success = controller.registerAdmin(username, password, email, role, storePassword);
@@ -214,7 +198,6 @@ public class ManageAdminsView extends JPanel {
                     usernameField.setText("");
                     emailField.setText("");
                     passwordField.setText("");
-                    roleComboBox.setSelectedIndex(0);
                     storePasswordCheckBox.setSelected(false);
                     
                     // Reload the admins table
@@ -235,20 +218,19 @@ public class ManageAdminsView extends JPanel {
         textField.setBackground(AppColors.DIVIDER_DARK_GRAY);
         textField.setForeground(AppColors.LIGHT_TEXT);
         textField.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-    }
-
-    private void loadAdmins() {
+    }    private void loadAdmins() {
         // Clear existing data
         tableModel.setRowCount(0);
 
         // Get all admins
-        List<Admin> admins = controller.getAllAdmins();        // Populate table with admin data
+        List<Admin> admins = controller.getAllAdmins();
+        
+        // Populate table with admin data
         for (Admin admin : admins) {
             Object[] rowData = {
                     admin.getUserId(),
                     admin.getUsername(),
-                    "admin@email.com", // Placeholder - replace with actual email if available
-                    admin.getAdminRole(),
+                    admin.getEmail(), // Use actual email from admin object
                     "View",
                     "Delete"
             };
@@ -302,9 +284,7 @@ public class ManageAdminsView extends JPanel {
             }
             return this;
         }
-    }
-
-    // Button editor for the table
+    }    // Button editor for the table
     private class ButtonEditor extends DefaultCellEditor {
         private JButton button;
         private String label;
@@ -335,18 +315,6 @@ public class ManageAdminsView extends JPanel {
             if (clicked) {
                 int selectedRow = adminsTable.getSelectedRow();
                 int adminId = (Integer) adminsTable.getValueAt(selectedRow, 0);
-                String adminRole = (String) adminsTable.getValueAt(selectedRow, 3);
-                
-                // Prevent deletion of super admins (optional security measure)
-                if ("SUPER_ADMIN".equals(adminRole)) {
-                    JOptionPane.showMessageDialog(
-                        button, 
-                        "Super Admins cannot be deleted!", 
-                        "Security Restriction", 
-                        JOptionPane.WARNING_MESSAGE
-                    );
-                    return label;
-                }
                 
                 int confirmResult = JOptionPane.showConfirmDialog(
                         button, 
@@ -426,8 +394,7 @@ public class ManageAdminsView extends JPanel {
             return super.stopCellEditing();
         }
     }
-    
-    // Button editor for delete action
+      // Button editor for delete action
     private class DeleteButtonEditor extends DefaultCellEditor {
         private JButton button;
         private boolean clicked;
@@ -455,18 +422,6 @@ public class ManageAdminsView extends JPanel {
             if (clicked) {
                 int selectedRow = adminsTable.getSelectedRow();
                 int adminId = (Integer) adminsTable.getValueAt(selectedRow, 0);
-                String adminRole = (String) adminsTable.getValueAt(selectedRow, 3);
-                
-                // Prevent deletion of super admins (optional security measure)
-                if ("SUPER_ADMIN".equals(adminRole)) {
-                    JOptionPane.showMessageDialog(
-                        button, 
-                        "Super Admins cannot be deleted!", 
-                        "Security Restriction", 
-                        JOptionPane.WARNING_MESSAGE
-                    );
-                    return "Delete";
-                }
                 
                 int confirmResult = JOptionPane.showConfirmDialog(
                         button, 

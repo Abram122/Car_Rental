@@ -92,14 +92,18 @@ public class CustomerDAO {
         String sql = "SELECT user_id, username, email, phone, license_number FROM user WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return new Customer(
+            ResultSet rs = stmt.executeQuery();            if (rs.next()) {
+                Customer customer = new Customer(
                         rs.getInt("user_id"),
                         rs.getString("username"),
                         null,
                         rs.getString("phone"),
                         rs.getString("license_number"));
+                
+                // Make sure to set the email
+                customer.setEmail(rs.getString("email"));
+                
+                return customer;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -154,14 +158,14 @@ public class CustomerDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             
-            while (rs.next()) {
-                Customer customer = new Customer(
+            while (rs.next()) {                Customer customer = new Customer(
                     rs.getInt("user_id"),
                     rs.getString("username"),
                     null, // We don't retrieve passwords
                     rs.getString("phone"),
                     rs.getString("license_number")
                 );
+                customer.setEmail(rs.getString("email"));
                 customers.add(customer);
             }
         } catch (SQLException e) {

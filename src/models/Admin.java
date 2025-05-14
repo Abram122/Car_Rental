@@ -15,8 +15,8 @@ public class Admin extends User {
     public void setAdminRole(String admin_role) {
         this.admin_role = admin_role;
     }
-    
-    public boolean isSuperAdmin() {
-        return "SUPER_ADMIN".equals(admin_role);
+      public boolean isSuperAdmin() {
+        // Since we're not using roles in the database, all admins have the same permissions
+        return true;
     }
 }

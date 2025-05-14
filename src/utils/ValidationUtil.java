@@ -39,12 +39,10 @@ public class ValidationUtil {    public static boolean isValidName(String name) 
         } catch (NumberFormatException e) {
             throw new ValidationException(input + " is not numeric");
         }
-    }
-
-    public static boolean isValidPassword(String password) throws ValidationException {
-        if (password == null || !password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=]).{8,}$")) {
+    }    public static boolean isValidPassword(String password) throws ValidationException {
+        if (password == null || !password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!_*()\\-]).{8,}$")) {
             throw new ValidationException(
-                    "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a digit, and a special character.");
+                    "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a digit, and a special character (@#$%^&+=!_*()-etc).");
         }
         return true;
     }
