@@ -106,10 +106,8 @@ public class LoginView extends JPanel {
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                mainFrame.getContentPane().removeAll();
-
-                if (isAdmin) {
-                    mainFrame.add(new AdminDashboard(mainFrame));
+                mainFrame.getContentPane().removeAll();                if (isAdmin) {
+                    mainFrame.add(new AdminDashboard(mainFrame, email));
                 } else {
                     CustomerDAO dao = new CustomerDAO();
                     Customer customer = dao.getByEmail(email);

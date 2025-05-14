@@ -7,6 +7,16 @@ public class Admin extends User {
         super(userId, username, password, phone);
         this.admin_role = admin_role;
     }
-
-
+    
+    public String getAdminRole() {
+        return admin_role;
+    }
+    
+    public void setAdminRole(String admin_role) {
+        this.admin_role = admin_role;
+    }
+    
+    public boolean isSuperAdmin() {
+        return "SUPER_ADMIN".equals(admin_role);
+    }
 }

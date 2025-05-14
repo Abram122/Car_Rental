@@ -141,4 +141,33 @@ public class CustomerDAO {
         }
         return list;
     }
+
+
+    // Get all customers
+    // This method retrieves all customers from the database and returns them as a list.
+    // It does not include sensitive information like passwords.
+
+    public List<Customer> getAllCustomers() {
+        List<Customer> customers = new ArrayList<>();
+        String sql = "SELECT user_id, username, email, phone, license_number, is_verified FROM user";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Customer customer = new Customer(
+                    rs.getInt("user_id"),
+                    rs.getString("username"),
+                    null, // We don't retrieve passwords
+                    rs.getString("phone"),
+                    rs.getString("license_number")
+                );
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return customers;
+    }
 }
