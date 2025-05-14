@@ -26,7 +26,8 @@ public class AvailableCarsView extends JPanel {
     private final Main mainFrame;
     private final CarModelDAO carModelDAO;
     private final Customer customer;
-    public AvailableCarsView(Main mainFrame ,Customer customer) {
+
+    public AvailableCarsView(Main mainFrame, Customer customer) {
         this.mainFrame = mainFrame;
         this.carController = new CarController();
         this.carModelDAO = new CarModelDAO();
@@ -166,19 +167,22 @@ public class AvailableCarsView extends JPanel {
 
         int carId = (int) tableModel.getValueAt(selectedRow, 0);
         Car car = carController.getCarById(carId);
-        if (car == null || !"Available".equals(car.getAvailabilityStatus())) {
+        if (car == null || false == car.getAvailabilityStatus()) {
             JOptionPane.showMessageDialog(this, "Selected car is not available.");
             return;
         }
 
-        String message = String.format("Car ID %d selected for booking.", carId);
-        JOptionPane.showMessageDialog(this, message, "Booking Confirmation", JOptionPane.INFORMATION_MESSAGE);
+        // Navigate to BookingView
+        mainFrame.getContentPane().removeAll();
+        mainFrame.add(new BookingView(mainFrame, customer));
+        mainFrame.revalidate();
+        mainFrame.repaint();
     }
 
     private void navigateBack() {
         mainFrame.setSize(600, 400);
         mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AppView(mainFrame , customer)); 
+        mainFrame.add(new AppView(mainFrame, customer));
         mainFrame.revalidate();
         mainFrame.repaint();
     }

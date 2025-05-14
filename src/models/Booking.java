@@ -12,6 +12,7 @@ public class Booking {
     private Date endDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String promotionCode;
 
     public Booking() {
     }
@@ -90,6 +91,14 @@ public class Booking {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getPromotionCode() {
+        return promotionCode;
+    }
+
+    public void setPromotionCode(String promotionCode) {
+        this.promotionCode = promotionCode;
     }
 
     @Override

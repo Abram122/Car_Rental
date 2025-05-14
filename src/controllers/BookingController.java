@@ -50,6 +50,16 @@ public class BookingController {
         return bookingDAO.updateBooking(booking);
     }
 
+    // update booking status 
+    public boolean updateBookingStatus(int bookingId, String status) {
+    Booking booking = bookingDAO.getBookingById(bookingId);
+    if (booking != null) {
+        booking.setStatus(status);
+        return bookingDAO.updateBooking(booking);
+    }
+    return false;
+}
+
     // Delete a booking by ID
     public boolean deleteBooking(int bookingId) {
         return bookingDAO.deleteBooking(bookingId);

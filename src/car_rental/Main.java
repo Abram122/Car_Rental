@@ -34,7 +34,7 @@ public class Main extends JFrame {
 
         // Load Login View as a default view
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
-        AdminDashboard loginView = new AdminDashboard(this);
+        LoginView loginView = new LoginView(this);
         add(loginView);
         revalidate();
         repaint();
