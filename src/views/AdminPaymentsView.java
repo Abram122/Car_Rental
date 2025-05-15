@@ -65,7 +65,12 @@ public class AdminPaymentsView extends JPanel {
 
         tableModel = new DefaultTableModel(new Object[] {
                 "Payment ID", "Booking ID", "User Name", "Amount", "Status", "Method", "Date"
-        }, 0);
+        }, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         paymentTable = new JTable(tableModel);
         paymentTable.setFillsViewportHeight(true);
@@ -102,26 +107,23 @@ public class AdminPaymentsView extends JPanel {
 
     private void loadPayments(String userName) {
         tableModel.setRowCount(0);
-        List<Payment> payments = paymentController.getAllPayments();
+        List<Payment> payments = paymentController.getPaymentsByUserName(userName);
         if (payments == null || payments.isEmpty()) {
             tableModel.addRow(new Object[] { "No payments found", "", "", "", "", "", "" });
             paymentTable.setEnabled(false);
         } else {
             for (Payment payment : payments) {
-                String paymentUserName = payment.getUserName() != null ? payment.getUserName() : "";
-                if (userName == null || userName.isEmpty() || paymentUserName.toLowerCase().contains(userName.toLowerCase())) {
-                    tableModel.addRow(new Object[] {
+                tableModel.addRow(new Object[] {
                         payment.getPaymentId(),
                         payment.getBookingId(),
-                        paymentUserName,
+                        payment.getUserName() != null ? payment.getUserName() : "",
                         payment.getAmount(),
                         payment.getPaymentStatus(),
                         payment.getPaymentMethod(),
                         payment.getPaymentDate()
-                    });
-                }
+                });
             }
-            paymentTable.setEnabled(tableModel.getRowCount() > 0);
+            paymentTable.setEnabled(true);
         }
     }
 

@@ -22,7 +22,7 @@ public class AdminDashboard extends JPanel {
         this.adminEmail = adminEmail;
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
-        mainFrame.setSize(800,1000);
+        mainFrame.setSize(800, 1000);
         // Add header panel
         add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
 
@@ -82,9 +82,10 @@ public class AdminDashboard extends JPanel {
         gbc.insets = new Insets(15, 15, 15, 15); // Spacing between cards
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;        // Admin actions as cards
+        gbc.weighty = 1.0; // Admin actions as cards
         String[] adminActions = {
-                "Manage Users", "Manage Admins", "Manage Bookings", "Manage Cars", "Manage Car Models","Manage Car Brands",
+                "Manage Users", "Manage Admins", "Manage Bookings", "Manage Cars", "Manage Car Models",
+                "Manage Car Brands",
                 "Manage Categories",
                 "Manage Payments", "Manage Maintenance", "Moderate Reviews",
                 "View Rental History", "Generate Invoices", "Manage Discounts"
@@ -165,7 +166,7 @@ public class AdminDashboard extends JPanel {
     }
 
     private void navigateToPage(String action, Main mainFrame) {
-        JPanel page = null;        // Dynamically instantiate the target page based on the action
+        JPanel page = null; // Dynamically instantiate the target page based on the action
         switch (action) {
             case "Manage Users":
                 page = new ManageUsersView(mainFrame, adminEmail);
@@ -187,8 +188,9 @@ public class AdminDashboard extends JPanel {
                 break;
             case "Manage Categories":
                 page = new ManageCategoryView(mainFrame);
-                break;            case "Manage Payments":
-                // page = new ManagePaymentsView(mainFrame);
+                break;
+            case "Manage Payments":
+                page = new AdminPaymentsView(mainFrame);
                 break;
             case "Manage Maintenance":
                 page = new ManageMaintenanceView(mainFrame);
@@ -232,7 +234,8 @@ public class AdminDashboard extends JPanel {
             public void mouseExited(MouseEvent e) {
                 backButton.setBackground(AppColors.ACCENT_TIFFANY);
             }
-        });        backButton.addActionListener(_ -> {
+        });
+        backButton.addActionListener(_ -> {
             mainFrame.getContentPane().removeAll();
             mainFrame.add(new AdminDashboard(mainFrame, adminEmail));
             mainFrame.revalidate();

@@ -4,6 +4,7 @@ import models.Payment;
 import utils.MySQLConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentDAO {
@@ -30,12 +31,12 @@ public class PaymentDAO {
     }
 
     public Payment getPaymentById(int paymentId) {
-        String sql = "SELECT * FROM Payment WHERE payment_id = ?";
+        String sql = "SELECT p.*, u.username as user_name FROM Payment p JOIN User u ON p.user_id = u.user_id WHERE payment_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, paymentId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new Payment(
+                Payment payment = new Payment(
                         rs.getInt("payment_id"),
                         rs.getInt("user_id"),
                         rs.getInt("booking_id"),
@@ -45,6 +46,8 @@ public class PaymentDAO {
                         rs.getDate("payment_date"),
                         rs.getTimestamp("created_at"),
                         rs.getTimestamp("updated_at"));
+                payment.setUserName(rs.getString("user_name"));
+                return payment;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -81,10 +84,10 @@ public class PaymentDAO {
     }
 
     public List<Payment> getAllPayments() {
-        List<Payment> payments = new java.util.ArrayList<>();
-        String sql = "SELECT p.*, u.name as user_name FROM Payment p JOIN User u ON p.user_id = u.user_id";
+        List<Payment> payments = new ArrayList<>();
+        String sql = "SELECT p.*, u.username as user_name FROM Payment p JOIN User u ON p.user_id = u.user_id";
         try (Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Payment payment = new Payment(
                         rs.getInt("payment_id"),
@@ -96,7 +99,7 @@ public class PaymentDAO {
                         rs.getDate("payment_date"),
                         rs.getTimestamp("created_at"),
                         rs.getTimestamp("updated_at"));
-                payment.setUserName(rs.getString("user_name")); 
+                payment.setUserName(rs.getString("user_name"));
                 payments.add(payment);
             }
         } catch (SQLException e) {
@@ -106,8 +109,8 @@ public class PaymentDAO {
     }
 
     public List<Payment> getPaymentsByBookingId(int bookingId) {
-        List<Payment> payments = new java.util.ArrayList<>();
-        String sql = "SELECT * FROM Payment WHERE booking_id = ?";
+        List<Payment> payments = new ArrayList<>();
+        String sql = "SELECT p.*, u.username as user_name FROM Payment p JOIN User u ON p.user_id = u.user_id WHERE booking_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, bookingId);
             ResultSet rs = stmt.executeQuery();
@@ -122,6 +125,33 @@ public class PaymentDAO {
                         rs.getDate("payment_date"),
                         rs.getTimestamp("created_at"),
                         rs.getTimestamp("updated_at"));
+                payment.setUserName(rs.getString("user_name"));
+                payments.add(payment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return payments;
+    }
+
+    public List<Payment> getPaymentsByUserName(String userName) {
+        List<Payment> payments = new ArrayList<>();
+        String sql = "SELECT p.*, u.username as user_name FROM Payment p JOIN User u ON p.user_id = u.user_id WHERE LOWER(u.username) LIKE ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + userName.toLowerCase() + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Payment payment = new Payment(
+                        rs.getInt("payment_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("booking_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("payment_status"),
+                        rs.getString("payment_method"),
+                        rs.getDate("payment_date"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"));
+                payment.setUserName(rs.getString("user_name"));
                 payments.add(payment);
             }
         } catch (SQLException e) {
