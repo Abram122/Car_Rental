@@ -1,7 +1,6 @@
 package views;
 
 import car_rental.Main;
-import models.Customer;
 import utils.AppColors;
 
 import javax.swing.*;
@@ -15,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class AdminDashboard extends JPanel {
     private String adminEmail;
 
-    public AdminDashboard(Main mainFrame ) {
+    public AdminDashboard(Main mainFrame) {
         this(mainFrame, null);
     }
 
@@ -23,6 +22,7 @@ public class AdminDashboard extends JPanel {
         this.adminEmail = adminEmail;
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
+
         // Add header panel
         add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
 
@@ -31,8 +31,6 @@ public class AdminDashboard extends JPanel {
 
         // Add footer panel
         add(createFooterPanel(), BorderLayout.SOUTH);
-
-        mainFrame.setSize(800, 1000);
     }
 
     private JPanel createHeaderPanel(Main mainFrame) {
@@ -149,12 +147,12 @@ public class AdminDashboard extends JPanel {
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                card.setBackground(AppColors.ACCENT_PURPLE); 
+                card.setBackground(AppColors.ACCENT_PURPLE); // Hover effect
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                card.setBackground(AppColors.ACCENT_TIFFANY); 
+                card.setBackground(AppColors.ACCENT_TIFFANY); // Reset color
             }
 
             @Override
@@ -167,7 +165,7 @@ public class AdminDashboard extends JPanel {
     }
 
     private void navigateToPage(String action, Main mainFrame) {
-        JPanel page = null;       
+        JPanel page = null;        // Dynamically instantiate the target page based on the action
         switch (action) {
             case "Manage Users":
                 page = new ManageUsersView(mainFrame, adminEmail);
@@ -189,14 +187,8 @@ public class AdminDashboard extends JPanel {
                 break;
             case "Manage Categories":
                 page = new ManageCategoryView(mainFrame);
-<<<<<<< Updated upstream
                 break;            case "Manage Payments":
                 // page = new ManagePaymentsView(mainFrame);
-=======
-                break;
-            case "Manage Payments":
-                page = new AdminPaymentsView(mainFrame);
->>>>>>> Stashed changes
                 break;
             case "Manage Maintenance":
                 page = new ManageMaintenanceView(mainFrame);
