@@ -3,6 +3,7 @@ package car_rental;
 import com.formdev.flatlaf.FlatDarkLaf;
 
 import views.AdminDashboard;
+import views.InvoiceView;
 import views.LoginView;
 import views.ManageMaintenanceView;
 
@@ -36,8 +37,10 @@ public class Main extends JFrame {
 
         // Load Login View as a default view
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
-        LoginView loginView = new LoginView(this);
-        add(loginView);
+        // InvoiceView invoiceView = new InvoiceView(this);
+        // add(invoiceView);
+        AdminDashboard AdminDashboard = new AdminDashboard(this);
+        add(AdminDashboard);
         revalidate();
         repaint();
     }
