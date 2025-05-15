@@ -2,9 +2,11 @@ package views;
 
 import controllers.BookingController;
 import controllers.CarController;
+import controllers.DiscountController;
 import models.Booking;
 import models.Car;
 import models.Customer;
+import models.Discount;
 import utils.AppColors;
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
@@ -41,6 +43,9 @@ public class BookingView extends JPanel {
     private JLabel rentalPriceLabel;
     private JLabel daysLabel;
     private JLabel totalPriceLabel;
+    private JTextField promoCodeField;
+    private JButton applyPromoButton;
+    private double appliedPromoDiscount = 0.0;
 
     public BookingView(Main mainFrame, Customer customer) {
         this.mainFrame = mainFrame;
@@ -174,11 +179,32 @@ public class BookingView extends JPanel {
         gbc.weightx = 1.0;
         formPanel.add(discountField, gbc);
 
-        // Price details
+        // Promo code (add this block)
+        JLabel promoLabel = new JLabel("Promo Code:");
+        promoLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.weightx = 0.0;
+        formPanel.add(promoLabel, gbc);
+
+        promoCodeField = new JTextField();
+        promoCodeField.setFont(new Font("Arial", Font.PLAIN, 14));
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        formPanel.add(promoCodeField, gbc);
+
+        applyPromoButton = new JButton("Apply");
+        styleButton(applyPromoButton);
+        applyPromoButton.addActionListener(_ -> applyPromoCode());
+        gbc.gridx = 2;
+        gbc.weightx = 0.0;
+        formPanel.add(applyPromoButton, gbc);
+
+        // Price details (increment all gbc.gridy by +1)
         JLabel rentalPriceTitleLabel = new JLabel("Rental Price (per day):");
         rentalPriceTitleLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.weightx = 0.0;
         formPanel.add(rentalPriceTitleLabel, gbc);
 
@@ -191,7 +217,7 @@ public class BookingView extends JPanel {
         JLabel daysTitleLabel = new JLabel("Number of Days:");
         daysTitleLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 6;
         gbc.weightx = 0.0;
         formPanel.add(daysTitleLabel, gbc);
 
@@ -204,7 +230,7 @@ public class BookingView extends JPanel {
         JLabel totalPriceTitleLabel = new JLabel("Total Price:");
         totalPriceTitleLabel.setFont(new Font("Arial", Font.BOLD, 14));
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.weightx = 0.0;
         formPanel.add(totalPriceTitleLabel, gbc);
 
@@ -219,7 +245,7 @@ public class BookingView extends JPanel {
         styleButton(submitButton);
         submitButton.addActionListener(_ -> createBooking());
         gbc.gridx = 0;
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         gbc.gridwidth = 2;
         gbc.weightx = 0.0;
         gbc.fill = GridBagConstraints.CENTER;
@@ -477,6 +503,32 @@ public class BookingView extends JPanel {
                 JOptionPane.showMessageDialog(this, "Failed to cancel booking.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void applyPromoCode() {
+        String promoCode = promoCodeField.getText().trim();
+        if (promoCode.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a promo code.", "Error", JOptionPane.ERROR_MESSAGE);
+            appliedPromoDiscount = 0.0;
+            updatePriceDisplay();
+            return;
+        }
+        DiscountController discountController = new DiscountController();
+        Discount discount = discountController.getAllDiscounts().stream()
+                .filter(d -> promoCode.equalsIgnoreCase(d.getPromotionCode()))
+                .findFirst()
+                .orElse(null);
+        if (discount != null) {
+            appliedPromoDiscount = discount.getDiscountPercentage();
+            discountField.setText(String.valueOf(appliedPromoDiscount));
+            JOptionPane.showMessageDialog(this, "Promo applied: " + appliedPromoDiscount + "% off!", "Promo Applied",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            appliedPromoDiscount = 0.0;
+            discountField.setText("0");
+            JOptionPane.showMessageDialog(this, "Invalid promo code.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        updatePriceDisplay();
     }
 
     private void navigateBack() {

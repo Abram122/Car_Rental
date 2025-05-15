@@ -142,18 +142,16 @@ public class ManageDiscountView extends JPanel {
         int option = JOptionPane.showConfirmDialog(this, fields, "Add Discount", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
-                ValidationUtil.isNumeric(percentageField.getText()); // Validate percentage is numeric
-                boolean success = discountController.addDiscount(
-                        promotionCodeField.getText(),
-                        Integer.parseInt(percentageField.getText()));
+                Discount discount = new Discount();
+                discount.setPromotionCode(promotionCodeField.getText());
+                discount.setDiscountPercentage(Double.parseDouble(percentageField.getText()));
+                boolean success = discountController.addDiscount(discount);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Discount added successfully!");
                     loadDiscounts();
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to add discount.");
                 }
-            } catch (ValidationException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
@@ -170,11 +168,10 @@ public class ManageDiscountView extends JPanel {
 
         int discountId = (int) tableModel.getValueAt(selectedRow, 0);
         String currentPromotionCode = (String) tableModel.getValueAt(selectedRow, 1);
-        double currentPercentage = (double) tableModel.getValueAt(selectedRow, 2); // Cast to double
+        double currentPercentage = (double) tableModel.getValueAt(selectedRow, 2);
 
         JTextField promotionCodeField = new JTextField(currentPromotionCode);
-        JTextField percentageField = new JTextField(String.valueOf((int) currentPercentage)); // Convert to int for
-                                                                                              // display
+        JTextField percentageField = new JTextField(String.valueOf((int) currentPercentage));
         Object[] fields = {
                 "Promotion Code:", promotionCodeField,
                 "Discount Percentage:", percentageField
@@ -182,19 +179,17 @@ public class ManageDiscountView extends JPanel {
         int option = JOptionPane.showConfirmDialog(this, fields, "Update Discount", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             try {
-                ValidationUtil.isNumeric(percentageField.getText()); // Validate percentage is numeric
-                boolean success = discountController.updateDiscount(
-                        discountId,
-                        promotionCodeField.getText(),
-                        Integer.parseInt(percentageField.getText()));
+                Discount discount = new Discount();
+                discount.setDiscountId(discountId);
+                discount.setPromotionCode(promotionCodeField.getText());
+                discount.setDiscountPercentage(Double.parseDouble(percentageField.getText()));
+                boolean success = discountController.updateDiscount(discount);
                 if (success) {
                     JOptionPane.showMessageDialog(this, "Discount updated successfully!");
                     loadDiscounts();
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to update discount.");
                 }
-            } catch (ValidationException e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "An error occurred: " + e.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);

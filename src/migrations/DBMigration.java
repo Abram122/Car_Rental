@@ -139,6 +139,7 @@ public class DBMigration {
             applyMigration(conn, "create_payment_table", """
                         CREATE TABLE Payment (
                             payment_id INT PRIMARY KEY AUTO_INCREMENT,
+                            user_id INT,
                             booking_id INT,
                             amount DECIMAL(10, 2),
                             payment_status VARCHAR(50),
@@ -146,7 +147,8 @@ public class DBMigration {
                             payment_date DATE,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
+                            FOREIGN KEY (booking_id) REFERENCES Booking(booking_id),
+                            FOREIGN KEY (user_id) REFERENCES User(user_id)
                         )
                     """);
 
@@ -175,15 +177,6 @@ public class DBMigration {
                         )
                     """);
 
-            applyMigration(conn, "create_apply_discount_table", """
-                        CREATE TABLE Apply_Discount (
-                            payment_id INT,
-                            discount_id INT,
-                            PRIMARY KEY (payment_id, discount_id),
-                            FOREIGN KEY (payment_id) REFERENCES Payment(payment_id),
-                            FOREIGN KEY (discount_id) REFERENCES Discount(discount_id)
-                        )
-                    """);
 
             applyMigration(conn, "create_invoice_table", """
                         CREATE TABLE Invoice (

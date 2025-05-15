@@ -105,7 +105,7 @@ public class AppView extends JPanel {
 
         // User actions as cards
         String[] userActions = {
-                "Your Profile", "Available Cars", "Book a Car", "Your Reservations"
+                "Your Profile", "Available Cars", "Make a payment", "Your Reservations"
         };
 
         // Add cards dynamically
@@ -191,10 +191,8 @@ public class AppView extends JPanel {
             case "Available Cars":
                 page = new AvailableCarsView(mainFrame, customer); 
                 break;
-            case "Book a Car":
-                // page = new BookCarView(mainFrame, customer);
-                // For now, show a placeholder until this view is implemented
-                page = createPlaceholderPanel(action, "Make a new car booking");
+            case "Make a payment":
+                page = new PaymentView(mainFrame, customer);
                 break;
             case "Your Reservations":
                 // page = new ReservationsView(mainFrame, customer);

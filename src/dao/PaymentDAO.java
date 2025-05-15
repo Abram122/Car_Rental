@@ -4,6 +4,7 @@ import models.Payment;
 import utils.MySQLConnection;
 
 import java.sql.*;
+import java.util.List;
 
 public class PaymentDAO {
     private final Connection conn;
@@ -13,13 +14,14 @@ public class PaymentDAO {
     }
 
     public boolean addPayment(Payment payment, int bookingId) {
-        String sql = "INSERT INTO Payment (booking_id, amount, payment_status, payment_method, payment_date) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Payment (user_id, booking_id, amount, payment_status, payment_method, payment_date) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, bookingId);
-            stmt.setDouble(2, payment.getPrice());
-            stmt.setString(3, payment.getPaymentStatus());
-            stmt.setString(4, payment.getPaymentMethod());
-            stmt.setDate(5, new java.sql.Date(payment.getPaymentDate().getTime()));
+            stmt.setInt(1, payment.getUserId());
+            stmt.setInt(2, bookingId);
+            stmt.setDouble(3, payment.getAmount());
+            stmt.setString(4, payment.getPaymentStatus());
+            stmt.setString(5, payment.getPaymentMethod());
+            stmt.setDate(6, new java.sql.Date(payment.getPaymentDate().getTime()));
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,15 +36,97 @@ public class PaymentDAO {
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Payment(
-                    rs.getInt("payment_id"),
-                    rs.getString("payment_status"),
-                    rs.getString("payment_method"),
-                    rs.getDouble("amount")
-                );
+                        rs.getInt("payment_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("booking_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("payment_status"),
+                        rs.getString("payment_method"),
+                        rs.getDate("payment_date"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public boolean updatePayment(Payment payment) {
+        String sql = "UPDATE Payment SET user_id=?, booking_id=?, amount=?, payment_status=?, payment_method=?, payment_date=? WHERE payment_id=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, payment.getUserId());
+            stmt.setInt(2, payment.getBookingId());
+            stmt.setDouble(3, payment.getAmount());
+            stmt.setString(4, payment.getPaymentStatus());
+            stmt.setString(5, payment.getPaymentMethod());
+            stmt.setDate(6, new java.sql.Date(payment.getPaymentDate().getTime()));
+            stmt.setInt(7, payment.getPaymentId());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean deletePayment(int paymentId) {
+        String sql = "DELETE FROM Payment WHERE payment_id=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, paymentId);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public List<Payment> getAllPayments() {
+        List<Payment> payments = new java.util.ArrayList<>();
+        String sql = "SELECT p.*, u.name as user_name FROM Payment p JOIN User u ON p.user_id = u.user_id";
+        try (Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Payment payment = new Payment(
+                        rs.getInt("payment_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("booking_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("payment_status"),
+                        rs.getString("payment_method"),
+                        rs.getDate("payment_date"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"));
+                payment.setUserName(rs.getString("user_name")); 
+                payments.add(payment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return payments;
+    }
+
+    public List<Payment> getPaymentsByBookingId(int bookingId) {
+        List<Payment> payments = new java.util.ArrayList<>();
+        String sql = "SELECT * FROM Payment WHERE booking_id = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, bookingId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Payment payment = new Payment(
+                        rs.getInt("payment_id"),
+                        rs.getInt("user_id"),
+                        rs.getInt("booking_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("payment_status"),
+                        rs.getString("payment_method"),
+                        rs.getDate("payment_date"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("updated_at"));
+                payments.add(payment);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return payments;
     }
 }
