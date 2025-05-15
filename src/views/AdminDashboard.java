@@ -187,12 +187,11 @@ public class AdminDashboard extends JPanel {
                 break;
             case "Manage Categories":
                 page = new ManageCategoryView(mainFrame);
-                break;
-            case "Manage Payments":
+                break;            case "Manage Payments":
                 // page = new ManagePaymentsView(mainFrame);
                 break;
             case "Manage Maintenance":
-                // page = new ManageMaintenanceView(mainFrame);
+                page = new ManageMaintenanceView(mainFrame);
                 break;
             case "Moderate Reviews":
                 // page = new ModerateReviewsView(mainFrame);

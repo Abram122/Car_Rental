@@ -4,6 +4,8 @@ import com.formdev.flatlaf.FlatDarkLaf;
 
 import views.AdminDashboard;
 import views.LoginView;
+import views.ManageMaintenanceView;
+
 import javax.swing.*;
 import migrations.DBMigration;
 import utils.MySQLConnection;
