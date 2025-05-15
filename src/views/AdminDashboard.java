@@ -22,7 +22,7 @@ public class AdminDashboard extends JPanel {
         this.adminEmail = adminEmail;
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
-
+        mainFrame.setSize(800,1000);
         // Add header panel
         add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
 
