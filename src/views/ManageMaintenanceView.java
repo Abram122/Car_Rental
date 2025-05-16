@@ -2,7 +2,6 @@ package views;
 
 import controllers.CarController;
 import controllers.MaintenanceController;
-import dao.CarDAO;
 import models.Car;
 import models.Maintenance;
 import utils.AppColors;
@@ -15,7 +14,6 @@ import javax.swing.table.DefaultTableModel;
 import car_rental.Main;
 
 import java.awt.*;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -134,7 +132,7 @@ public class ManageMaintenanceView extends JPanel {
                 Car car = maintenance.getCar();
                 
                 if (car != null) {
-                    carDetails = "Plate: " + car.getPlateNo() + " - " + car.getFuelType();
+                    carDetails = "Plate: " + car.getPlateNo() + " - ";
                 }
                 
                 tableModel.addRow(new Object[] {

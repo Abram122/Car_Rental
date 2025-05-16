@@ -139,7 +139,7 @@ public class ManageCarView extends JPanel {
                         car.getMileage(),
                         car.getAvailabilityStatus(),
                         car.getRentalPrice(),
-                        car.getFuelType(),
+                        carModel.getFuelType(),
                         car.getPlateNo(),
                         car.getImageURL()
                 });
@@ -213,7 +213,6 @@ public class ManageCarView extends JPanel {
                 car.setMileage(Integer.parseInt(mileageField.getText()));
                 car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
                 car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
-                car.setFuelType((String) fuelTypeComboBox.getSelectedItem());
                 car.setPlateNo(plateNoField.getText());
                 car.setImageURL(imageURLField.getText());
                 car.setCreatedAt(LocalDateTime.now());
@@ -252,8 +251,6 @@ public class ManageCarView extends JPanel {
         JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
         availabilityComboBox.setSelectedItem(car.getAvailabilityStatus());
         JTextField rentalPriceField = new JTextField(String.valueOf(car.getRentalPrice()));
-        JComboBox<String> fuelTypeComboBox = new JComboBox<>(new String[] { "Petrol", "Diesel", "Electric", "Hybrid" });
-        fuelTypeComboBox.setSelectedItem(car.getFuelType());
         JTextField plateNoField = new JTextField(car.getPlateNo());
         JTextField imageURLField = new JTextField(car.getImageURL());
 
@@ -263,7 +260,6 @@ public class ManageCarView extends JPanel {
                 "Mileage:", mileageField,
                 "Availability:", availabilityComboBox,
                 "Rental Price:", rentalPriceField,
-                "Fuel Type:", fuelTypeComboBox,
                 "Plate Number:", plateNoField,
                 "Image URL:", imageURLField
         };
@@ -282,7 +278,6 @@ public class ManageCarView extends JPanel {
                 car.setMileage(Integer.parseInt(mileageField.getText()));
                 car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
                 car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
-                car.setFuelType((String) fuelTypeComboBox.getSelectedItem());
                 car.setPlateNo(plateNoField.getText());
                 car.setImageURL(imageURLField.getText());
                 car.setUpdatedAt(LocalDateTime.now());

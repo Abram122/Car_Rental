@@ -138,7 +138,7 @@ public class AvailableCarsView extends JPanel {
                             car.getMileage(),
                             car.getAvailabilityStatus(),
                             car.getRentalPrice(),
-                            car.getFuelType(),
+                            carModel.getFuelType(),
                             car.getPlateNo(),
                             car.getImageURL()
                     });

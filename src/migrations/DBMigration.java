@@ -75,7 +75,6 @@ public class DBMigration {
                             mileage INT,
                             availability_status VARCHAR(50),
                             rental_price DECIMAL(10, 2),
-                            fuel_type VARCHAR(50),
                             plate_no VARCHAR(20),
                             image_url TEXT,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -85,15 +84,6 @@ public class DBMigration {
                         )
                     """);
 
-            applyMigration(conn, "create_manage_car_table", """
-                        CREATE TABLE Manage_Car (
-                            admin_id INT,
-                            car_id INT,
-                            PRIMARY KEY (admin_id, car_id),
-                            FOREIGN KEY (admin_id) REFERENCES Admin(admin_id),
-                            FOREIGN KEY (car_id) REFERENCES Car(car_id)
-                        )
-                    """);
 
             applyMigration(conn, "create_maintenance_table", """
                         CREATE TABLE Maintenance (
@@ -178,18 +168,6 @@ public class DBMigration {
                     """);
 
 
-            applyMigration(conn, "create_invoice_table", """
-                        CREATE TABLE Invoice (
-                            invoice_id INT PRIMARY KEY AUTO_INCREMENT,
-                            payment_id INT,
-                            invoice_date DATE,
-                            total_price DECIMAL(10, 2),
-                            details TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            FOREIGN KEY (payment_id) REFERENCES Payment(payment_id)
-                        )
-                    """);
 
             System.out.println("All applicable migrations processed.");
 

@@ -1,7 +1,9 @@
 package controllers;
 
 import dao.BookingDAO;
+import dao.CarDAO;
 import models.Booking;
+import models.Car;
 
 import java.util.List;
 
@@ -51,11 +53,21 @@ public class BookingController {
     }
 
     // update booking status 
-    public boolean updateBookingStatus(int bookingId, String status) {
+public boolean updateBookingStatus(int bookingId, String status) {
     Booking booking = bookingDAO.getBookingById(bookingId);
     if (booking != null) {
         booking.setStatus(status);
-        return bookingDAO.updateBooking(booking);
+        boolean bookingUpdated = bookingDAO.updateBooking(booking);
+
+        if ("Accepted".equalsIgnoreCase(status)) {
+            CarDAO carDAO = new CarDAO();
+            Car car = carDAO.getCarById(booking.getCarId());
+            if (car != null) {
+                car.setAvailabilityStatus(false);
+                carDAO.updateCar(car);
+            }
+        }
+        return bookingUpdated;
     }
     return false;
 }

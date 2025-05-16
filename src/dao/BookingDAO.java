@@ -68,7 +68,7 @@ public class BookingDAO {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM Booking ORDER BY created_at DESC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 bookings.add(mapResultSetToBooking(rs));
             }
@@ -117,7 +117,6 @@ public class BookingDAO {
                 rs.getDate("start_date"),
                 rs.getDate("end_date"),
                 rs.getTimestamp("created_at").toLocalDateTime(),
-                rs.getTimestamp("updated_at").toLocalDateTime()
-        );
+                rs.getTimestamp("updated_at").toLocalDateTime());
     }
 }

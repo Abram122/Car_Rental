@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableCellEditor;
 
 import car_rental.Main;
 
@@ -108,7 +107,7 @@ public class ManageBookingsView extends JPanel {
                         sdf.format(booking.getStartDate()),
                         sdf.format(booking.getEndDate()),
                         booking.getStatus(),
-                        "Action" // Placeholder for the action buttons
+                        "Action" 
                 });
             }
             bookingTable.setEnabled(true);
@@ -166,7 +165,7 @@ public class ManageBookingsView extends JPanel {
             super(checkBox);
             button = new JButton();
             button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
+            button.addActionListener(_ -> fireEditingStopped());
         }
 
         @Override

@@ -19,14 +19,13 @@ public class Car {
     }
 
     public Car(int carID, int modelID, int categoryID, int mileage, Boolean availabilityStatus, float rentalPrice,
-            String fuelType, String plateNo, String imageURL, LocalDateTime createdAt, LocalDateTime updatedAt) {
+                String plateNo, String imageURL, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.carID = carID;
         this.modelID = modelID;
         this.categoryID = categoryID;
         this.mileage = mileage;
         this.availabilityStatus = availabilityStatus;
         this.rentalPrice = rentalPrice;
-        this.fuelType = fuelType;
         this.plateNo = plateNo;
         this.imageURL = imageURL;
         this.createdAt = createdAt;
@@ -81,13 +80,6 @@ public class Car {
         this.rentalPrice = rentalPrice;
     }
 
-    public String getFuelType() {
-        return fuelType;
-    }
-
-    public void setFuelType(String fuelType) {
-        this.fuelType = fuelType;
-    }
 
     public String getPlateNo() {
         return plateNo;
