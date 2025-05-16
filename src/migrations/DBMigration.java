@@ -146,14 +146,14 @@ public class DBMigration {
                         CREATE TABLE Rental_History (
                             rental_id INT PRIMARY KEY AUTO_INCREMENT,
                             user_id INT,
-                            car_id INT,
+                            booking_id INT,
                             return_date DATE,
                             extra_charges DECIMAL(10, 2),
                             comments TEXT,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                             FOREIGN KEY (user_id) REFERENCES User(user_id),
-                            FOREIGN KEY (car_id) REFERENCES Car(car_id)
+                            FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
                         )
                     """);
 
@@ -166,8 +166,6 @@ public class DBMigration {
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                         )
                     """);
-
-
 
             System.out.println("All applicable migrations processed.");
 

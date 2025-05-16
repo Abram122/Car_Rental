@@ -2,9 +2,11 @@ package views;
 
 import controllers.BookingController;
 import controllers.PaymentController;
+import controllers.ReviewController;
 import models.Booking;
 import models.Customer;
 import models.Payment;
+import models.Review;
 import utils.AppColors;
 
 import car_rental.Main;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ReservationsView extends JPanel {
     private final BookingController bookingController;
     private final PaymentController paymentController;
+    private final ReviewController reviewController;
     private final Main mainFrame;
     private final Customer customer;
     private JTable reservationsTable;
@@ -28,6 +31,7 @@ public class ReservationsView extends JPanel {
         this.customer = customer;
         this.bookingController = new BookingController();
         this.paymentController = new PaymentController();
+        this.reviewController = new ReviewController();
 
         setLayout(new BorderLayout(10, 10));
         setBackground(AppColors.MAIN_BG);
@@ -57,12 +61,12 @@ public class ReservationsView extends JPanel {
         tablePanel.setBackground(AppColors.MAIN_BG);
 
         tableModel = new DefaultTableModel(new Object[] {
-                "Booking ID", "Car ID", "Start Date", "End Date", "Status", "Payment Status", "Invoice"
+                "Booking ID", "Car ID", "Start Date", "End Date", "Status", "Payment Status", "Invoice", "Review"
         }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Only the "Invoice" column is editable (for the button)
-                return column == 6;
+                // Only the "Invoice" and "Review" columns are editable (for the buttons)
+                return column == 6 || column == 7;
             }
         };
 
@@ -75,9 +79,13 @@ public class ReservationsView extends JPanel {
         reservationsTable.getColumn("Invoice").setCellRenderer(new InvoiceButtonRenderer());
         reservationsTable.getColumn("Invoice").setCellEditor(new InvoiceButtonEditor(new JCheckBox()));
 
+        // Set custom renderer and editor for the "Review" button column
+        reservationsTable.getColumn("Review").setCellRenderer(new ReviewButtonRenderer());
+        reservationsTable.getColumn("Review").setCellEditor(new ReviewButtonEditor(new JCheckBox()));
+
         JScrollPane scrollPane = new JScrollPane(reservationsTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Reservations"));
-        scrollPane.setPreferredSize(new Dimension(800, 400));
+        scrollPane.setPreferredSize(new Dimension(900, 400));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         return tablePanel;
@@ -107,7 +115,7 @@ public class ReservationsView extends JPanel {
         tableModel.setRowCount(0);
         List<Booking> bookings = bookingController.getBookingsByUserId(customer.getUserId());
         if (bookings == null || bookings.isEmpty()) {
-            tableModel.addRow(new Object[] { "No reservations found", "", "", "", "", "", "" });
+            tableModel.addRow(new Object[] { "No reservations found", "", "", "", "", "", "", "" });
             reservationsTable.setEnabled(false);
         } else {
             for (Booking booking : bookings) {
@@ -117,6 +125,9 @@ public class ReservationsView extends JPanel {
                             .filter(p -> "Paid".equalsIgnoreCase(p.getPaymentStatus()))
                             .findFirst().orElse(null);
                     if (paidPayment != null) {
+                        // Check if review exists for this booking
+                        Review review = reviewController.getReviewByBookingId(booking.getBookingId());
+                        String reviewBtnLabel = (review != null) ? "View Review" : "Add Review";
                         tableModel.addRow(new Object[] {
                                 booking.getBookingId(),
                                 booking.getCarId(),
@@ -124,7 +135,8 @@ public class ReservationsView extends JPanel {
                                 booking.getEndDate(),
                                 booking.getStatus(),
                                 "Paid",
-                                "Show Invoice"
+                                "Show Invoice",
+                                reviewBtnLabel
                         });
                     }
                 }
@@ -165,7 +177,7 @@ public class ReservationsView extends JPanel {
             super(checkBox);
             button = new JButton("Show Invoice");
             button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
+            button.addActionListener(_ -> fireEditingStopped());
         }
 
         @Override
@@ -206,6 +218,67 @@ public class ReservationsView extends JPanel {
             }
             isPushed = false;
             return "Show Invoice";
+        }
+    }
+
+    // Renderer for the "Review" button
+    class ReviewButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
+        public ReviewButtonRenderer() {
+            setOpaque(true);
+        }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setText(value == null ? "Add Review" : value.toString());
+            return this;
+        }
+    }
+
+    // Editor for the "Review" button
+    class ReviewButtonEditor extends DefaultCellEditor {
+        private JButton button;
+        private boolean isPushed;
+        private int row;
+
+        public ReviewButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+            button = new JButton();
+            button.setOpaque(true);
+            button.addActionListener(_ -> fireEditingStopped());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.row = row;
+            isPushed = true;
+            button.setText(value == null ? "Add Review" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            if (isPushed) {
+                int bookingId = (int) tableModel.getValueAt(row, 0);
+                Review review = reviewController.getReviewByBookingId(bookingId);
+                if (review != null) {
+                    // Show review in a dialog
+                    JFrame viewFrame = new JFrame("View Review");
+                    viewFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    viewFrame.setContentPane(new ReviewView(review));
+                    viewFrame.pack();
+                    viewFrame.setLocationRelativeTo(button);
+                    viewFrame.setVisible(true);
+                } else {
+                    // Open add review form
+                    JFrame reviewFrame = new JFrame("Add Review");
+                    reviewFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    reviewFrame.setContentPane(new AddReviewView(mainFrame, customer, bookingId));
+                    reviewFrame.pack();
+                    reviewFrame.setLocationRelativeTo(button);
+                    reviewFrame.setVisible(true);
+                }
+            }
+            isPushed = false;
+            return button.getText();
         }
     }
 }

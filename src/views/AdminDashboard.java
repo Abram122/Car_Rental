@@ -196,7 +196,7 @@ public class AdminDashboard extends JPanel {
                 page = new ManageMaintenanceView(mainFrame);
                 break;
             case "Moderate Reviews":
-                // page = new ModerateReviewsView(mainFrame);
+                page = new ManageReviewView(mainFrame);
                 break;
             case "View Rental History":
                 // page = new RentalHistoryView(mainFrame);
