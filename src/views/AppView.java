@@ -195,9 +195,7 @@ public class AppView extends JPanel {
                 page = new PaymentView(mainFrame, customer);
                 break;
             case "Your Reservations":
-                // page = new ReservationsView(mainFrame, customer);
-                // For now, show a placeholder until this view is implemented
-                page = createPlaceholderPanel(action, "View and manage your current reservations");
+                page = new ReservationsView(mainFrame, customer);
                 break;
             default:
                 // Placeholder for unknown actions

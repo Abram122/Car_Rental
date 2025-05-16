@@ -64,11 +64,12 @@ public class AdminPaymentsView extends JPanel {
         tablePanel.setBackground(AppColors.MAIN_BG);
 
         tableModel = new DefaultTableModel(new Object[] {
-                "Payment ID", "Booking ID", "User Name", "Amount", "Status", "Method", "Date"
+                "Payment ID", "Booking ID", "User Name", "Amount", "Status", "Method", "Date", "Invoice"
         }, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                // Only the "Invoice" column is editable (for the button)
+                return column == 7;
             }
         };
 
@@ -77,9 +78,13 @@ public class AdminPaymentsView extends JPanel {
         paymentTable.setRowHeight(30);
         paymentTable.setFont(new Font("Arial", Font.PLAIN, 14));
 
+        // Set custom renderer and editor for the "Invoice" button column
+        paymentTable.getColumn("Invoice").setCellRenderer(new InvoiceButtonRenderer());
+        paymentTable.getColumn("Invoice").setCellEditor(new InvoiceButtonEditor(new JCheckBox()));
+
         JScrollPane scrollPane = new JScrollPane(paymentTable);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Payments"));
-        scrollPane.setPreferredSize(new Dimension(800, 400));
+        scrollPane.setPreferredSize(new Dimension(900, 400));
         tablePanel.add(scrollPane, BorderLayout.CENTER);
 
         return tablePanel;
@@ -109,7 +114,7 @@ public class AdminPaymentsView extends JPanel {
         tableModel.setRowCount(0);
         List<Payment> payments = paymentController.getPaymentsByUserName(userName);
         if (payments == null || payments.isEmpty()) {
-            tableModel.addRow(new Object[] { "No payments found", "", "", "", "", "", "" });
+            tableModel.addRow(new Object[] { "No payments found", "", "", "", "", "", "", "" });
             paymentTable.setEnabled(false);
         } else {
             for (Payment payment : payments) {
@@ -120,7 +125,8 @@ public class AdminPaymentsView extends JPanel {
                         payment.getAmount(),
                         payment.getPaymentStatus(),
                         payment.getPaymentMethod(),
-                        payment.getPaymentDate()
+                        payment.getPaymentDate(),
+                        "Make Invoice"
                 });
             }
             paymentTable.setEnabled(true);
@@ -133,5 +139,73 @@ public class AdminPaymentsView extends JPanel {
         mainFrame.add(new AdminDashboard(mainFrame));
         mainFrame.revalidate();
         mainFrame.repaint();
+    }
+
+    // Renderer for the "Invoice" button
+    class InvoiceButtonRenderer extends JButton implements javax.swing.table.TableCellRenderer {
+        public InvoiceButtonRenderer() {
+            setOpaque(true);
+        }
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setText(value == null ? "Make Invoice" : value.toString());
+            return this;
+        }
+    }
+
+    // Editor for the "Invoice" button
+    class InvoiceButtonEditor extends DefaultCellEditor {
+        private JButton button;
+        private boolean isPushed;
+        private int row;
+
+        public InvoiceButtonEditor(JCheckBox checkBox) {
+            super(checkBox);
+            button = new JButton("Make Invoice");
+            button.setOpaque(true);
+            button.addActionListener(e -> fireEditingStopped());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            this.row = row;
+            isPushed = true;
+            button.setText(value == null ? "Make Invoice" : value.toString());
+            return button;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            if (isPushed) {
+                // Get payment data from the table model
+                int paymentId = (int) tableModel.getValueAt(row, 0);
+                int bookingId = (int) tableModel.getValueAt(row, 1);
+                String userName = (String) tableModel.getValueAt(row, 2);
+                double amount = Double.parseDouble(tableModel.getValueAt(row, 3).toString());
+                String status = (String) tableModel.getValueAt(row, 4);
+                String method = (String) tableModel.getValueAt(row, 5);
+                String date = tableModel.getValueAt(row, 6).toString();
+
+                InvoiceView invoiceView = new InvoiceView(
+                    mainFrame,
+                    "INV-" + paymentId,
+                    userName,
+                    "Car Model",
+                    "Rental Period",
+                    amount,
+                    0.0,
+                    amount,
+                    date
+                );
+                JFrame invoiceFrame = new JFrame("Invoice");
+                invoiceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                invoiceFrame.setContentPane(invoiceView);
+                invoiceFrame.pack();
+                invoiceFrame.setLocationRelativeTo(button);
+                invoiceFrame.setVisible(true);
+            }
+            isPushed = false;
+            return "Make Invoice";
+        }
     }
 }
