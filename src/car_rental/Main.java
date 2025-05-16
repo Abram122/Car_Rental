@@ -25,7 +25,7 @@ public class Main extends JFrame {
         // set icon 
         ImageIcon icon = new ImageIcon("src/assets/logo.png");
         // Basic JFrame setup
-        setTitle("Car Rental System");
+        setTitle("Car Rental Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
