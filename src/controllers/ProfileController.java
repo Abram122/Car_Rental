@@ -18,7 +18,8 @@ public class ProfileController {
     public boolean save(Customer c) {
         
         return dao.updateProfile(c);
-    }    public List<RentalHistory> history(int userId) {
+    }
+        public List<RentalHistory> history(int userId) {
         return dao.getRentalHistory(userId);
     }
     

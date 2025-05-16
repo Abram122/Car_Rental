@@ -3,7 +3,6 @@ package views;
 import dao.CustomerDAO;
 import models.Booking;
 import models.Customer;
-import models.RentalHistory;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,11 +20,10 @@ public class ProfileView extends JPanel {
 
     private JTextField phoneField;
     private JTextField licenseField;
-    private JTable historyTable;
 
     public ProfileView(Main mainFrame, Customer customer) {
-        this.mainFrame = mainFrame; // Store the main frame reference
-        this.customer = customer; // Store the customer object
+        this.mainFrame = mainFrame;
+        this.customer = customer;
         setLayout(new BorderLayout());
         initUI();
     }
@@ -66,53 +64,24 @@ public class ProfileView extends JPanel {
         // Buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton saveButton = new JButton("Save Changes");
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                saveProfile();
-            }
-        });
+        saveButton.addActionListener(e -> saveProfile());
         buttonPanel.add(saveButton);
 
-
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-                goBack();
-            }
-        });
+        backButton.addActionListener(e -> goBack());
         buttonPanel.add(backButton);
 
         formPanel.add(buttonPanel);
 
         add(formPanel, BorderLayout.CENTER);
 
-        // Create a panel for tables (rental history and bookings)
-        JPanel tablesPanel = new JPanel();
-        tablesPanel.setLayout(new BoxLayout(tablesPanel, BoxLayout.Y_AXIS));
-        tablesPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
-
-        // Rental history table
-        historyTable = new JTable();
-        loadRentalHistory();
-        JScrollPane historyScrollPane = new JScrollPane(historyTable);
-        historyScrollPane.setBorder(BorderFactory.createTitledBorder("Rental History"));
-        historyScrollPane.setPreferredSize(new Dimension(550, 150));
-        tablesPanel.add(historyScrollPane);
-
-        // Add some spacing between tables
-        tablesPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-
-        // Bookings table
+        // Bookings table panel
         JPanel bookingsPanel = createBookingsPanel();
         bookingsPanel.setPreferredSize(new Dimension(550, 150));
-        tablesPanel.add(bookingsPanel);
-
-        add(tablesPanel, BorderLayout.SOUTH);
+        add(bookingsPanel, BorderLayout.SOUTH);
 
         // Make main frame larger to accommodate all content
-        mainFrame.setSize(650, 700);
+        mainFrame.setSize(650, 500);
     }
 
     private void saveProfile() {
@@ -140,41 +109,13 @@ public class ProfileView extends JPanel {
         }
     }
 
-    private void loadRentalHistory() {
-        List<RentalHistory> history = customerDAO.getRentalHistory(customer.getUserId());
-
-        DefaultTableModel model = new DefaultTableModel(new Object[] { "Rental ID", "Return Date", "Comments" }, 0);
-
-        if (history == null || history.isEmpty()) {
-            // Show a message in the table when there's no history
-            model.addRow(new Object[] { "No rental history found", "", "" });
-            historyTable.setEnabled(false);
-        } else {
-            for (RentalHistory rh : history) {
-                model.addRow(new Object[] {
-                        rh.getRentalId(),
-                        rh.getActualReturnDate(),
-                        rh.getComments()
-                });
-            }
-            historyTable.setEnabled(true);
-        }
-
-        historyTable.setModel(model);
-    }
-
     private void goBack() {
-        // Make the window back to original size
         mainFrame.setSize(600, 400);
-
-        // Navigate back to the previous page using mainFrame
         mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AppView(mainFrame, customer)); // Return to AppView
+        mainFrame.add(new AppView(mainFrame, customer));
         mainFrame.revalidate();
         mainFrame.repaint();
     }
-
-    
 
     private JPanel createBookingsPanel() {
         String[] cols = { "Booking ID", "Start Date", "End Date", "Status" };

@@ -29,7 +29,7 @@ public class CustomerDAO {
             pstmt.setString(6, licenseNumber);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            if (e.getMessage().contains("Duplicate entry"))  {
+            if (e.getMessage().contains("Duplicate entry")) {
                 throw new ValidationException("Error: Duplicate entry for username or email.");
             }
             e.printStackTrace();
@@ -92,17 +92,18 @@ public class CustomerDAO {
         String sql = "SELECT user_id, username, email, phone, license_number FROM user WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
-            ResultSet rs = stmt.executeQuery();            if (rs.next()) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
                 Customer customer = new Customer(
                         rs.getInt("user_id"),
                         rs.getString("username"),
                         null,
                         rs.getString("phone"),
                         rs.getString("license_number"));
-                
+
                 // Make sure to set the email
                 customer.setEmail(rs.getString("email"));
-                
+
                 return customer;
             }
         } catch (SQLException e) {
@@ -126,7 +127,8 @@ public class CustomerDAO {
 
     public List<RentalHistory> getRentalHistory(int userId) {
         List<RentalHistory> list = new ArrayList<>();
-        String sql = "SELECT rental_id, return_date, comments, created_at, updated_at " +
+        String sql = "SELECT rental_id, user_id, booking_id, return_date, extra_charges, comments, created_at, updated_at "
+                +
                 "FROM Rental_History WHERE user_id = ? ORDER BY created_at DESC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
@@ -134,10 +136,13 @@ public class CustomerDAO {
             while (rs.next()) {
                 RentalHistory rh = new RentalHistory(
                         rs.getInt("rental_id"),
-                        rs.getTimestamp("return_date").toLocalDateTime(),
-                        rs.getString("comments"));
-                rh.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-                rh.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
+                        rs.getInt("user_id"),
+                        rs.getInt("booking_id"),
+                        rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null,
+                        rs.getBigDecimal("extra_charges"),
+                        rs.getString("comments"),
+                        rs.getTimestamp("created_at") != null ? rs.getTimestamp("created_at").toLocalDateTime() : null,
+                        rs.getTimestamp("updated_at") != null ? rs.getTimestamp("updated_at").toLocalDateTime() : null);
                 list.add(rh);
             }
         } catch (SQLException e) {
@@ -146,32 +151,32 @@ public class CustomerDAO {
         return list;
     }
 
-
     // Get all customers
-    // This method retrieves all customers from the database and returns them as a list.
+    // This method retrieves all customers from the database and returns them as a
+    // list.
     // It does not include sensitive information like passwords.
 
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
         String sql = "SELECT user_id, username, email, phone, license_number, is_verified FROM user";
-        
+
         try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
-            while (rs.next()) {                Customer customer = new Customer(
-                    rs.getInt("user_id"),
-                    rs.getString("username"),
-                    null, // We don't retrieve passwords
-                    rs.getString("phone"),
-                    rs.getString("license_number")
-                );
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Customer customer = new Customer(
+                        rs.getInt("user_id"),
+                        rs.getString("username"),
+                        null, // We don't retrieve passwords
+                        rs.getString("phone"),
+                        rs.getString("license_number"));
                 customer.setEmail(rs.getString("email"));
                 customers.add(customer);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return customers;
     }
 }

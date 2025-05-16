@@ -1,19 +1,30 @@
 package models;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class RentalHistory {
     private int rentalId;
-    private LocalDateTime actualReturnDate;
+    private int userId;
+    private int bookingId;
+    private LocalDate returnDate;
+    private BigDecimal extraCharges;
     private String comments;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public RentalHistory(int rentalId, LocalDateTime actualReturnDate, String comments) {
+    public RentalHistory() {}
+
+    public RentalHistory(int rentalId, int userId, int bookingId, LocalDate returnDate, BigDecimal extraCharges, String comments, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.rentalId = rentalId;
-        this.actualReturnDate = actualReturnDate;
+        this.userId = userId;
+        this.bookingId = bookingId;
+        this.returnDate = returnDate;
+        this.extraCharges = extraCharges;
         this.comments = comments;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getRentalId() {
@@ -24,12 +35,36 @@ public class RentalHistory {
         this.rentalId = rentalId;
     }
 
-    public LocalDateTime getActualReturnDate() {
-        return actualReturnDate;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setActualReturnDate(LocalDateTime actualReturnDate) {
-        this.actualReturnDate = actualReturnDate;
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getBookingId() {
+        return bookingId;
+    }
+
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
+    }
+
+    public BigDecimal getExtraCharges() {
+        return extraCharges;
+    }
+
+    public void setExtraCharges(BigDecimal extraCharges) {
+        this.extraCharges = extraCharges;
     }
 
     public String getComments() {
@@ -54,10 +89,6 @@ public class RentalHistory {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public String getRentalDetails() {
-        return "Rental ID: " + rentalId + ", Return Date: " + actualReturnDate + ", Comments: " + comments;
     }
 
 }

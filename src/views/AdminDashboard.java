@@ -22,7 +22,6 @@ public class AdminDashboard extends JPanel {
         this.adminEmail = adminEmail;
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
-        mainFrame.setSize(800, 1000);
         // Add header panel
         add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
 
@@ -88,7 +87,7 @@ public class AdminDashboard extends JPanel {
                 "Manage Car Brands",
                 "Manage Categories",
                 "Manage Payments", "Manage Maintenance", "Moderate Reviews",
-                "View Rental History", "Generate Invoices", "Manage Discounts"
+                "View Rental History", "Manage Discounts"
         };
 
         // Add cards dynamically
@@ -199,10 +198,7 @@ public class AdminDashboard extends JPanel {
                 page = new ManageReviewView(mainFrame);
                 break;
             case "View Rental History":
-                // page = new RentalHistoryView(mainFrame);
-                break;
-            case "Generate Invoices":
-                // page = new GenerateInvoicesView(mainFrame);
+                page = new ManageRentalHistoryView(mainFrame);
                 break;
             case "Manage Discounts":
                 page = new ManageDiscountView(mainFrame);
