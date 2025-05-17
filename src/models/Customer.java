@@ -12,9 +12,7 @@ public class Customer {
     private Date createdAt;
     private Date updatedAt;
 
-    private String address;
     private String licenseNumber;
-    private LocalDate birthday;
     private boolean isVerified;
 
     public Customer(int customerId, String username, String password, String phone, String licenseNumber) {
@@ -35,9 +33,7 @@ public class Customer {
     public String getEmail() { return email; }
     public Date getCreatedAt() { return createdAt; }
     public Date getUpdatedAt() { return updatedAt; }
-    public String getAddress() { return address; }
     public String getLicenseNumber() { return licenseNumber; }
-    public LocalDate getBirthday() { return birthday; }
     public boolean isVerified() { return isVerified; }
 
     // Setters
@@ -48,8 +44,6 @@ public class Customer {
     public void setEmail(String email) { this.email = email; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
     public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
-    public void setAddress(String address) { this.address = address; }
     public void setLicenseNumber(String licenseNumber) { this.licenseNumber = licenseNumber; }
-    public void setBirthday(LocalDate birthday) { this.birthday = birthday; }
     public void setVerified(boolean isVerified) { this.isVerified = isVerified; }
 }
