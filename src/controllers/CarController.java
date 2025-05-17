@@ -25,7 +25,6 @@ public class CarController {
             car.setUpdatedAt(LocalDateTime.now());
         }
 
-        ValidationUtil.isNumeric(car.getPlateNo());
         ValidationUtil.isNumeric(Integer.toString(car.getMileage()));
         ValidationUtil.isValidFloat(Float.toString(car.getRentalPrice()));
         ValidationUtil.isValidURL(car.getImageURL());
