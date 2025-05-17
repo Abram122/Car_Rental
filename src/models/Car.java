@@ -9,7 +9,6 @@ public class Car {
     private int mileage;
     private Boolean availabilityStatus;
     private float rentalPrice;
-    private String fuelType;
     private String plateNo;
     private String imageURL;
     private LocalDateTime createdAt;
@@ -122,7 +121,6 @@ public class Car {
                 ", mileage=" + mileage +
                 ", availabilityStatus='" + availabilityStatus + '\'' +
                 ", rentalPrice=" + rentalPrice +
-                ", fuelType='" + fuelType + '\'' +
                 ", plateNo='" + plateNo + '\'' +
                 ", imageURL='" + imageURL + '\'' +
                 ", createdAt=" + createdAt +
