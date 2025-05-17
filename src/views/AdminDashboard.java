@@ -1,6 +1,8 @@
 package views;
 
 import car_rental.Main;
+import dao.AdminDAO;
+import models.Admin;
 import utils.AppColors;
 
 import javax.swing.*;
@@ -22,13 +24,8 @@ public class AdminDashboard extends JPanel {
         this.adminEmail = adminEmail;
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
-        // Add header panel
         add(createHeaderPanel(mainFrame), BorderLayout.NORTH);
-
-        // Add main content panel with cards
         add(createMainContentPanel(mainFrame), BorderLayout.CENTER);
-
-        // Add footer panel
         add(createFooterPanel(), BorderLayout.SOUTH);
     }
 
@@ -36,14 +33,11 @@ public class AdminDashboard extends JPanel {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(AppColors.ACCENT_TIFFANY);
         headerPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
-
-        // Title
         JLabel titleLabel = new JLabel("Admin Dashboard");
         titleLabel.setForeground(AppColors.LIGHT_TEXT);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
         headerPanel.add(titleLabel, BorderLayout.WEST);
-
-        // Logout button
+        mainFrame.setSize(800, 800);
         JButton logoutButton = new JButton("Logout");
         logoutButton.setBackground(AppColors.ACCENT_PURPLE);
         logoutButton.setForeground(AppColors.LIGHT_TEXT);
@@ -70,41 +64,55 @@ public class AdminDashboard extends JPanel {
         }
     }
 
+    private String getAdminRole(String email) {
+        if (email == null) return "";
+        AdminDAO adminDAO = new AdminDAO();
+        Admin admin = adminDAO.getAdminByEmail(email);
+        return admin != null ? admin.getRole() : "";
+    }
+
     private JPanel createMainContentPanel(Main mainFrame) {
         JPanel contentPanel = new JPanel();
         contentPanel.setBackground(AppColors.MAIN_BG);
         contentPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
-
-        // Use a GridBagLayout for cards (3 columns, dynamic rows)
         contentPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15); // Spacing between cards
+        gbc.insets = new Insets(15, 15, 15, 15);
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0; // Admin actions as cards
+        gbc.weighty = 1.0;
+
         String[] adminActions = {
-                "Manage Users", "Manage Admins", "Manage Bookings", "Manage Cars", "Manage Car Models",
-                "Manage Car Brands",
-                "Manage Categories",
-                "Manage Payments", "Manage Maintenance", "Moderate Reviews",
-                "View Rental History", "Manage Discounts"
+                "Manage Bookings", "Manage Cars", "Manage Car Models",
+                "Manage Car Brands", "Manage Categories", "Manage Payments",
+                "Manage Maintenance", "Moderate Reviews", "View Rental History", "Manage Discounts"
         };
 
-        // Add cards dynamically
         int gridX = 0;
         int gridY = 0;
-        for (String action : adminActions) {
-            JPanel card = createCard(action, mainFrame);
-            gbc.gridx = gridX;
-            gbc.gridy = gridY;
-            contentPanel.add(card, gbc);
 
-            // Update grid position (3 cards per row)
-            gridX++;
+        String role = getAdminRole(adminEmail);
+        if ("super_admin".equalsIgnoreCase(role)) {
+            JPanel usersCard = createCard("Manage Users", mainFrame);
+            gbc.gridx = gridX++;
+            gbc.gridy = gridY;
+            contentPanel.add(usersCard, gbc);
+
+            JPanel adminsCard = createCard("Manage Admins", mainFrame);
+            gbc.gridx = gridX++;
+            gbc.gridy = gridY;
+            contentPanel.add(adminsCard, gbc);
+        }
+
+        for (String action : adminActions) {
             if (gridX > 2) {
                 gridX = 0;
                 gridY++;
             }
+            JPanel card = createCard(action, mainFrame);
+            gbc.gridx = gridX++;
+            gbc.gridy = gridY;
+            contentPanel.add(card, gbc);
         }
 
         return contentPanel;
@@ -114,58 +122,46 @@ public class AdminDashboard extends JPanel {
         JPanel footerPanel = new JPanel(new BorderLayout());
         footerPanel.setBackground(AppColors.ACCENT_TIFFANY.darker());
         footerPanel.setBorder(new EmptyBorder(10, 15, 10, 15));
-
-        // Current date
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, yyyy");
         JLabel dateLabel = new JLabel(now.format(formatter));
         dateLabel.setForeground(AppColors.LIGHT_TEXT);
         footerPanel.add(dateLabel, BorderLayout.WEST);
-
-        // Support contact info
         JLabel supportLabel = new JLabel("Support: admin@carrentalsystem.com");
         supportLabel.setForeground(AppColors.LIGHT_TEXT);
         footerPanel.add(supportLabel, BorderLayout.EAST);
-
         return footerPanel;
     }
 
     private JPanel createCard(String action, Main mainFrame) {
         JPanel card = new JPanel();
-        card.setBackground(AppColors.ACCENT_TIFFANY); // Card background
+        card.setBackground(AppColors.ACCENT_TIFFANY);
         card.setLayout(new BorderLayout());
         card.setPreferredSize(new Dimension(200, 100));
         card.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Card label
         JLabel label = new JLabel(action, SwingConstants.CENTER);
         label.setForeground(AppColors.LIGHT_TEXT);
         label.setFont(new Font("Arial", Font.BOLD, 14));
         card.add(label, BorderLayout.CENTER);
-
-        // Hover effect and navigation
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                card.setBackground(AppColors.ACCENT_PURPLE); // Hover effect
+                card.setBackground(AppColors.ACCENT_PURPLE);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
-                card.setBackground(AppColors.ACCENT_TIFFANY); // Reset color
+                card.setBackground(AppColors.ACCENT_TIFFANY);
             }
-
             @Override
             public void mouseClicked(MouseEvent e) {
                 navigateToPage(action, mainFrame);
             }
         });
-
         return card;
     }
 
     private void navigateToPage(String action, Main mainFrame) {
-        JPanel page = null; // Dynamically instantiate the target page based on the action
+        JPanel page = null;
         switch (action) {
             case "Manage Users":
                 page = new ManageUsersView(mainFrame, adminEmail);
@@ -204,7 +200,6 @@ public class AdminDashboard extends JPanel {
                 page = new ManageDiscountView(mainFrame);
                 break;
             default:
-                // Placeholder for unknown actions
                 page = new JPanel(new BorderLayout());
                 page.setBackground(AppColors.MAIN_BG);
                 JLabel placeholder = new JLabel("Page for: " + action, SwingConstants.CENTER);
@@ -214,7 +209,6 @@ public class AdminDashboard extends JPanel {
                 break;
         }
 
-        // Add a back button to return to the dashboard
         JButton backButton = new JButton("Back to Dashboard");
         backButton.setBackground(AppColors.ACCENT_TIFFANY);
         backButton.setForeground(AppColors.MAIN_BG);
@@ -225,7 +219,6 @@ public class AdminDashboard extends JPanel {
             public void mouseEntered(MouseEvent e) {
                 backButton.setBackground(AppColors.ACCENT_PURPLE);
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 backButton.setBackground(AppColors.ACCENT_TIFFANY);
@@ -239,7 +232,6 @@ public class AdminDashboard extends JPanel {
         });
         page.add(backButton, BorderLayout.SOUTH);
 
-        // Navigate to the new page
         mainFrame.getContentPane().removeAll();
         mainFrame.add(page);
         mainFrame.revalidate();

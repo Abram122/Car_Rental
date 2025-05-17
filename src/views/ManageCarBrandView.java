@@ -3,6 +3,7 @@ package views;
 import controllers.BrandController;
 import models.CarBrand;
 import utils.AppColors;
+import utils.ValidationException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -79,12 +80,24 @@ public class ManageCarBrandView extends JPanel {
 
         JButton addButton = new JButton("Add Brand");
         styleButton(addButton);
-        addButton.addActionListener(_ -> showAddBrandDialog());
+        addButton.addActionListener(_ -> {
+            try {
+                showAddBrandDialog();
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+        });
         footerPanel.add(addButton);
 
         JButton updateButton = new JButton("Update Brand");
         styleButton(updateButton);
-        updateButton.addActionListener(_ -> showUpdateBrandDialog());
+        updateButton.addActionListener(_ -> {
+            try {
+                showUpdateBrandDialog();
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+        });
         footerPanel.add(updateButton);
 
         JButton deleteButton = new JButton("Delete Brand");
@@ -92,12 +105,6 @@ public class ManageCarBrandView extends JPanel {
         deleteButton.setBackground(AppColors.ERROR_RED);
         deleteButton.addActionListener(_ -> deleteSelectedBrand());
         footerPanel.add(deleteButton);
-
-        JButton backButton = new JButton("Back to Dashboard");
-        styleButton(backButton);
-        backButton.addActionListener(_ -> navigateBack());
-        footerPanel.add(backButton);
-
         return footerPanel;
     }
 
@@ -126,7 +133,7 @@ public class ManageCarBrandView extends JPanel {
         }
     }
 
-    private void showAddBrandDialog() {
+    private void showAddBrandDialog() throws ValidationException {
         JTextField brandNameField = new JTextField();
         Object[] fields = {
                 "Brand Name:", brandNameField
@@ -143,7 +150,7 @@ public class ManageCarBrandView extends JPanel {
         }
     }
 
-    private void showUpdateBrandDialog() {
+    private void showUpdateBrandDialog() throws ValidationException {
         int selectedRow = brandTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a brand to update.");
@@ -187,11 +194,4 @@ public class ManageCarBrandView extends JPanel {
         }
     }
 
-    private void navigateBack() {
-        mainFrame.setSize(600, 400);
-        mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AdminDashboard(mainFrame));
-        mainFrame.revalidate();
-        mainFrame.repaint();
-    }
 }

@@ -4,7 +4,6 @@ import controllers.RentalHistoryController;
 import dao.BookingDAO;
 import dao.CustomerDAO;
 import models.RentalHistory;
-import models.User;
 import models.Booking;
 import models.Customer;
 import utils.AppColors;
@@ -68,7 +67,7 @@ public class ManageRentalHistoryView extends JPanel {
         userIdToUsername.clear();
         List<Customer> users = new CustomerDAO().getAllCustomers();
         for (Customer user : users) {
-            userIdToUsername.put(user.getUserId(), user.getUsername());
+            userIdToUsername.put(user.getCustomerId(), user.getUsername());
         }
     }
 
@@ -125,11 +124,6 @@ public class ManageRentalHistoryView extends JPanel {
         deleteButton.addActionListener(_ -> deleteSelectedRentalHistory());
         footerPanel.add(deleteButton);
 
-        JButton backButton = new JButton("Back to Dashboard");
-        styleButton(backButton);
-        backButton.addActionListener(_ -> navigateBack());
-        footerPanel.add(backButton);
-
         return footerPanel;
     }
 
@@ -147,7 +141,7 @@ public class ManageRentalHistoryView extends JPanel {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         boolean found = false;
         for (RentalHistory rh : histories) {
-            String username = userIdToUsername.getOrDefault(rh.getUserId(), "Unknown");
+            String username = userIdToUsername.getOrDefault(rh.getCustomerId(), "Unknown");
             tableModel.addRow(new Object[]{
                     rh.getRentalId(),
                     username,
@@ -173,7 +167,7 @@ public class ManageRentalHistoryView extends JPanel {
         JComboBox<String> userComboBox = new JComboBox<>();
         List<Customer> users = new CustomerDAO().getAllCustomers();
         for (Customer user : users) {
-            userComboBox.addItem(user.getUserId() + " - " + user.getUsername());
+            userComboBox.addItem(user.getCustomerId() + " - " + user.getUsername());
         }
 
         // Booking ComboBox
@@ -252,15 +246,15 @@ public class ManageRentalHistoryView extends JPanel {
         List<Customer> users = new CustomerDAO().getAllCustomers();
         int userIndex = 0, userSelectedIndex = 0;
         for (Customer user : users) {
-            userComboBox.addItem(user.getUserId() + " - " + user.getUsername());
-            if (user.getUserId() == rh.getUserId()) userSelectedIndex = userIndex;
+            userComboBox.addItem(user.getCustomerId() + " - " + user.getUsername());
+            if (user.getCustomerId() == rh.getCustomerId()) userSelectedIndex = userIndex;
             userIndex++;
         }
         userComboBox.setSelectedIndex(userSelectedIndex);
 
         // Booking ComboBox
         JComboBox<String> bookingComboBox = new JComboBox<>();
-        int selectedUserId = rh.getUserId();
+        int selectedUserId = rh.getCustomerId();
         List<Booking> bookings = new BookingDAO().getBookingsByUserId(selectedUserId);
         int bookingIndex = 0, bookingSelectedIndex = 0;
         for (Booking booking : bookings) {
@@ -271,7 +265,7 @@ public class ManageRentalHistoryView extends JPanel {
         bookingComboBox.setSelectedIndex(bookingSelectedIndex);
 
         // Update bookings when user changes
-        userComboBox.addActionListener(e -> {
+        userComboBox.addActionListener(_ -> {
             bookingComboBox.removeAllItems();
             int newUserId = Integer.parseInt(userComboBox.getSelectedItem().toString().split(" - ")[0]);
             List<Booking> newBookings = new BookingDAO().getBookingsByUserId(newUserId);
@@ -346,11 +340,4 @@ public class ManageRentalHistoryView extends JPanel {
         }
     }
 
-    private void navigateBack() {
-        mainFrame.setSize(600, 400);
-        mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AdminDashboard(mainFrame));
-        mainFrame.revalidate();
-        mainFrame.repaint();
-    }
 }

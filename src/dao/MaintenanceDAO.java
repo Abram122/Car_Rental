@@ -59,7 +59,6 @@ public class MaintenanceDAO {
                     maintenance.setDetails(rs.getString("details"));
                     maintenance.setCost(rs.getFloat("cost"));
                     
-                    // Convert java.sql.Date to LocalDateTime for the model
                     java.sql.Date date = rs.getDate("maintenance_date");
                     if (date != null) {
                         maintenance.setMaintenanceDate(date.toLocalDate().atStartOfDay());
@@ -70,7 +69,6 @@ public class MaintenanceDAO {
                     maintenance.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                     maintenance.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                     
-                    // Load associated car information
                     loadCarInfo(maintenance);
                     
                     return maintenance;
@@ -81,7 +79,6 @@ public class MaintenanceDAO {
         }
         return null;
     }    
-    // Helper method to load car information for maintenance record
     private void loadCarInfo(Maintenance maintenance) {
         if (maintenance.getCarId() > 0) {
             try {
@@ -118,7 +115,6 @@ public class MaintenanceDAO {
                 maintenance.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                 maintenance.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
                 
-                // Load associated car information
                 loadCarInfo(maintenance);
                 
                 list.add(maintenance);

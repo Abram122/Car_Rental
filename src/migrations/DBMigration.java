@@ -8,13 +8,11 @@ public class DBMigration {
         try {
             createMigrationsTable(conn);
 
-            applyMigration(conn, "create_user_table", """
-                        CREATE TABLE User (
-                            user_id INT PRIMARY KEY AUTO_INCREMENT,
+            applyMigration(conn, "create_customer_table", """
+                        CREATE TABLE Customer (
+                            customer_id INT PRIMARY KEY AUTO_INCREMENT,
                             username VARCHAR(100) UNIQUE NOT NULL,
                             password_hash VARCHAR(255) NOT NULL,
-                            first_name VARCHAR(100),
-                            last_name VARCHAR(100),
                             email VARCHAR(150) UNIQUE NOT NULL,
                             phone VARCHAR(20),
                             birthday DATE,
@@ -33,7 +31,7 @@ public class DBMigration {
                             username VARCHAR(100) UNIQUE NOT NULL,
                             password_hash VARCHAR(255) NOT NULL,
                             email VARCHAR(150) UNIQUE NOT NULL,
-                            is_verified BOOLEAN NOT NULL DEFAULT FALSE,
+                            role VARCHAR(50),
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                         )
@@ -102,14 +100,14 @@ public class DBMigration {
             applyMigration(conn, "create_booking_table", """
                         CREATE TABLE Booking (
                             booking_id INT PRIMARY KEY AUTO_INCREMENT,
-                            user_id INT,
+                            customer_id INT,
                             car_id INT,
                             status VARCHAR(50),
                             start_date DATE,
                             end_date DATE,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            FOREIGN KEY (user_id) REFERENCES User(user_id),
+                            FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
                             FOREIGN KEY (car_id) REFERENCES Car(car_id)
                         )
                     """);
@@ -117,11 +115,11 @@ public class DBMigration {
             applyMigration(conn, "create_review_table", """
                         CREATE TABLE Review (
                             review_id INT PRIMARY KEY AUTO_INCREMENT,
-                            user_id INT,
+                            customer_id INT,
                             booking_id INT,
                             review TEXT,
                             rating INT,
-                            FOREIGN KEY (user_id) REFERENCES User(user_id),
+                            FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
                             FOREIGN KEY (booking_id) REFERENCES Booking(booking_id)
                         )
                     """);
@@ -129,7 +127,7 @@ public class DBMigration {
             applyMigration(conn, "create_payment_table", """
                         CREATE TABLE Payment (
                             payment_id INT PRIMARY KEY AUTO_INCREMENT,
-                            user_id INT,
+                            customer_id INT,
                             booking_id INT,
                             amount DECIMAL(10, 2),
                             payment_status VARCHAR(50),
@@ -138,21 +136,21 @@ public class DBMigration {
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                             FOREIGN KEY (booking_id) REFERENCES Booking(booking_id),
-                            FOREIGN KEY (user_id) REFERENCES User(user_id)
+                            FOREIGN KEY (customer_id) REFERENCES Customer(customer_id)
                         )
                     """);
 
             applyMigration(conn, "create_rental_history_table", """
                         CREATE TABLE Rental_History (
                             rental_id INT PRIMARY KEY AUTO_INCREMENT,
-                            user_id INT,
+                            customer_id INT,
                             booking_id INT,
                             return_date DATE,
                             extra_charges DECIMAL(10, 2),
                             comments TEXT,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                            FOREIGN KEY (user_id) REFERENCES User(user_id),
+                            FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
                             FOREIGN KEY (booking_id) REFERENCES booking(booking_id)
                         )
                     """);

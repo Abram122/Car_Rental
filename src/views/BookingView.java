@@ -169,12 +169,13 @@ public class BookingView extends JPanel {
         discountField = new JTextField("0");
         discountField.setFont(new Font("Arial", Font.PLAIN, 14));
         discountField.setToolTipText("Enter discount percentage (0-100)");
-        discountField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                updatePriceDisplay();
-            }
-        });
+        discountField.setEditable(false);
+        // discountField.addKeyListener(new KeyAdapter() {
+        //     @Override
+        //     public void keyReleased(KeyEvent e) {
+        //         updatePriceDisplay();
+        //     }
+        // });
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         formPanel.add(discountField, gbc);
@@ -339,7 +340,7 @@ public class BookingView extends JPanel {
 
     private void loadBookings() {
         tableModel.setRowCount(0);
-        List<Booking> bookings = bookingController.getBookingsByUserId(customer.getUserId());
+        List<Booking> bookings = bookingController.getBookingsByUserId(customer.getCustomerId());
         if (bookings == null || bookings.isEmpty()) {
             tableModel.addRow(new Object[] { "No bookings found", "", "", "", "", "", "" });
             bookingTable.setEnabled(false);
@@ -456,7 +457,7 @@ public class BookingView extends JPanel {
         float totalPrice = car.getRentalPrice() * days * (1 - discount / 100);
 
         boolean success = bookingController.addBooking(
-                customer.getUserId(),
+                customer.getCustomerId(),
                 carId,
                 "Pending",
                 startDate,
@@ -532,7 +533,7 @@ public class BookingView extends JPanel {
     }
 
     private void navigateBack() {
-        mainFrame.setSize(600, 400);
+        mainFrame.setSize(800, 800);
         mainFrame.getContentPane().removeAll();
         mainFrame.add(new AppView(mainFrame, customer));
         mainFrame.revalidate();

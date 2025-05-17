@@ -13,9 +13,9 @@ public class CategoryController {
     }
 
     public boolean addCategory(String name, String description, String categoryImg) throws ValidationException {
-        ValidationUtil.isValidName(name); // Validate category name
-        ValidationUtil.isValidDescription(description); // Validate description
-        ValidationUtil.isValidURL(categoryImg); // Validate image URL
+        ValidationUtil.isValidName(name);  
+        ValidationUtil.isValidDescription(description); 
+        ValidationUtil.isValidURL(categoryImg);
 
         Category category = new Category();
         category.setName(name);
@@ -27,9 +27,9 @@ public class CategoryController {
     }
 
     public boolean updateCategory(int id, String name, String description, String categoryImg) throws ValidationException {
-        ValidationUtil.isValidName(name); // Validate category name
-        ValidationUtil.isValidDescription(description); // Validate description
-        ValidationUtil.isValidURL(categoryImg); // Validate image URL
+        ValidationUtil.isValidName(name); 
+        ValidationUtil.isValidDescription(description); 
+        ValidationUtil.isValidURL(categoryImg); 
 
         Category category = new Category();
         category.setCategoryID(id);

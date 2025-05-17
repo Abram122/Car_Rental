@@ -2,6 +2,9 @@ package controllers;
 
 import dao.ReviewDAO;
 import models.Review;
+import utils.ValidationException;
+import utils.ValidationUtil;
+
 import java.util.List;
 
 public class ReviewController {
@@ -11,7 +14,10 @@ public class ReviewController {
         this.reviewDAO = new ReviewDAO();
     }
 
-    public boolean addReview(Review review) {
+    public boolean addReview(Review review) throws ValidationException {
+        
+        ValidationUtil.isNumeric(Integer.toString(review.getRating()));
+        ValidationUtil.isValidDescription(review.getReview());
         return reviewDAO.addReview(review);
     }
 

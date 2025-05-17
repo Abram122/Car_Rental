@@ -1,21 +1,13 @@
 package views;
-
-import dao.CustomerDAO;
-import models.Booking;
 import models.Customer;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
 import car_rental.Main;
-import controllers.ProfileController;
-
 import java.awt.*;
-import java.util.List;
-
+import controllers.ProfileController;
 public class ProfileView extends JPanel {
     private final Customer customer;
-    private final CustomerDAO customerDAO = new CustomerDAO();
+    private final ProfileController profileController = new ProfileController();
     private final Main mainFrame;
 
     private JTextField phoneField;
@@ -64,11 +56,11 @@ public class ProfileView extends JPanel {
         // Buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton saveButton = new JButton("Save Changes");
-        saveButton.addActionListener(e -> saveProfile());
+        saveButton.addActionListener(_ -> saveProfile());
         buttonPanel.add(saveButton);
 
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(e -> goBack());
+        backButton.addActionListener(_ -> goBack());
         buttonPanel.add(backButton);
 
         formPanel.add(buttonPanel);
@@ -97,20 +89,19 @@ public class ProfileView extends JPanel {
             customer.setPhone(newPhone);
             customer.setLicenseNumber(newLicense);
 
-            boolean success = customerDAO.updateProfile(customer);
+            boolean success = profileController.save(customer);
             if (success) {
                 JOptionPane.showMessageDialog(this, "Profile updated successfully!");
             } else {
                 JOptionPane.showMessageDialog(this, "Failed to update profile.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (utils.ValidationException e) {
-            // Show the validation error to the user
             JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void goBack() {
-        mainFrame.setSize(600, 400);
+        mainFrame.setSize(800, 800);
         mainFrame.getContentPane().removeAll();
         mainFrame.add(new AppView(mainFrame, customer));
         mainFrame.revalidate();
@@ -120,29 +111,6 @@ public class ProfileView extends JPanel {
     private JPanel createBookingsPanel() {
         String[] cols = { "Booking ID", "Start Date", "End Date", "Status" };
         DefaultTableModel model = new DefaultTableModel(cols, 0);
-
-        List<Booking> bookings = new ProfileController().loadBookings(customer.getUserId());
-
-        if (bookings == null || bookings.isEmpty()) {
-            // Show a message in the table when there are no bookings
-            model.addRow(new Object[] { "No bookings found", "", "", "" });
-            JTable table = new JTable(model);
-            table.setEnabled(false);
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(new JScrollPane(table), BorderLayout.CENTER);
-            panel.setBorder(BorderFactory.createTitledBorder("Your Bookings"));
-            return panel;
-        }
-
-        // If we have bookings, display them
-        for (Booking b : bookings) {
-            model.addRow(new Object[] {
-                    b.getBookingId(),
-                    b.getStartDate(),
-                    b.getEndDate(),
-                    b.getStatus()
-            });
-        }
 
         JTable table = new JTable(model);
         JPanel panel = new JPanel(new BorderLayout());

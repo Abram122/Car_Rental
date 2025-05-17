@@ -17,11 +17,12 @@ public class BookingController {
     // Add a new booking
     public boolean addBooking(int userId, int carId, String status, java.util.Date startDate, java.util.Date endDate) {
         Booking booking = new Booking();
-        booking.setUserId(userId);
+        booking.setCustomerId(userId);
         booking.setCarId(carId);
         booking.setStatus(status);
         booking.setStartDate(startDate);
         booking.setEndDate(endDate);
+        
         return bookingDAO.addBooking(booking);
     }
 
@@ -44,7 +45,7 @@ public class BookingController {
     public boolean updateBooking(int bookingId, int userId, int carId, String status, java.util.Date startDate, java.util.Date endDate) {
         Booking booking = new Booking();
         booking.setBookingId(bookingId);
-        booking.setUserId(userId);
+        booking.setCustomerId(userId);
         booking.setCarId(carId);
         booking.setStatus(status);
         booking.setStartDate(startDate);

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public class RentalHistory {
     private int rentalId;
-    private int userId;
+    private int customerId;
     private int bookingId;
     private LocalDate returnDate;
     private BigDecimal extraCharges;
@@ -16,9 +16,9 @@ public class RentalHistory {
 
     public RentalHistory() {}
 
-    public RentalHistory(int rentalId, int userId, int bookingId, LocalDate returnDate, BigDecimal extraCharges, String comments, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public RentalHistory(int rentalId, int customerId, int bookingId, LocalDate returnDate, BigDecimal extraCharges, String comments, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.rentalId = rentalId;
-        this.userId = userId;
+        this.customerId = customerId;
         this.bookingId = bookingId;
         this.returnDate = returnDate;
         this.extraCharges = extraCharges;
@@ -35,12 +35,12 @@ public class RentalHistory {
         this.rentalId = rentalId;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public int getBookingId() {

@@ -15,9 +15,9 @@ public class ReviewDAO {
 
     // Add a new review to the database
     public boolean addReview(Review review) {
-        String sql = "INSERT INTO review (user_id, booking_id, review, rating) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO review (customer_id, booking_id, review, rating) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, review.getUserID());
+            stmt.setInt(1, review.getCustomerID());
             stmt.setInt(2, review.getBookingID());
             stmt.setString(3, review.getReview());
             stmt.setInt(4, review.getRating());
@@ -37,7 +37,7 @@ public class ReviewDAO {
                 if (rs.next()) {
                     Review review = new Review();
                     review.setReviewID(rs.getInt("review_id"));
-                    review.setUserID(rs.getInt("user_id"));
+                    review.setCustomerID(rs.getInt("customer_id"));
                     review.setBookingID(rs.getInt("booking_id"));
                     review.setReview(rs.getString("review"));
                     review.setRating(rs.getInt("rating"));
@@ -59,7 +59,7 @@ public class ReviewDAO {
             while (rs.next()) {
                 Review review = new Review();
                 review.setReviewID(rs.getInt("review_id"));
-                review.setUserID(rs.getInt("user_id"));
+                review.setCustomerID(rs.getInt("customer_id"));
                 review.setBookingID(rs.getInt("booking_id"));
                 review.setReview(rs.getString("review"));
                 review.setRating(rs.getInt("rating"));
@@ -79,7 +79,7 @@ public class ReviewDAO {
                 if (rs.next()) {
                     Review review = new Review(
                             rs.getInt("review_id"),
-                            rs.getInt("user_id"),
+                            rs.getInt("customer_id"),
                             rs.getInt("booking_id"),
                             rs.getString("review"),
                             rs.getInt("rating"));
@@ -94,13 +94,13 @@ public class ReviewDAO {
 
     public List<Review> getAllReviewsWithUsername() {
         List<Review> reviews = new ArrayList<>();
-        String sql = "SELECT r.*, u.username FROM review r JOIN user u ON r.user_id = u.user_id ORDER BY r.review_id DESC";
+        String sql = "SELECT r.*, u.username FROM review r JOIN customer u ON r.customer_id = u.customer_id ORDER BY r.review_id DESC";
         try (PreparedStatement stmt = conn.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Review review = new Review(
                         rs.getInt("review_id"),
-                        rs.getInt("user_id"),
+                        rs.getInt("customer_id"),
                         rs.getInt("booking_id"),
                         rs.getString("review"),
                         rs.getInt("rating"));

@@ -17,11 +17,11 @@ public class CustomerDAO {
         this.conn = MySQLConnection.getInstance().getConnection();
     }
 
-    public boolean register(int userId, String username, String password, String email, String phone,
+    public boolean register(int customerId, String username, String password, String email, String phone,
             String licenseNumber) throws ValidationException {
-        String sql = "INSERT INTO user (user_id, username, password_hash, email, phone, license_number) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO customer (customer_id, username, password_hash, email, phone, license_number) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
+            pstmt.setInt(1, customerId);
             pstmt.setString(2, username);
             pstmt.setString(3, password);
             pstmt.setString(4, email);
@@ -38,7 +38,7 @@ public class CustomerDAO {
     }
 
     public boolean login(String email, String password) {
-        String sql = "SELECT password_hash FROM user WHERE email = ?";
+        String sql = "SELECT password_hash from customer WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -53,7 +53,7 @@ public class CustomerDAO {
     }
 
     public boolean delete(String email) {
-        String sql = "DELETE FROM user WHERE email = ?";
+        String sql = "DELETE from customer WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             return stmt.executeUpdate() > 0;
@@ -64,7 +64,7 @@ public class CustomerDAO {
     }
 
     public boolean isVerified(String email) {
-        String sql = "SELECT is_verified FROM user WHERE email = ?";
+        String sql = "SELECT is_verified from customer WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
@@ -78,7 +78,7 @@ public class CustomerDAO {
     }
 
     public boolean verifyUser(String email) {
-        String sql = "UPDATE user SET is_verified = TRUE WHERE email = ?";
+        String sql = "UPDATE customer SET is_verified = TRUE WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             return stmt.executeUpdate() > 0;
@@ -89,13 +89,13 @@ public class CustomerDAO {
     }
 
     public Customer getByEmail(String email) {
-        String sql = "SELECT user_id, username, email, phone, license_number FROM user WHERE email = ?";
+        String sql = "SELECT customer_id, username, email, phone, license_number from customer WHERE email = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Customer customer = new Customer(
-                        rs.getInt("user_id"),
+                        rs.getInt("customer_id"),
                         rs.getString("username"),
                         null,
                         rs.getString("phone"),
@@ -113,11 +113,11 @@ public class CustomerDAO {
     }
 
     public boolean updateProfile(Customer c) {
-        String sql = "UPDATE user SET phone = ?, license_number = ? WHERE user_id = ?";
+        String sql = "UPDATE customer SET phone = ?, license_number = ? WHERE customer_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, c.getPhone());
             stmt.setString(2, c.getLicenseNumber());
-            stmt.setInt(3, c.getUserId());
+            stmt.setInt(3, c.getCustomerId());
             return stmt.executeUpdate() == 1;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -125,18 +125,18 @@ public class CustomerDAO {
         }
     }
 
-    public List<RentalHistory> getRentalHistory(int userId) {
+    public List<RentalHistory> getRentalHistory(int customerId) {
         List<RentalHistory> list = new ArrayList<>();
-        String sql = "SELECT rental_id, user_id, booking_id, return_date, extra_charges, comments, created_at, updated_at "
+        String sql = "SELECT rental_id, customer_id, booking_id, return_date, extra_charges, comments, created_at, updated_at "
                 +
-                "FROM Rental_History WHERE user_id = ? ORDER BY created_at DESC";
+                "FROM Rental_History WHERE customer_id = ? ORDER BY created_at DESC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, userId);
+            stmt.setInt(1, customerId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 RentalHistory rh = new RentalHistory(
                         rs.getInt("rental_id"),
-                        rs.getInt("user_id"),
+                        rs.getInt("customer_id"),
                         rs.getInt("booking_id"),
                         rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null,
                         rs.getBigDecimal("extra_charges"),
@@ -158,14 +158,14 @@ public class CustomerDAO {
 
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
-        String sql = "SELECT user_id, username, email, phone, license_number, is_verified FROM user";
+        String sql = "SELECT customer_id, username, email, phone, license_number, is_verified from customer";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql);
                 ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Customer customer = new Customer(
-                        rs.getInt("user_id"),
+                        rs.getInt("customer_id"),
                         rs.getString("username"),
                         null, // We don't retrieve passwords
                         rs.getString("phone"),
@@ -178,5 +178,17 @@ public class CustomerDAO {
         }
 
         return customers;
+    }
+
+    public boolean isEmailExists(String email) {
+        String sql = "SELECT 1 FROM customer WHERE email = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

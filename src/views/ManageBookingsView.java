@@ -44,11 +44,6 @@ public class ManageBookingsView extends JPanel {
         titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
         headerPanel.add(titleLabel, BorderLayout.CENTER);
 
-        JButton backButton = new JButton("Back to Dashboard");
-        styleButton(backButton);
-        backButton.addActionListener(_ -> navigateBack());
-        headerPanel.add(backButton, BorderLayout.WEST);
-
         return headerPanel;
     }
 
@@ -83,13 +78,6 @@ public class ManageBookingsView extends JPanel {
         return tablePanel;
     }
 
-    private void styleButton(JButton button) {
-        button.setBackground(AppColors.ACCENT_TIFFANY);
-        button.setForeground(AppColors.LIGHT_TEXT);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-    }
 
     private void loadBookings() {
         tableModel.setRowCount(0);
@@ -102,7 +90,7 @@ public class ManageBookingsView extends JPanel {
             for (Booking booking : bookings) {
                 tableModel.addRow(new Object[] {
                         booking.getBookingId(),
-                        booking.getUserId(),
+                        booking.getCustomerId(),
                         booking.getCarId(),
                         sdf.format(booking.getStartDate()),
                         sdf.format(booking.getEndDate()),
@@ -134,13 +122,7 @@ public class ManageBookingsView extends JPanel {
         }
     }
 
-    private void navigateBack() {
-        mainFrame.setSize(600, 400);
-        mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AdminDashboard(mainFrame)); // Navigate back to the dashboard
-        mainFrame.revalidate();
-        mainFrame.repaint();
-    }
+
 
     // Custom renderer for the "Action" column
     class ButtonRenderer extends JButton implements TableCellRenderer {

@@ -18,24 +18,21 @@ import java.io.InputStream;
 
 public class InvoiceView extends JPanel {
 
-    private String invoiceNumber, customerName, carModel, rentalPeriod, date;
-    private double subtotal, discount, total;
+    private String invoiceNumber, customerName, booking_id, date;
+    private double total;
 
-    public InvoiceView(Main main,String invoiceNumber, String customerName, String carModel, String rentalPeriod,
-            double subtotal, double discount, double total, String date) {
+    public InvoiceView(Main main,String invoiceNumber, String customerName, String booking_id, 
+            double total, String date) {
         this.invoiceNumber = invoiceNumber;
         this.customerName = customerName;
-        this.carModel = carModel;
-        this.rentalPeriod = rentalPeriod;
-        this.subtotal = subtotal;
-        this.discount = discount;
+        this.booking_id = booking_id;
         this.total = total;
         this.date = date;
 
         setLayout(new BorderLayout(10, 10));
         setBackground(AppColors.MAIN_BG);
-        setPreferredSize(new Dimension(700, 600)); // Make the panel bigger
-        main.setSize(800, 1000); // Set the main frame size
+        setPreferredSize(new Dimension(700, 600)); 
+        main.setSize(800, 1000); 
         // Header
         JLabel title = new JLabel("Car Rental Receipt", SwingConstants.CENTER);
         title.setFont(new Font("Arial", Font.BOLD, 32));
@@ -52,12 +49,9 @@ public class InvoiceView extends JPanel {
         content.add(invoiceRow("Invoice #:", invoiceNumber));
         content.add(invoiceRow("Date:", date));
         content.add(invoiceRow("Customer:", customerName));
-        content.add(invoiceRow("Car Model:", carModel));
-        content.add(invoiceRow("Rental Period:", rentalPeriod));
+        content.add(invoiceRow("Booking #", booking_id));
         content.add(Box.createVerticalStrut(16));
         content.add(divider());
-        content.add(invoiceRow("Subtotal:", String.format("%.2f EGP", subtotal)));
-        content.add(invoiceRow("Discount:", String.format("-%.2f EGP", discount)));
         content.add(divider());
         content.add(invoiceRowBold("Total:", String.format("%.2f EGP", total)));
 
@@ -82,7 +76,7 @@ public class InvoiceView extends JPanel {
         exportBtn.setFocusPainted(false);
         exportBtn.setBorder(new EmptyBorder(12, 30, 12, 30));
         exportBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        exportBtn.addActionListener(e -> {
+        exportBtn.addActionListener(_ -> {
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.setDialogTitle("Save Invoice as PDF");
             fileChooser.setSelectedFile(new java.io.File("invoice.pdf"));
@@ -159,15 +153,10 @@ public class InvoiceView extends JPanel {
                 y = writeLine(contentStream, "Invoice #: " + invoiceNumber, margin, y, leading, luxuriousFont, 16);
                 y = writeLine(contentStream, "Date: " + date, margin, y, leading, luxuriousFont, 16);
                 y = writeLine(contentStream, "Customer: " + customerName, margin, y, leading, luxuriousFont, 16);
-                y = writeLine(contentStream, "Car Model: " + carModel, margin, y, leading, luxuriousFont, 16);
-                y = writeLine(contentStream, "Rental Period: " + rentalPeriod, margin, y, leading, luxuriousFont, 16);
+                y = writeLine(contentStream, "Booking #" + booking_id, margin, y, leading, luxuriousFont, 16);
 
                 y -= leading * 2;
 
-                y = writeLine(contentStream, "Subtotal: " + String.format("%.2f EGP", subtotal), margin, y, leading,
-                        luxuriousFont, 16);
-                y = writeLine(contentStream, "Discount: -" + String.format("%.2f EGP", discount), margin, y, leading,
-                        luxuriousFont, 16);
                 y = writeLine(contentStream, "Total: " + String.format("%.2f EGP", total), margin, y, leading,
                         luxuriousFont, 20);
 

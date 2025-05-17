@@ -1,22 +1,42 @@
 package models;
 
-public class Admin extends User {
-    protected String admin_role;
+import java.util.Date;
 
-    public Admin(int userId, String username, String password, String phone, String admin_role) {
-        super(userId, username, password, phone);
-        this.admin_role = admin_role;
+public class Admin {
+    private int adminId;
+    private String username;
+    private String passwordHash;
+    private String email;
+    private String role;
+    private Date createdAt;
+    private Date updatedAt;
+
+
+    public Admin(int adminId, String username, String passwordHash, String email, String role, Date createdAt, Date updatedAt) {
+        this.adminId = adminId;
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.email = email;
+        this.role = role;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
-    
-    public String getAdminRole() {
-        return admin_role;
-    }
-    
-    public void setAdminRole(String admin_role) {
-        this.admin_role = admin_role;
-    }
-      public boolean isSuperAdmin() {
-        // Since we're not using roles in the database, all admins have the same permissions
-        return true;
-    }
+
+    // Getters
+    public int getAdminId() { return adminId; }
+    public String getUsername() { return username; }
+    public String getPasswordHash() { return passwordHash; }
+    public String getEmail() { return email; }
+    public String getRole() { return role; }
+    public Date getCreatedAt() { return createdAt; }
+    public Date getUpdatedAt() { return updatedAt; }
+
+    // Setters
+    public void setAdminId(int adminId) { this.adminId = adminId; }
+    public void setUsername(String username) { this.username = username; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public void setEmail(String email) { this.email = email; }
+    public void setRole(String role) { this.role = role; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(Date updatedAt) { this.updatedAt = updatedAt; }
 }

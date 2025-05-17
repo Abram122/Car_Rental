@@ -28,13 +28,11 @@ public class LoginView extends JPanel {
         setBackground(AppColors.MAIN_BG);
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 
-        // Title
         JLabel titleLabel = new JLabel("Login");
         titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 24));
         titleLabel.setForeground(AppColors.LIGHT_TEXT);
         add(titleLabel, "span, center, gapbottom 20");
 
-        // email field
         emailField = new JTextField(20);
         emailField.setBackground(AppColors.DIVIDER_DARK_GRAY);
         emailField.setForeground(AppColors.LIGHT_TEXT);
@@ -44,7 +42,6 @@ public class LoginView extends JPanel {
         add(userLabel);
         add(emailField, "wrap, growx, gapbottom 10");
 
-        // Password field
         passwordField = new JPasswordField(20);
         passwordField.setBackground(AppColors.DIVIDER_DARK_GRAY);
         passwordField.setForeground(AppColors.LIGHT_TEXT);
@@ -54,19 +51,16 @@ public class LoginView extends JPanel {
         add(passLabel);
         add(passwordField, "wrap, growx, gapbottom 10");
 
-        // Admin checkbox
         adminCheckBox = new JCheckBox("Login as Admin");
         adminCheckBox.setForeground(AppColors.LIGHT_TEXT);
         adminCheckBox.setBackground(AppColors.MAIN_BG);
         add(adminCheckBox, "span, center, gapbottom 20");
 
-        // Login button
         loginButton = new JButton("Login");
         styleButton(loginButton);
         loginButton.addActionListener(_e -> onLogin());
         add(loginButton, "span, center, gapbottom 10");
 
-        // Switch to Register label
         switchToRegisterLabel = new JLabel("Don't have an account? Register");
         switchToRegisterLabel.setForeground(AppColors.ACCENT_TIFFANY);
         switchToRegisterLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -97,6 +91,15 @@ public class LoginView extends JPanel {
         String password = new String(passwordField.getPassword());
         boolean isAdmin = adminCheckBox.isSelected();
 
+        if (email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Please enter both email and password.",
+                    "Input Error",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
             boolean success = loginController.login(email, password, isAdmin);
             if (success) {
@@ -106,35 +109,46 @@ public class LoginView extends JPanel {
                         "Success",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                mainFrame.getContentPane().removeAll();                if (isAdmin) {
+                mainFrame.getContentPane().removeAll();
+                if (isAdmin) {
                     mainFrame.add(new AdminDashboard(mainFrame, email));
                 } else {
                     CustomerDAO dao = new CustomerDAO();
                     Customer customer = dao.getByEmail(email);
-
                     if (customer != null) {
                         mainFrame.add(new AppView(mainFrame, customer));
                     } else {
                         JOptionPane.showMessageDialog(
                                 this,
-                                "Customer not found.",
-                                "Error",
+                                "No account found with this email.",
+                                "User Not Found",
                                 JOptionPane.ERROR_MESSAGE);
-                        return; // Exit the method to prevent showing anything else
+                        resetFields();
+                        return;
                     }
                 }
-
                 mainFrame.revalidate();
                 mainFrame.repaint();
             } else {
                 JOptionPane.showMessageDialog(
                         this,
-                        "Invalid credentials!",
-                        "Error",
+                        "Invalid credentials! Please check your email and password.",
+                        "Login Failed",
                         JOptionPane.ERROR_MESSAGE);
+                resetFields();
             }
         } catch (ValidationException ve) {
-            if ("NOT_VERIFIED".equals(ve.getMessage())) {
+            if ("EMAIL_NOT_FOUND".equals(ve.getMessage())) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No account found with this email.",
+                        "User Not Found",
+                        JOptionPane.ERROR_MESSAGE);
+                mainFrame.getContentPane().removeAll();
+                mainFrame.add(new RegisterView(mainFrame));
+                mainFrame.revalidate();
+                mainFrame.repaint();
+            } else if ("NOT_VERIFIED".equals(ve.getMessage())) {
                 JOptionPane.showMessageDialog(
                         this,
                         "Your email is not verified. Please verify your email.",
@@ -151,14 +165,21 @@ public class LoginView extends JPanel {
                         ve.getMessage(),
                         "Validation Error",
                         JOptionPane.ERROR_MESSAGE);
+                resetFields();
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(
                     this,
-                    "An unexpected error occurred: " + e.getMessage(),
+                    "An unexpected error occurred:\n" + e.getMessage(),
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
+            resetFields();
         }
+    }
+
+    private void resetFields() {
+        passwordField.setText("");
+        passwordField.requestFocus();
     }
 
     private void styleButton(JButton button) {

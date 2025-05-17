@@ -5,6 +5,7 @@ import controllers.CarModelController;
 import models.CarBrand;
 import models.CarModel;
 import utils.AppColors;
+import utils.ValidationException;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -68,7 +69,7 @@ public class ManageCarModelView extends JPanel {
     private JPanel createTablePanel() {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Brand", "Model", "Fuel Type"}, 0);
+        tableModel = new DefaultTableModel(new Object[] { "ID", "Brand", "Model", "Fuel Type" }, 0);
         carModelTable = new JTable(tableModel);
         carModelTable.setFillsViewportHeight(true);
         carModelTable.setRowHeight(30);
@@ -86,12 +87,24 @@ public class ManageCarModelView extends JPanel {
 
         JButton addButton = new JButton("Add Car Model");
         styleButton(addButton);
-        addButton.addActionListener(_ -> showAddCarModelDialog());
+        addButton.addActionListener(_ -> {
+            try {
+                showAddCarModelDialog();
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+        });
         footerPanel.add(addButton);
 
         JButton updateButton = new JButton("Update Car Model");
         styleButton(updateButton);
-        updateButton.addActionListener(_ -> showUpdateCarModelDialog());
+        updateButton.addActionListener(_ -> {
+            try {
+                showUpdateCarModelDialog();
+            } catch (ValidationException e) {
+                e.printStackTrace();
+            }
+        });
         footerPanel.add(updateButton);
 
         JButton deleteButton = new JButton("Delete Car Model");
@@ -99,11 +112,6 @@ public class ManageCarModelView extends JPanel {
         deleteButton.setBackground(AppColors.ERROR_RED);
         deleteButton.addActionListener(_ -> deleteSelectedCarModel());
         footerPanel.add(deleteButton);
-
-        JButton backButton = new JButton("Back to Dashboard");
-        styleButton(backButton);
-        backButton.addActionListener(_ -> navigateBack());
-        footerPanel.add(backButton);
 
         return footerPanel;
     }
@@ -125,7 +133,7 @@ public class ManageCarModelView extends JPanel {
             brandNameToIdMap.put(brand.getBrandName(), brand.getBrandId());
         }
         if (carModels == null || carModels.isEmpty()) {
-            tableModel.addRow(new Object[]{"No car models found", "", "", ""});
+            tableModel.addRow(new Object[] { "No car models found", "", "", "" });
             carModelTable.setEnabled(false);
         } else {
             for (CarModel carModel : carModels) {
@@ -134,7 +142,7 @@ public class ManageCarModelView extends JPanel {
                         .map(CarBrand::getBrandName)
                         .findFirst()
                         .orElse("Unknown");
-                tableModel.addRow(new Object[]{
+                tableModel.addRow(new Object[] {
                         carModel.getModelId(),
                         brandName,
                         carModel.getModelName(),
@@ -145,7 +153,7 @@ public class ManageCarModelView extends JPanel {
         }
     }
 
-    private void showAddCarModelDialog() {
+    private void showAddCarModelDialog() throws ValidationException {
         List<CarBrand> brands = brandController.getAllBrands();
         if (brands == null || brands.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No brands available. Please add a brand first.");
@@ -154,11 +162,12 @@ public class ManageCarModelView extends JPanel {
         String[] brandNames = brands.stream().map(CarBrand::getBrandName).toArray(String[]::new);
         JComboBox<String> brandComboBox = new JComboBox<>(brandNames);
         JTextField modelNameField = new JTextField();
-        JTextField fuelTypeField = new JTextField();
+        String[] fuelTypes = { "Petrol", "Diesel", "Electric", "Hybrid" };
+        JComboBox<String> fuelTypeComboBox = new JComboBox<>(fuelTypes);
         Object[] fields = {
                 "Brand:", brandComboBox,
                 "Model Name:", modelNameField,
-                "Fuel Type:", fuelTypeField
+                "Fuel Type:", fuelTypeComboBox
         };
         int option = JOptionPane.showConfirmDialog(this, fields, "Add Car Model", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
@@ -171,8 +180,7 @@ public class ManageCarModelView extends JPanel {
             boolean success = carModelController.addCarModel(
                     brandId,
                     modelNameField.getText(),
-                    fuelTypeField.getText()
-            );
+                    (String) fuelTypeComboBox.getSelectedItem());
             if (success) {
                 JOptionPane.showMessageDialog(this, "Car model added successfully!");
                 loadCarModels();
@@ -182,7 +190,7 @@ public class ManageCarModelView extends JPanel {
         }
     }
 
-    private void showUpdateCarModelDialog() {
+    private void showUpdateCarModelDialog() throws ValidationException {
         int selectedRow = carModelTable.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select a car model to update.");
@@ -202,11 +210,13 @@ public class ManageCarModelView extends JPanel {
         JComboBox<String> brandComboBox = new JComboBox<>(brandNames);
         brandComboBox.setSelectedItem(currentBrandName);
         JTextField modelNameField = new JTextField(currentModelName);
-        JTextField fuelTypeField = new JTextField(currentFuelType);
+        String[] fuelTypes = { "Petrol", "Diesel", "Electric", "Hybrid" };
+        JComboBox<String> fuelTypeComboBox = new JComboBox<>(fuelTypes);
+        fuelTypeComboBox.setSelectedItem(currentFuelType);
         Object[] fields = {
                 "Brand:", brandComboBox,
                 "Model Name:", modelNameField,
-                "Fuel Type:", fuelTypeField
+                "Fuel Type:", fuelTypeComboBox
         };
         int option = JOptionPane.showConfirmDialog(this, fields, "Update Car Model", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
@@ -220,8 +230,7 @@ public class ManageCarModelView extends JPanel {
                     modelId,
                     brandId,
                     modelNameField.getText(),
-                    fuelTypeField.getText()
-            );
+                    (String) fuelTypeComboBox.getSelectedItem());
             if (success) {
                 JOptionPane.showMessageDialog(this, "Car model updated successfully!");
                 loadCarModels();
@@ -238,7 +247,8 @@ public class ManageCarModelView extends JPanel {
             return;
         }
         int modelId = (int) tableModel.getValueAt(selectedRow, 0);
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this car model?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete this car model?",
+                "Confirm Delete", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             boolean success = carModelController.deleteCarModel(modelId);
             if (success) {
@@ -250,11 +260,4 @@ public class ManageCarModelView extends JPanel {
         }
     }
 
-    private void navigateBack() {
-        mainFrame.setSize(600, 400);
-        mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AdminDashboard(mainFrame));
-        mainFrame.revalidate();
-        mainFrame.repaint();
-    }
 }

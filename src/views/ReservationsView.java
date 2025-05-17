@@ -113,7 +113,7 @@ public class ReservationsView extends JPanel {
 
     private void loadReservations() {
         tableModel.setRowCount(0);
-        List<Booking> bookings = bookingController.getBookingsByUserId(customer.getUserId());
+        List<Booking> bookings = bookingController.getBookingsByUserId(customer.getCustomerId());
         if (bookings == null || bookings.isEmpty()) {
             tableModel.addRow(new Object[] { "No reservations found", "", "", "", "", "", "", "" });
             reservationsTable.setEnabled(false);
@@ -202,10 +202,7 @@ public class ReservationsView extends JPanel {
                             mainFrame,
                             "INV-" + paidPayment.getPaymentId(),
                             customer.getUsername(),
-                            "Car Model", // You can fetch car model if needed
-                            "Rental Period", // You can fetch rental period if needed
-                            paidPayment.getAmount(),
-                            0.0,
+                            "Booking-"+paidPayment.getBookingId(),  
                             paidPayment.getAmount(),
                             paidPayment.getPaymentDate() != null ? paidPayment.getPaymentDate().toString() : "");
                     JFrame invoiceFrame = new JFrame("Invoice");

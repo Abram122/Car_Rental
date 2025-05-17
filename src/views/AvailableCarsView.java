@@ -180,7 +180,7 @@ public class AvailableCarsView extends JPanel {
     }
 
     private void navigateBack() {
-        mainFrame.setSize(600, 400);
+        mainFrame.setSize(800, 800);
         mainFrame.getContentPane().removeAll();
         mainFrame.add(new AppView(mainFrame, customer));
         mainFrame.revalidate();

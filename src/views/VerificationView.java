@@ -15,10 +15,8 @@ public class VerificationView extends JPanel {
     private JTextField otpField;
     private JButton verifyButton;
     private JLabel switchToLoginLabel;
-    private String email;
 
     public VerificationView(Main mainFrame, String email) {
-        this.email = email;
         setBackground(AppColors.MAIN_BG);
         setLayout(new MigLayout("fill, insets 20", "[center]", "[center]"));
 

@@ -146,8 +146,10 @@ public class AdminPaymentsView extends JPanel {
         public InvoiceButtonRenderer() {
             setOpaque(true);
         }
+
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,
+                int row, int column) {
             setText(value == null ? "Make Invoice" : value.toString());
             return this;
         }
@@ -163,11 +165,12 @@ public class AdminPaymentsView extends JPanel {
             super(checkBox);
             button = new JButton("Make Invoice");
             button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
+            button.addActionListener(_ -> fireEditingStopped());
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+                int column) {
             this.row = row;
             isPushed = true;
             button.setText(value == null ? "Make Invoice" : value.toString());
@@ -178,25 +181,19 @@ public class AdminPaymentsView extends JPanel {
         public Object getCellEditorValue() {
             if (isPushed) {
                 // Get payment data from the table model
-                int paymentId = (int) tableModel.getValueAt(row, 0);
-                int bookingId = (int) tableModel.getValueAt(row, 1);
-                String userName = (String) tableModel.getValueAt(row, 2);
+                int paymentId = Integer.parseInt(tableModel.getValueAt(row, 0).toString());
+                int booking_id = Integer.parseInt(tableModel.getValueAt(row, 1).toString()); 
+                String userName = tableModel.getValueAt(row, 2).toString(); 
                 double amount = Double.parseDouble(tableModel.getValueAt(row, 3).toString());
-                String status = (String) tableModel.getValueAt(row, 4);
-                String method = (String) tableModel.getValueAt(row, 5);
                 String date = tableModel.getValueAt(row, 6).toString();
 
                 InvoiceView invoiceView = new InvoiceView(
-                    mainFrame,
-                    "INV-" + paymentId,
-                    userName,
-                    "Car Model",
-                    "Rental Period",
-                    amount,
-                    0.0,
-                    amount,
-                    date
-                );
+                        mainFrame,
+                        "INV-" + paymentId,
+                        userName,
+                        "Booking-" + booking_id,
+                        amount,
+                        date);
                 JFrame invoiceFrame = new JFrame("Invoice");
                 invoiceFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 invoiceFrame.setContentPane(invoiceView);

@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Booking {
     private int bookingId;
-    private int userId;
+    private int customerId;
     private int carId;
     private String status;
     private Date startDate;
@@ -17,10 +17,10 @@ public class Booking {
     public Booking() {
     }
 
-    public Booking(int bookingId, int userId, int carId, String status, Date startDate, Date endDate,
+    public Booking(int bookingId, int customerId, int carId, String status, Date startDate, Date endDate,
             LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.bookingId = bookingId;
-        this.userId = userId;
+        this.customerId = customerId;
         this.carId = carId;
         this.status = status;
         this.startDate = startDate;
@@ -37,12 +37,12 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
     }
 
     public int getCarId() {
@@ -105,7 +105,7 @@ public class Booking {
     public String toString() {
         return "Booking{" +
                 "bookingId=" + bookingId +
-                ", userId=" + userId +
+                ", customerId=" + customerId +
                 ", carId=" + carId +
                 ", status='" + status + '\'' +
                 ", startDate=" + startDate +

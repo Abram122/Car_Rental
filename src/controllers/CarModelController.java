@@ -2,6 +2,8 @@ package controllers;
 
 import dao.CarModelDAO;
 import models.CarModel;
+import utils.ValidationException;
+import utils.ValidationUtil;
 
 import java.util.List;
 
@@ -12,20 +14,24 @@ public class CarModelController {
         this.carModelDAO = new CarModelDAO();
     }
 
-    public boolean addCarModel(int brandId, String modelName, String fuelType) {
+    public boolean addCarModel(int brandId, String modelName, String fuelType) throws ValidationException {
         CarModel carModel = new CarModel();
         carModel.setBrandId(brandId);
         carModel.setModelName(modelName);
         carModel.setFuelType(fuelType);
+        ValidationUtil.isValidName(carModel.getModelName());
+        ValidationUtil.isValidName(carModel.getFuelType());
         return carModelDAO.addCarModel(carModel);
     }
 
-    public boolean updateCarModel(int modelId, int brandId, String modelName, String fuelType) {
+    public boolean updateCarModel(int modelId, int brandId, String modelName, String fuelType) throws ValidationException {
         CarModel carModel = new CarModel();
         carModel.setModelId(modelId);
         carModel.setBrandId(brandId);
         carModel.setModelName(modelName);
         carModel.setFuelType(fuelType);
+        ValidationUtil.isValidName(carModel.getModelName());
+        ValidationUtil.isValidName(carModel.getFuelType());
         return carModelDAO.updateCarModel(carModel);
     }
 

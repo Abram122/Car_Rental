@@ -4,7 +4,7 @@ import controllers.ReviewController;
 import models.Customer;
 import models.Review;
 import utils.AppColors;
-
+import utils.ValidationException;
 import car_rental.Main;
 
 import javax.swing.*;
@@ -35,12 +35,16 @@ public class AddReviewView extends JPanel {
                 return;
             }
             ReviewController reviewController = new ReviewController();
-            Review review = new Review(0, customer.getUserId(), bookingId, reviewText, rating);
-            if (reviewController.addReview(review)) {
-                JOptionPane.showMessageDialog(this, "Review submitted!");
-                SwingUtilities.getWindowAncestor(this).dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to submit review.");
+            Review review = new Review(0, customer.getCustomerId(), bookingId, reviewText, rating);
+            try {
+                if (reviewController.addReview(review)) {
+                    JOptionPane.showMessageDialog(this, "Review submitted!");
+                    SwingUtilities.getWindowAncestor(this).dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to submit review.");
+                }
+            } catch (HeadlessException | ValidationException e1) {
+                e1.printStackTrace();
             }
         });
 

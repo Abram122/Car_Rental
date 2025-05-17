@@ -10,7 +10,7 @@ public class HashUtil {
     return BCrypt.hashpw(plain, BCrypt.gensalt(12));
   }
 
-  //vverify a plaintext password against a stored BCrypt hash so this is simply boolean function so we do comparsion
+  //verify a plaintext password against a stored BCrypt hash so this is simply boolean function so we do comparsion
   public static boolean verifyPassword(String plain, String hashed) {
     return BCrypt.checkpw(plain, hashed);
   }

@@ -16,10 +16,10 @@ public class AppView extends JPanel {
     private Customer customer;
 
     public AppView(Main mainFrame, Customer customer) {
-        this.customer = customer; // Store the customer object
+        this.customer = customer;
         setBackground(AppColors.MAIN_BG);
         setLayout(new BorderLayout(0, 10));
-        
+        mainFrame.setSize(800, 800); 
         // Add header panel
         add(createHeaderPanel(), BorderLayout.NORTH);
         
@@ -183,7 +183,6 @@ public class AppView extends JPanel {
     }    private void navigateToPage(String action, Main mainFrame) {
         JPanel page = null;
 
-        // Dynamically instantiate the target page based on the action
         switch (action) {
             case "Your Profile":
                 page = new ProfileView(mainFrame, customer); 
@@ -198,12 +197,10 @@ public class AppView extends JPanel {
                 page = new ReservationsView(mainFrame, customer);
                 break;
             default:
-                // Placeholder for unknown actions
                 page = createPlaceholderPanel(action, "This feature is coming soon");
                 break;
         }
 
-        // Add a back button to return to the dashboard
         JButton backButton = new JButton("Back to Dashboard");
         backButton.setBackground(AppColors.ACCENT_TIFFANY);
         backButton.setForeground(AppColors.MAIN_BG);

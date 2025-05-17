@@ -105,37 +105,19 @@ public class PaymentView extends JPanel {
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
     }
 
-    private void loadUnpaidPayments() {
-        tableModel.setRowCount(0);
-        List<Booking> bookings = bookingController.getBookingsByUserId(customer.getUserId());
-        if (bookings == null || bookings.isEmpty()) {
-            tableModel.addRow(new Object[] { "No unpaid payments found", "", "", "", "", "" });
-            bookingTable.setEnabled(false);
-        } else {
-            for (Booking booking : bookings) {
-                List<Payment> payments = paymentController.getPaymentsByBookingId(booking.getBookingId());
-                if (payments != null) {
-                    for (Payment payment : payments) {
-                        if (!"Paid".equalsIgnoreCase(payment.getPaymentStatus())) {
-                            tableModel.addRow(new Object[] {
-                                    payment.getPaymentId(),
-                                    payment.getBookingId(),
-                                    payment.getAmount(),
-                                    payment.getPaymentStatus(),
-                                    payment.getPaymentMethod(),
-                                    "Pay"
-                            });
-                        }
-                    }
-                }
-            }
-            bookingTable.setEnabled(tableModel.getRowCount() > 0);
-        }
-    }
-
     private void loadBookings() {
         tableModel.setRowCount(0);
-        List<Booking> bookings = bookingController.getBookingsByUserId(customer.getUserId());
+        List<Booking> bookings;
+        try {
+            bookings = bookingController.getBookingsByUserId(customer.getCustomerId());
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error loading bookings: " + ex.getMessage(), "Database Error",
+                    JOptionPane.ERROR_MESSAGE);
+            tableModel.setRowCount(0);
+            tableModel.addRow(new Object[] { "Error loading bookings", "", "", "", "", "" });
+            bookingTable.setEnabled(false);
+            return;
+        }
         if (bookings == null || bookings.isEmpty()) {
             tableModel.addRow(new Object[] { "No bookings found", "", "", "", "", "" });
             bookingTable.setEnabled(false);
@@ -201,7 +183,7 @@ public class PaymentView extends JPanel {
                 // Create a new Payment object (now includes userId)
                 Payment payment = new Payment();
                 payment.setBookingId(bookingId);
-                payment.setUserId(customer.getUserId()); // Set the userId here!
+                payment.setUserId(customer.getCustomerId()); // Set the userId here!
                 payment.setAmount(100.0); // Set the amount as needed (e.g., fetch from booking/price)
                 payment.setPaymentStatus("Paid");
                 payment.setPaymentMethod("Cash"); // Or prompt user for method
@@ -232,7 +214,7 @@ public class PaymentView extends JPanel {
     }
 
     private void navigateBack() {
-        mainFrame.setSize(600, 400);
+        mainFrame.setSize(800, 800);
         mainFrame.getContentPane().removeAll();
         mainFrame.add(new AppView(mainFrame, customer));
         mainFrame.revalidate();

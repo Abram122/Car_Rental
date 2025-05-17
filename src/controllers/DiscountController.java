@@ -16,11 +16,7 @@ public class DiscountController {
     // Create a new discount
     public boolean addDiscount(Discount discount) throws ValidationException {
         ValidationUtil.isValidPromotionCode(discount.getPromotionCode());
-        // ValidationUtil.isValidDiscountPercentage(String.valueOf(discount.getDiscountPercentage()));
-        if (discount.getDiscountId() == 0) {
-            int discountId = (int) (System.currentTimeMillis() % Integer.MAX_VALUE);
-            discount.setDiscountId(discountId);
-        }
+        ValidationUtil.isValidDiscountPercentage(String.valueOf(discount.getDiscountPercentage()));
         return discountDAO.addDiscount(discount);
     }
 
@@ -32,7 +28,7 @@ public class DiscountController {
     // Update an existing discount
     public boolean updateDiscount(Discount discount) throws ValidationException {
         ValidationUtil.isValidPromotionCode(discount.getPromotionCode());
-        // ValidationUtil.isValidDiscountPercentage(String.valueOf(discount.getDiscountPercentage()));
+        ValidationUtil.isValidDiscountPercentage(String.valueOf(discount.getDiscountPercentage()));
         return discountDAO.updateDiscount(discount);
     }
 

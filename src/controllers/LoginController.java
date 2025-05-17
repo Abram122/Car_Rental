@@ -16,9 +16,8 @@ public class LoginController {
 
     public boolean login(String email, String password, boolean isAdmin)
             throws ValidationException {
-        // Validate input fields using ValidationUtil
         ValidationUtil.isValidEmail(email); // Validate email
-        // ValidationUtil.isValidPassword(password); // Validate password
+        ValidationUtil.isValidPassword(password); // Validate password
 
         // Check if the email belongs to admin or customer
         if (isAdmin) {
@@ -26,6 +25,9 @@ public class LoginController {
         }
 
         // Check email verification for customers
+        if (!customerDAO.isEmailExists(email)) {
+            throw new ValidationException("EMAIL_NOT_FOUND");
+        }
         if (!customerDAO.isVerified(email)) {
             throw new ValidationException("NOT_VERIFIED");
         } else {

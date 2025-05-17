@@ -19,9 +19,9 @@ public class RentalHistoryDAO {
 
     // CREATE
     public boolean addRentalHistory(RentalHistory rh) {
-        String sql = "INSERT INTO Rental_History (user_id, booking_id, return_date, extra_charges, comments) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Rental_History (customer_id, booking_id, return_date, extra_charges, comments) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, rh.getUserId());
+            pstmt.setInt(1, rh.getCustomerId());
             pstmt.setInt(2, rh.getBookingId());
             if (rh.getReturnDate() != null) {
                 pstmt.setDate(3, Date.valueOf(rh.getReturnDate()));
@@ -69,9 +69,9 @@ public class RentalHistoryDAO {
 
     // UPDATE
     public boolean updateRentalHistory(RentalHistory rh) {
-        String sql = "UPDATE Rental_History SET user_id=?, booking_id=?, return_date=?, extra_charges=?, comments=? WHERE rental_id=?";
+        String sql = "UPDATE Rental_History SET customer_id=?, booking_id=?, return_date=?, extra_charges=?, comments=? WHERE rental_id=?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, rh.getUserId());
+            pstmt.setInt(1, rh.getCustomerId());
             pstmt.setInt(2, rh.getBookingId());
             if (rh.getReturnDate() != null) {
                 pstmt.setDate(3, Date.valueOf(rh.getReturnDate()));
@@ -100,11 +100,10 @@ public class RentalHistoryDAO {
         }
     }
 
-    // Helper to map ResultSet to RentalHistory object
     private RentalHistory mapResultSetToRentalHistory(ResultSet rs) throws SQLException {
         return new RentalHistory(
             rs.getInt("rental_id"),
-            rs.getInt("user_id"),
+            rs.getInt("customer_id"),
             rs.getInt("booking_id"),
             rs.getDate("return_date") != null ? rs.getDate("return_date").toLocalDate() : null,
             rs.getBigDecimal("extra_charges"),

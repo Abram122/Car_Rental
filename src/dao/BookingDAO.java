@@ -16,9 +16,9 @@ public class BookingDAO {
 
     // Add a new booking
     public boolean addBooking(Booking booking) {
-        String sql = "INSERT INTO Booking (user_id, car_id, status, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Booking (customer_id, car_id, status, start_date, end_date) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, booking.getUserId());
+            stmt.setInt(1, booking.getCustomerId());
             stmt.setInt(2, booking.getCarId());
             stmt.setString(3, booking.getStatus());
             stmt.setDate(4, new java.sql.Date(booking.getStartDate().getTime()));
@@ -49,7 +49,7 @@ public class BookingDAO {
     // Retrieve all bookings for a specific user
     public List<Booking> getBookingsByUserId(int userId) {
         List<Booking> bookings = new ArrayList<>();
-        String sql = "SELECT * FROM Booking WHERE user_id = ? ORDER BY start_date DESC";
+        String sql = "SELECT * FROM Booking WHERE customer_id = ? ORDER BY start_date DESC";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -80,9 +80,9 @@ public class BookingDAO {
 
     // Update a booking
     public boolean updateBooking(Booking booking) {
-        String sql = "UPDATE Booking SET user_id = ?, car_id = ?, status = ?, start_date = ?, end_date = ?, updated_at = CURRENT_TIMESTAMP WHERE booking_id = ?";
+        String sql = "UPDATE Booking SET customer_id = ?, car_id = ?, status = ?, start_date = ?, end_date = ?, updated_at = CURRENT_TIMESTAMP WHERE booking_id = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, booking.getUserId());
+            stmt.setInt(1, booking.getCustomerId());
             stmt.setInt(2, booking.getCarId());
             stmt.setString(3, booking.getStatus());
             stmt.setDate(4, new java.sql.Date(booking.getStartDate().getTime()));
@@ -111,7 +111,7 @@ public class BookingDAO {
     private Booking mapResultSetToBooking(ResultSet rs) throws SQLException {
         return new Booking(
                 rs.getInt("booking_id"),
-                rs.getInt("user_id"),
+                rs.getInt("customer_id"),
                 rs.getInt("car_id"),
                 rs.getString("status"),
                 rs.getDate("start_date"),

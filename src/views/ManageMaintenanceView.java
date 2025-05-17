@@ -102,10 +102,6 @@ public class ManageMaintenanceView extends JPanel {
         deleteButton.addActionListener(_ -> deleteSelectedMaintenance());
         footerPanel.add(deleteButton);
 
-        JButton backButton = new JButton("Back to Dashboard");
-        styleButton(backButton);
-        backButton.addActionListener(_ -> navigateBack());
-        footerPanel.add(backButton);
 
         return footerPanel;
     }
@@ -231,8 +227,6 @@ public class ManageMaintenanceView extends JPanel {
         }
 
         JComboBox<String> carComboBox = loadCarOptions();
-        String currentCarOption = maintenance.getCarId() + " - " + 
-                (maintenance.getCar() != null ? maintenance.getCar().getPlateNo() : "Unknown");
         
         // Try to select the current car in the combo box
         for (int i = 0; i < carComboBox.getItemCount(); i++) {
@@ -319,11 +313,4 @@ public class ManageMaintenanceView extends JPanel {
         }
     }
 
-    private void navigateBack() {
-        mainFrame.setSize(600, 400);
-        mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AdminDashboard(mainFrame));
-        mainFrame.revalidate();
-        mainFrame.repaint();
-    }
 }

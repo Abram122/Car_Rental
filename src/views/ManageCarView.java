@@ -103,11 +103,6 @@ public class ManageCarView extends JPanel {
         deleteButton.addActionListener(_ -> deleteSelectedCar());
         footerPanel.add(deleteButton);
 
-        JButton backButton = new JButton("Back to Dashboard");
-        styleButton(backButton);
-        backButton.addActionListener(_ -> navigateBack());
-        footerPanel.add(backButton);
-
         return footerPanel;
     }
 
@@ -325,11 +320,4 @@ public class ManageCarView extends JPanel {
         }
     }
 
-    private void navigateBack() {
-        mainFrame.setSize(600, 400);
-        mainFrame.getContentPane().removeAll();
-        mainFrame.add(new AdminDashboard(mainFrame));
-        mainFrame.revalidate();
-        mainFrame.repaint();
-    }
 }

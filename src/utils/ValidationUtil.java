@@ -1,14 +1,15 @@
 package utils;
 
-public class ValidationUtil {    public static boolean isValidName(String name) throws ValidationException {
+public class ValidationUtil {
+    public static boolean isValidName(String name) throws ValidationException {
         if (name == null || !name.matches("^[\\p{L} ]{2,}$")) {
             throw new ValidationException(name + " is not a valid name");
         }
         return true;
     }
-    
+
     public static boolean isValidEmail(String email) throws ValidationException {
-        
+
         if (email == null || !email.matches("^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$")) {
             throw new ValidationException(email + " is not a valid email");
         }
@@ -34,12 +35,14 @@ public class ValidationUtil {    public static boolean isValidName(String name) 
             throw new ValidationException("Input is null or empty and not numeric");
         }
         try {
-            Integer.parseInt(input); // Attempt to parse the input as an integer
+            Integer.parseInt(input);
             return true;
         } catch (NumberFormatException e) {
             throw new ValidationException(input + " is not numeric");
         }
-    }    public static boolean isValidPassword(String password) throws ValidationException {
+    }
+
+    public static boolean isValidPassword(String password) throws ValidationException {
         if (password == null || !password.matches("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@#$%^&+=!_*()\\-]).{8,}$")) {
             throw new ValidationException(
                     "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a digit, and a special character (@#$%^&+=!_*()-etc).");
@@ -63,8 +66,8 @@ public class ValidationUtil {    public static boolean isValidName(String name) 
 
     // Validate that discount percentage is numeric and <= 100
     public static boolean isValidDiscountPercentage(String percentage) throws ValidationException {
-        isNumeric(percentage); // Validate that it is numeric
-        int value = Integer.parseInt(percentage);
+        isValidFloat(percentage); // Validate that it is a valid float
+        float value = Float.parseFloat(percentage);
         if (value < 0 || value > 100) {
             throw new ValidationException("Discount percentage must be between 0 and 100.");
         }
@@ -80,5 +83,17 @@ public class ValidationUtil {    public static boolean isValidName(String name) 
             throw new ValidationException("Promotion code must be alphanumeric and up to 30 characters.");
         }
         return true;
+    }
+
+    public static boolean isValidFloat(String input) throws ValidationException {
+        if (input == null || input.trim().isEmpty()) {
+            throw new ValidationException("Input is null or empty and not a valid float");
+        }
+        try {
+            Float.parseFloat(input);
+            return true;
+        } catch (NumberFormatException e) {
+            throw new ValidationException(input + " is not a valid float number");
+        }
     }
 }

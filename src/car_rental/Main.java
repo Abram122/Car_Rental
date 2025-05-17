@@ -2,7 +2,6 @@ package car_rental;
 
 import com.formdev.flatlaf.FlatDarkLaf;
 
-import views.AdminDashboard;
 import views.LoginView;
 import javax.swing.*;
 import migrations.DBMigration;
@@ -27,15 +26,15 @@ public class Main extends JFrame {
         // Basic JFrame setup
         setTitle("Car Rental Management System");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
+        setSize(800, 800);
         setLocationRelativeTo(null);
         setResizable(false);
         setIconImage(icon.getImage());
 
         // Load Login View as a default view
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS)); 
-        LoginView loginView = new LoginView(this);
-        add(loginView);
+        LoginView LoginView = new LoginView(this);
+        add(LoginView);
         revalidate();
         repaint();
     }
