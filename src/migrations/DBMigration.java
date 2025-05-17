@@ -14,11 +14,8 @@ public class DBMigration {
                             username VARCHAR(100) UNIQUE NOT NULL,
                             password_hash VARCHAR(255) NOT NULL,
                             email VARCHAR(150) UNIQUE NOT NULL,
-                            phone VARCHAR(20),
-                            birthday DATE,
-                            address TEXT,
-                            license_number VARCHAR(50),
-                            last_login TIMESTAMP,
+                            phone VARCHAR(20) UNIQUE,
+                            license_number VARCHAR(50) UNIQUE,
                             is_verified BOOLEAN NOT NULL DEFAULT FALSE,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -40,7 +37,7 @@ public class DBMigration {
             applyMigration(conn, "create_category_table", """
                         CREATE TABLE Category (
                             category_id INT PRIMARY KEY AUTO_INCREMENT,
-                            name VARCHAR(100),
+                            name VARCHAR(100) UNIQUE,
                             description TEXT,
                             category_img TEXT,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -51,7 +48,7 @@ public class DBMigration {
             applyMigration(conn, "create_brand_table", """
                         CREATE TABLE Brand (
                             brand_id INT PRIMARY KEY AUTO_INCREMENT,
-                            brand_name VARCHAR(100)
+                            brand_name VARCHAR(100) UNIQUE
                         )
                     """);
 
@@ -73,7 +70,7 @@ public class DBMigration {
                             mileage INT,
                             availability_status VARCHAR(50),
                             rental_price DECIMAL(10, 2),
-                            plate_no VARCHAR(20),
+                            plate_no VARCHAR(20) UNIQUE,
                             image_url TEXT,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
