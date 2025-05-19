@@ -10,7 +10,7 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 
 ---
 
-## 📈 Project Stats
+## 📈 Project Status
 <div align="center">
 
 [![Repo Stats](https://github-readme-stats.vercel.app/api/pin/?username=Abram122&repo=Car_Rental&show_owner=false&title_color=blue&icon_color=yellow&bg_color=0d1117)](https://github.com/Abram122/Car_Rental)  
@@ -171,13 +171,6 @@ Car_Rental/
 > <img src="screenshots/booking.png" width="400"/>
 > <img src="screenshots/invoice.png" width="400"/>
 </div>
-
-
-```markdown
-![Login](screenshots/login.png)
-![Booking Form](screenshots/booking.png)
-![Invoice View](screenshots/invoice.png)
-```
 
 ---
 
