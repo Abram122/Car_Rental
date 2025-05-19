@@ -1,11 +1,12 @@
-<p align="center">
-  <img src="https://github.com/Abram122/Car_Rental/blob/main/src/assets/logo.png" alt="Project Logo" width="200"/>
-</p>
-
 # 🚗 Car Rental Management System (CRMS)
 
 A desktop application for managing car rentals, built with Java Swing and MySQL.  
 It follows a modular MVC-inspired architecture with migrations, DAOs, domain models, and a Swing GUI.
+
+<p align="center">
+  <img src="https://github.com/Abram122/Car_Rental/blob/main/src/assets/logo.png" alt="Project Logo" width="200"/>
+</p>
+
 
 ---
 
@@ -24,7 +25,6 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 
 </div>
 
----
 
 ---
 
