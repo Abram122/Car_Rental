@@ -166,7 +166,12 @@ Car_Rental/
 
 ## 📸 Screenshots
 
-> *(Add real screenshots here in a folder named `/screenshots/`)*
+> <div align="center">
+> <img src="screenshots/login.png" width="400"/>
+> <img src="screenshots/booking.png" width="400"/>
+> <img src="screenshots/invoice.png" width="400"/>
+</div>
+
 
 ```markdown
 ![Login](screenshots/login.png)
