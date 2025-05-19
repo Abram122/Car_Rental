@@ -6,11 +6,15 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 ---
 
 ## 📈 Project Stats
-[![Repo Stats](https://github-readme-stats.vercel.app/api/pin/?username=Abram122&repo=Car_Rental&show_owner=false&title_color=blue&icon_color=yellow&bg_color=0d1117)](https://github.com/Abram122/Car_Rental)
+<div align="center">
 
-![Lines of Code](https://tokei.rs/b1/github/Abram122/Car_Rental)
-![Total Commits](https://img.shields.io/github/commit-activity/y/Abram122/Car_Rental)
-![Last Commit](https://img.shields.io/github/last-commit/Abram122/Car_Rental)
+[![Repo Stats](https://github-readme-stats.vercel.app/api/pin/?username=Abram122&repo=Car_Rental&show_owner=false&title_color=blue&icon_color=yellow&bg_color=0d1117)](https://github.com/Abram122/Car_Rental)  
+<br>
+<img src="https://tokei.rs/b1/github/Abram122/Car_Rental" alt="Lines of Code">
+<img src="https://img.shields.io/github/commit-activity/y/Abram122/Car_Rental" alt="Total Commits">
+<img src="https://img.shields.io/github/last-commit/Abram122/Car_Rental" alt="Last Commit">
+
+</div>
 
 ---
 
