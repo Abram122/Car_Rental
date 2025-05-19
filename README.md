@@ -1,3 +1,5 @@
+````bash
+cat << 'EOF' > README.md
 # 🚗 Car Rental Management System (CRMS)
 
 A desktop application for managing car rentals, built with Java Swing and MySQL.  
@@ -11,7 +13,6 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 ![Lines of Code](https://tokei.rs/b1/github/Abram122/Car_Rental)
 ![Total Commits](https://img.shields.io/github/commit-activity/y/Abram122/Car_Rental)
 ![Last Commit](https://img.shields.io/github/last-commit/Abram122/Car_Rental)
-
 
 ---
 
@@ -29,6 +30,7 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 - [Screenshots](#screenshots)
 - [Contributing](#contributing)
 - [License](#license)
+- [Team Members](#team-members)
 - [Contact](#contact)
 - [Acknowledgements](#acknowledgements)
 
@@ -38,42 +40,42 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 
 CRMS is a Java Swing-based desktop application using MySQL for persistence. It implements an MVC-inspired modular architecture:
 
-- DAO pattern for data access
-- Domain models for business logic
+- DAO pattern for data access  
+- Domain models for business logic  
 - Database migrations for setup
 
 ---
 
 ## ✨ Features
 
-- ✅ User & Admin authentication
-- 🧾 Customer registration with license info
-- 🚘 Car inventory management (CRUD + categories)
-- 📅 Booking system with date validation
-- 💳 Payment handling and invoice generation
-- 📊 Rental history and returns tracking
-- ⭐ Customer reviews and ratings
-- 🔧 Maintenance logging and cost tracking
+- ✅ User & Admin authentication  
+- 🧾 Customer registration with license info  
+- 🚘 Car inventory management (CRUD + categories)  
+- 📅 Booking system with date validation  
+- 💳 Payment handling and invoice generation  
+- 📊 Rental history and returns tracking  
+- ⭐ Customer reviews and ratings  
+- 🔧 Maintenance logging and cost tracking  
 
 ---
 
 ## 💻 Tech Stack
 
-- **Language**: Java SE
-- **GUI**: Java Swing
-- **Database**: MySQL
-- **Build Tool**: Maven (optional)
-- **JDBC**: MySQL Connector/J
-- **Version Control**: Git + GitHub
+- **Language**: Java SE  
+- **GUI**: Java Swing  
+- **Database**: MySQL  
+- **Build Tool**: Maven (optional)  
+- **JDBC**: MySQL Connector/J  
+- **Version Control**: Git + GitHub  
 
 ---
 
 ## 🛠 Prerequisites
 
-- Java 8 or higher
-- MySQL Server
-- MySQL Connector/J
-- (Optional) Maven or Gradle
+- Java 8 or higher  
+- MySQL Server  
+- MySQL Connector/J  
+- (Optional) Maven or Gradle  
 
 ---
 
@@ -166,19 +168,21 @@ Car_Rental/
 1. Fork the repo
 2. Create a new branch:
 
-   ```bash
-   git checkout -b feature/YourFeature
-   ```
+```bash
+git checkout -b feature/YourFeature
+```
+
 3. Commit your changes:
 
-   ```bash
-   git commit -m "Add YourFeature"
-   ```
+```bash
+git commit -m "Add YourFeature"
+```
+
 4. Push and create a pull request
 
-   ```bash
-   git push origin feature/YourFeature
-   ```
+```bash
+git push origin feature/YourFeature
+```
 
 ---
 
@@ -189,3 +193,30 @@ See the [LICENSE](LICENSE) file for details.
 
 ---
 
+## 👨‍💻 Team Members
+
+* **Abram Mina**
+* **Kareem Diaa**
+* **Ahmed Mohamed**
+* **Zeyad Mahmoud**
+
+---
+
+## 📬 Contact
+
+For inquiries or collaboration, feel free to reach out via GitHub Issues or Discussions.
+
+---
+
+## 🙌 Acknowledgements
+
+* Java & Swing Documentation
+* MySQL Community Edition
+* GitHub Community
+* Open-source contributors
+  EOF
+
+```
+
+You can paste this script directly into a terminal to generate a `README.md` file with all the content. Let me know if you want this adapted for Linux, Windows, or VS Code setup!
+```
