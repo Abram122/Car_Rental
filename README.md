@@ -187,7 +187,6 @@ git push origin feature/YourFeature
 ## 📜 License
 
 This project is licensed under the **MIT License**.
-See the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -214,7 +213,3 @@ For inquiries or collaboration, feel free to reach out via GitHub Issues or Disc
 * Open-source contributors
   EOF
 
-```
-
-You can paste this script directly into a terminal to generate a `README.md` file with all the content. Let me know if you want this adapted for Linux, Windows, or VS Code setup!
-```
