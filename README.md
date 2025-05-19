@@ -207,9 +207,9 @@ For inquiries or collaboration, feel free to reach out via GitHub Issues or Disc
 
 ## 🙌 Acknowledgements
 
+* SU TECH Assistant Professors, Teaching Assistants, and Mentors
 * Java & Swing Documentation
 * MySQL Community Edition
 * GitHub Community
 * Open-source contributors
-  EOF
 
