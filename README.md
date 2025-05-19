@@ -1,5 +1,3 @@
-````bash
-cat << 'EOF' > README.md
 # 🚗 Car Rental Management System (CRMS)
 
 A desktop application for managing car rentals, built with Java Swing and MySQL.  
