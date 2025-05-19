@@ -1,4 +1,7 @@
-![CRMS Banner](https://github.com/Abram122/Car_Rental/blob/main/src/assets/logo.png)
+<p align="center">
+  <img src="https://github.com/Abram122/Car_Rental/blob/main/src/assets/logo.png" alt="Project Logo" width="200"/>
+</p>
+
 # 🚗 Car Rental Management System (CRMS)
 
 A desktop application for managing car rentals, built with Java Swing and MySQL.  
@@ -15,14 +18,11 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 <img src="https://img.shields.io/github/commit-activity/y/Abram122/Car_Rental" alt="Total Commits">
 <img src="https://img.shields.io/github/last-commit/Abram122/Car_Rental" alt="Last Commit">
 
-</div>
-
----
-
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-00758F?style=for-the-badge&logo=mysql&logoColor=white)
 ![Swing](https://img.shields.io/badge/Swing-007396?style=for-the-badge&logo=java&logoColor=white)
 
+</div>
 
 ---
 
