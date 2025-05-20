@@ -7,7 +7,6 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
   <img src="https://github.com/Abram122/Car_Rental/blob/main/src/assets/logo.png" alt="Project Logo" width="200"/>
 </p>
 
-
 ---
 
 ## 📈 Project Status
@@ -25,7 +24,6 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 
 </div>
 
-
 ---
 
 ## 📑 Table of Contents
@@ -33,180 +31,361 @@ It follows a modular MVC-inspired architecture with migrations, DAOs, domain mod
 - [About](#about)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Project Architecture](#project-architecture)
+- [Design Patterns](#design-patterns)
+- [Project Components](#project-components)
+  - [Models](#models)
+  - [DAO Layer](#dao-layer)
+  - [Controllers](#controllers)
+  - [Views](#views)
+  - [Utils](#utils)
+  - [Migrations](#migrations)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Configuration](#configuration)
-- [Database Migrations](#database-migrations)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
+- [Database Setup](#database-setup)
+- [Running the Application](#running-the-application)
 - [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
 - [Team Members](#team-members)
-- [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
+- [License](#license)
 
 ---
 
 ## 📝 About
-CRMS simplifies the car rental process by allowing businesses to register customers, manage bookings, track vehicles, and handle payments from a single interface.
 
-CRMS is a Java Swing-based desktop application using MySQL for persistence. It implements an MVC-inspired modular architecture:
+The Car Rental Management System (CRMS) is a comprehensive desktop application designed to simplify the car rental process for businesses. It provides a complete solution for managing customers, vehicles, bookings, payments, and maintenance all within a single interface.
 
-- DAO pattern for data access  
-- Domain models for business logic  
-- Database migrations for setup
+This application is built using Java Swing for the GUI and MySQL for data persistence, following an MVC (Model-View-Controller) architecture pattern. It's designed with modularity and extensibility in mind, making it easy to maintain and extend.
 
 ---
 
 ## ✨ Features
 
-- ✅ User & Admin authentication  
-- 🧾 Customer registration with license info  
-- 🚘 Car inventory management (CRUD + categories)  
-- 📅 Booking system with date validation  
-- 💳 Payment handling and invoice generation  
-- 📊 Rental history and returns tracking  
-- ⭐ Customer reviews and ratings  
-- 🔧 Maintenance logging and cost tracking  
+- **User Authentication**
+  - ✅ Customer and Admin login and registration
+  - 🔑 Secure password hashing with jBCrypt
+  - 📧 Email verification system
+  
+- **Customer Management**
+  - 👤 Customer registration with license information
+  - 📋 Customer profile management
+  - 🔍 Customer search and filtering
+  
+- **Car Management**
+  - 🚘 Complete car inventory system (CRUD operations)
+  - 🏷️ Car categorization and brand management
+  - 📊 Car availability tracking
+  - 🖼️ Car image upload and display
+  
+- **Booking System**
+  - 📅 Advanced booking with date validation
+  - 💳 Payment processing
+  - 🧾 Invoice generation
+  - 🔄 Rental history tracking
+  
+- **Maintenance & Reviews**
+  - 🔧 Vehicle maintenance logging
+  - 💰 Maintenance cost tracking
+  - ⭐ Customer review and rating system
+  
+- **Admin Features**
+  - 📊 Dashboard with key metrics
+  - 👥 User management
+  - 💵 Payment oversight
+  - 📝 Discount management
 
 ---
 
 ## 💻 Tech Stack
 
-- **Language**: Java SE  
-- **GUI**: Java Swing  
-- **Database**: MySQL  
-- **Build Tool**: Maven (optional)  
-- **JDBC**: MySQL Connector/J  
-- **Version Control**: Git + GitHub  
+- **Language**: Java SE
+- **GUI Framework**: Java Swing with FlatLaf for modern UI
+- **Database**: MySQL
+- **JDBC Connector**: MySQL Connector/J 9.1.0
+- **Additional Libraries**:
+  - jBCrypt for password hashing
+  - FlatLaf for modern UI
+  - PDFBox for PDF generation
+  - JavaMail for email functionality
+  - JDatePicker for date selection
+  - MigLayout for flexible GUI layouts
+
+---
+
+## 🏗️ Project Architecture
+
+The Car Rental Management System follows the **Model-View-Controller (MVC)** architectural pattern, structured as follows:
+
+```
+📂 src/
+ ┣ 📂 models/            # Domain models representing business entities
+ ┣ 📂 dao/               # Data Access Objects for database operations
+ ┣ 📂 controllers/       # Controllers to handle business logic
+ ┣ 📂 views/             # UI components and screens
+ ┣ 📂 utils/             # Utility classes and helpers
+ ┣ 📂 migrations/        # Database setup and migrations
+ ┣ 📂 services/          # Business services (e.g., OTP service)
+ ┣ 📂 resources/         # Configuration files
+ ┣ 📂 assets/            # Images and other static resources
+ ┗ 📂 fonts/             # Custom fonts for the application
+```
+
+This architecture provides:
+- **Separation of concerns**: Each component has a clear responsibility
+- **Maintainability**: Changes to one layer don't affect other layers
+- **Testability**: Components can be tested in isolation
+- **Flexibility**: Easy to extend or modify functionality
+
+---
+
+## 📦 Project Components
+
+### 📊 Models
+
+Models represent the business entities and encapsulate the data structure. Key models include:
+
+- **Car**: Represents a vehicle available for rental
+  - Attributes: ID, model, category, mileage, availability, price, etc.
+  - Related models: `CarBrand`, `CarModel`, `Category`
+
+- **Customer**: Represents a registered user
+  - Attributes: ID, username, password hash, email, license number, etc.
+  - Authentication and profile details
+
+- **Booking**: Represents a car reservation
+  - Attributes: ID, car ID, customer ID, dates, status, etc.
+  - Links customers to cars for a specific period
+
+- **Payment**: Handles financial transactions
+  - Attributes: ID, booking ID, amount, status, date, method
+  - Tracks all financial aspects of rentals
+
+- **RentalHistory**: Records past rentals
+  - Attributes: ID, booking ID, return date, condition notes, etc.
+  - Maintains a history of all completed rentals
+
+- **Maintenance**: Tracks vehicle upkeep
+  - Attributes: ID, car ID, date, description, cost, etc.
+  - Records all maintenance activities for each vehicle
+
+- **Review**: Customer feedback about rentals
+  - Attributes: ID, booking ID, rating, comments, date
+  - Allows customers to rate their rental experience
+
+### 🗄️ DAO Layer
+
+The Data Access Object (DAO) layer provides an abstraction between the database and the application. Each DAO class:
+
+- Handles CRUD operations (Create, Read, Update, Delete)
+- Manages SQL queries and database connections
+- Maps database records to model objects
+
+Key DAO classes:
+
+- **CarDAO**: Manages car data in the database
+  - Methods: `insertCar()`, `getCarById()`, `updateCar()`, `deleteCar()`, etc.
+  - Handles car-specific database operations
+
+- **CustomerDAO**: Manages customer accounts
+  - Methods: `registerCustomer()`, `getCustomerByUsername()`, `verifyCustomer()`, etc.
+  - Handles customer authentication and profile management
+
+- **BookingDAO**: Manages rental bookings
+  - Methods: `createBooking()`, `getBookingsByCustomer()`, `updateBookingStatus()`, etc.
+  - Handles reservation-related database operations
+
+All DAO classes follow a similar pattern, providing a consistent interface for database operations while encapsulating SQL complexity.
+
+### 🎮 Controllers
+
+Controllers act as intermediaries between the Views and the Models/DAOs. They:
+
+- Validate user input before processing
+- Implement business logic
+- Call appropriate DAO methods
+- Return results to the Views
+
+Key controllers:
+
+- **CarController**: Manages car-related operations
+  - Methods: `addCar()`, `updateCar()`, `deleteCar()`, `getCarById()`, etc.
+  - Validates car data before database operations
+
+- **BookingController**: Handles rental bookings
+  - Methods: `createBooking()`, `cancelBooking()`, `getActiveBookings()`, etc.
+  - Manages the booking workflow and status transitions
+
+- **LoginController**: Handles user authentication
+  - Methods: `loginCustomer()`, `loginAdmin()`, `verifyCredentials()`
+  - Securely authenticates users and manages sessions
+
+### 🖼️ Views
+
+Views are the user interface components built with Java Swing. The application uses FlatLaf for a modern look and feel. Key views include:
+
+- **LoginView**: User authentication screen
+  - Components: Username/password fields, login button
+  - Functionality: Authenticate users, reset password
+
+- **AdminDashboard**: Main admin interface
+  - Components: Navigation menu, summary statistics
+  - Functionality: Access to all admin functions
+
+- **AvailableCarsView**: Displays cars for rental
+  - Components: Car listing table, filters, booking button
+  - Functionality: Browse and select cars for rental
+
+- **BookingView**: Booking creation interface
+  - Components: Date pickers, customer details, payment options
+  - Functionality: Complete the booking process
+
+- **ManageCarView**: Car management interface
+  - Components: Car listing, add/edit/delete buttons
+  - Functionality: CRUD operations for car inventory
+
+Each view is designed to be responsive and user-friendly, with consistent styling and navigation.
+
+### 🔧 Utils
+
+Utility classes provide common functionality used across the application:
+
+- **MySQLConnection**: Database connection management (Singleton)
+  - Methods: `getInstance()`, `getConnection()`
+  - Maintains a single connection to the MySQL database
+
+- **EmailUtil**: Email notification services
+  - Methods: `sendVerificationEmail()`, `sendPasswordReset()`
+  - Handles all email communications
+
+- **HashUtil**: Password security
+  - Methods: `hashPassword()`, `verifyPassword()`
+  - Uses jBCrypt for secure password handling
+
+- **ValidationUtil**: Input validation
+  - Methods: `isValidEmail()`, `isValidPhone()`, etc.
+  - Ensures data integrity before processing
+
+- **AppColors**: UI color constants
+  - Defines color scheme for consistent UI appearance
+
+### 📜 Migrations
+
+The migration system automates database setup and schema changes:
+
+- **DBMigration**: Database setup and schema management
+  - Methods: `migrate()`, `applyMigration()`
+  - Creates all required tables and initial data
 
 ---
 
 ## 🛠 Prerequisites
 
-- Java 8 or higher  
-- MySQL Server  
-- MySQL Connector/J  
-- (Optional) Maven or Gradle  
+- Java Development Kit (JDK) 8 or higher
+- MySQL Server 5.7 or higher
+- MySQL Connector/J 9.1.0
+- (Optional) An IDE such as Eclipse, IntelliJ IDEA, or NetBeans
 
 ---
 
 ## 🚀 Installation
 
-```bash
-# 1. Clone the repo
-git clone https://github.com/Abram122/Car_Rental.git
-cd Car_Rental
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Abram122/Car_Rental.git
+   cd Car_Rental
+   ```
 
-# 2. (Optional) Build with Maven
-mvn clean package
-````
+2. **Configure database connection**
+   - Edit `src/resources/DBPropFile.properties` with your MySQL credentials
+   - Ensure MySQL server is running
+
+3. **Add required libraries**
+   - All required JAR files are in the `lib/` directory
+   - Add these to your build path if not already included
+
+4. **Compile the project**
+   - Use your IDE's build functionality or compile manually
 
 ---
 
 ## ⚙️ Configuration
 
-Create or update:
+### Database Configuration
 
-```
-src/resources/DBPropFile.properties
-```
-
+Edit the `src/resources/DBPropFile.properties` file:
 ```properties
-MYSQL_DB_URL=jdbc:mysql://localhost:3306/car_rental_db
-USER=your_db_username
-PASSWORD=your_db_password
+MYSQL_DB_URL=jdbc:mysql://localhost:3306/car_rental
+USER=your_username
+PASSWORD=your_password
+```
+
+### Email Configuration
+
+Edit the `src/resources/smtp.properties` file:
+```properties
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_AUTH=true
+SMTP_STARTTLS=true
+SMTP_USERNAME=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
 ```
 
 ---
 
-## 🗄️ Database Migrations
+## 📊 Database Setup
 
-Run the migration script from:
+To initialize the database:
 
-```java
-Connection conn = MySQLConnection.getInstance().getConnection();
-DBMigration.migrate(conn);
-```
+1. **Create a MySQL database**
+   ```sql
+   CREATE DATABASE car_rental;
+   ```
 
-Creates tables like `User`, `Admin`, `Car`, `Booking`, `Invoice`, `Review`, `Maintenance`, etc.
+2. **Run migrations**
+   - Uncomment the migration code in `Main.java`
+   - Run the application once to create all tables
+   - Re-comment the migration code for subsequent runs
 
----
-
-## ▶️ Usage
-
-1. Start MySQL server
-2. Run migration script (if not already)
-3. Launch the app:
-
-```bash
-java -cp target/Car_Rental.jar Main
-```
+The migration system will automatically create all required tables, indexes, and relationships.
 
 ---
 
-## 📁 Project Structure
+## 🏃‍♂️ Running the Application
 
-```
-Car_Rental/
-├── src/
-│   ├── controllers/      # Handles app logic and UI interaction
-│   ├── dao/              # Data Access Objects
-│   ├── migrations/       # DB setup scripts
-│   ├── models/           # Domain/business logic
-│   ├── utils/            # Utilities & DB connection
-│   ├── views/            # Java Swing views
-│   └── Main.java         # App entry point
-└── resources/
-    └── DBPropFile.properties
-```
+1. **Compile and run the Main class**
+   ```bash
+   javac -cp "lib/*" -d bin src/car_rental/Main.java
+   java -cp "bin;lib/*" car_rental.Main
+   ```
 
----
+2. **Login**
+   - Use the default admin credentials (check admin_passwords.txt)
+   - Or register a new customer account
 
-## 📸 Screenshots
-
-> <div align="center">
-> <img src="screenshots/login.png" width="400"/>
-> <img src="screenshots/booking.png" width="400"/>
-> <img src="screenshots/invoice.png" width="400"/>
-</div>
+3. **Navigate the interface**
+   - Use the menu options to access different features
+   - Admin users have access to management features
+   - Customers can browse cars, make bookings, and view their history
 
 ---
 
-## 🤝 Contributing
+## 🏆 Team Members
 
-1. Fork the repo
-2. Create a new branch:
-
-```bash
-git checkout -b feature/YourFeature
-```
-
-3. Commit your changes:
-
-```bash
-git commit -m "Add YourFeature"
-```
-
-4. Push and create a pull request
-
-```bash
-git push origin feature/YourFeature
-```
+[Your team member information here]
 
 ---
 
-## 📜 License
+## 📄 License
 
-This project is licensed under the **MIT License**.
+[Your license information here]
 
----
+
 
 ## 👨‍💻 Team Members
 
 * **Abram Mina**
-* **[Kareem Diaa](https://github.com/kareem-diaa)**
+* **Kareem Diaa**
 * **Ahmed Mohamed**
 * **Zeyad Mahmoud**
 
