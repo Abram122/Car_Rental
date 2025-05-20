@@ -371,23 +371,12 @@ The migration system will automatically create all required tables, indexes, and
 ---
 
 ## 🏆 Team Members
-
-[Your team member information here]
-
----
-
-## 📄 License
-
-[Your license information here]
-
-
-
-## 👨‍💻 Team Members
-
 * **Abram Mina**
-* **Kareem Diaa**
 * **Ahmed Mohamed**
+* **Kareem Diaa**
 * **Zeyad Mahmoud**
+
+
 
 ---
 
