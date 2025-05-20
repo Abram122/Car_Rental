@@ -1,15 +1,12 @@
 package utils;
 
 public class ValidationUtil {
-// ...existing code...
-public static boolean isValidName(String name) throws ValidationException {
-    // Allow letters, digits, spaces, and dashes, at least 2 characters
-    if (name == null || !name.matches("^[\\p{L}\\d \\-]{2,}$")) {
-        throw new ValidationException(name + " is not a valid name");
+    public static boolean isValidName(String name) throws ValidationException {
+        if (name == null || !name.matches("^[\\p{L} ]{2,}$")) {
+            throw new ValidationException(name + " is not a valid name");
+        }
+        return true;
     }
-    return true;
-}
-// ...existing code...
 
     public static boolean isValidEmail(String email) throws ValidationException {
 
