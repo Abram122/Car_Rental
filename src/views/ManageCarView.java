@@ -157,138 +157,138 @@ public class ManageCarView extends JPanel {
         return categoryComboBox;
     }
 
-    private JComboBox<String> loadCarModelOptions() {
-        JComboBox<String> carModelComboBox = new JComboBox<>();
-        List<CarModel> carModels = carModelDAO.getAllCarModels();
-        if (carModels != null && !carModels.isEmpty()) {
-            for (CarModel carModel : carModels) {
-                carModelComboBox
-                        .addItem(carModel.getModelId() + " - " + carModel.getBrandId() + " " + carModel.getModelId());
-            }
-        } else {
-            carModelComboBox.addItem("No car models available");
-            carModelComboBox.setEnabled(false);
+private JComboBox<String> loadCarModelOptions() {
+    JComboBox<String> carModelComboBox = new JComboBox<>();
+    List<CarModel> carModels = carModelDAO.getAllCarModels();
+    if (carModels != null && !carModels.isEmpty()) {
+        for (CarModel carModel : carModels) {
+            carModelComboBox.addItem(carModel.getModelName());
+            carModelComboBox.putClientProperty(carModel.getModelName(), carModel.getModelId());
         }
-        return carModelComboBox;
+    } else {
+        carModelComboBox.addItem("No car models available");
+        carModelComboBox.setEnabled(false);
     }
+    return carModelComboBox;
+}
 
     private void showAddCarDialog() {
-        JComboBox<String> carModelComboBox = loadCarModelOptions();
-        JComboBox<String> categoryComboBox = loadCategoryOptions();
-        JTextField mileageField = new JTextField();
-        JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
-        JTextField rentalPriceField = new JTextField();
-        JComboBox<String> fuelTypeComboBox = new JComboBox<>(new String[] { "Petrol", "Diesel", "Electric", "Hybrid" });
-        JTextField plateNoField = new JTextField();
-        JTextField imageURLField = new JTextField();
+    JComboBox<String> carModelComboBox = loadCarModelOptions();
+    JComboBox<String> categoryComboBox = loadCategoryOptions();
+    JTextField mileageField = new JTextField();
+    JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
+    JTextField rentalPriceField = new JTextField();
+    JComboBox<String> fuelTypeComboBox = new JComboBox<>(new String[] { "Petrol", "Diesel", "Electric", "Hybrid" });
+    JTextField plateNoField = new JTextField();
+    JTextField imageURLField = new JTextField();
 
-        Object[] fields = {
-                "Car Model:", carModelComboBox,
-                "Category:", categoryComboBox,
-                "Mileage:", mileageField,
-                "Availability:", availabilityComboBox,
-                "Rental Price:", rentalPriceField,
-                "Fuel Type:", fuelTypeComboBox,
-                "Plate Number:", plateNoField,
-                "Image URL:", imageURLField
-        };
+    Object[] fields = {
+            "Car Model:", carModelComboBox,
+            "Category:", categoryComboBox,
+            "Mileage:", mileageField,
+            "Availability:", availabilityComboBox,
+            "Rental Price:", rentalPriceField,
+            "Fuel Type:", fuelTypeComboBox,
+            "Plate Number:", plateNoField,
+            "Image URL:", imageURLField
+    };
 
-        int option = JOptionPane.showConfirmDialog(this, fields, "Add Car", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            try {
-                String selectedCarModel = (String) carModelComboBox.getSelectedItem();
-                int carModelId = Integer.parseInt(selectedCarModel.split(" - ")[0]);
+    int option = JOptionPane.showConfirmDialog(this, fields, "Add Car", JOptionPane.OK_CANCEL_OPTION);
+    if (option == JOptionPane.OK_OPTION) {
+        try {
+            String selectedCarModel = (String) carModelComboBox.getSelectedItem();
+            Integer carModelId = (Integer) carModelComboBox.getClientProperty(selectedCarModel);
 
-                String selectedCategory = (String) categoryComboBox.getSelectedItem();
-                int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
+            String selectedCategory = (String) categoryComboBox.getSelectedItem();
+            int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
 
-                Car car = new Car();
-                car.setModelID(carModelId);
-                car.setCategoryID(categoryId);
-                car.setMileage(Integer.parseInt(mileageField.getText()));
-                car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
-                car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
-                car.setPlateNo(plateNoField.getText());
-                car.setImageURL(imageURLField.getText());
-                car.setCreatedAt(LocalDateTime.now());
-                car.setUpdatedAt(LocalDateTime.now());
+            Car car = new Car();
+            car.setModelID(carModelId);
+            car.setCategoryID(categoryId);
+            car.setMileage(Integer.parseInt(mileageField.getText()));
+            car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
+            car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
+            car.setPlateNo(plateNoField.getText());
+            car.setImageURL(imageURLField.getText());
+            car.setCreatedAt(LocalDateTime.now());
+            car.setUpdatedAt(LocalDateTime.now());
 
-                boolean success = carController.addCar(car);
-                if (success) {
-                    JOptionPane.showMessageDialog(this, "Car added successfully!");
-                    loadCars();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Failed to add car.");
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            boolean success = carController.addCar(car);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Car added successfully!");
+                loadCars();
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to add car.");
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+}
 
-    private void showUpdateCarDialog() {
-        int selectedRow = carTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Please select a car to update.");
-            return;
-        }
+private void showUpdateCarDialog() {
+    int selectedRow = carTable.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Please select a car to update.");
+        return;
+    }
 
-        int carId = (int) tableModel.getValueAt(selectedRow, 0);
-        Car car = carController.getCarById(carId);
-        if (car == null) {
-            JOptionPane.showMessageDialog(this, "Car not found.");
-            return;
-        }
+    int carId = (int) tableModel.getValueAt(selectedRow, 0);
+    Car car = carController.getCarById(carId);
+    if (car == null) {
+        JOptionPane.showMessageDialog(this, "Car not found.");
+        return;
+    }
 
-        JComboBox<String> carModelComboBox = loadCarModelOptions();
-        JComboBox<String> categoryComboBox = loadCategoryOptions();
-        JTextField mileageField = new JTextField(String.valueOf(car.getMileage()));
-        JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
-        availabilityComboBox.setSelectedItem(car.getAvailabilityStatus());
-        JTextField rentalPriceField = new JTextField(String.valueOf(car.getRentalPrice()));
-        JTextField plateNoField = new JTextField(car.getPlateNo());
-        JTextField imageURLField = new JTextField(car.getImageURL());
+    JComboBox<String> carModelComboBox = loadCarModelOptions();
+    JComboBox<String> categoryComboBox = loadCategoryOptions();
+    JTextField mileageField = new JTextField(String.valueOf(car.getMileage()));
+    JComboBox<Boolean> availabilityComboBox = new JComboBox<>(new Boolean[] { true, false });
+    availabilityComboBox.setSelectedItem(car.getAvailabilityStatus());
+    JTextField rentalPriceField = new JTextField(String.valueOf(car.getRentalPrice()));
+    JTextField plateNoField = new JTextField(car.getPlateNo());
+    JTextField imageURLField = new JTextField(car.getImageURL());
 
-        Object[] fields = {
-                "Car Model:", carModelComboBox,
-                "Category:", categoryComboBox,
-                "Mileage:", mileageField,
-                "Availability:", availabilityComboBox,
-                "Rental Price:", rentalPriceField,
-                "Plate Number:", plateNoField,
-                "Image URL:", imageURLField
-        };
+    Object[] fields = {
+            "Car Model:", carModelComboBox,
+            "Category:", categoryComboBox,
+            "Mileage:", mileageField,
+            "Availability:", availabilityComboBox,
+            "Rental Price:", rentalPriceField,
+            "Plate Number:", plateNoField,
+            "Image URL:", imageURLField
+    };
 
-        int option = JOptionPane.showConfirmDialog(this, fields, "Update Car", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            try {
-                String selectedCarModel = (String) carModelComboBox.getSelectedItem();
-                int carModelId = Integer.parseInt(selectedCarModel.split(" - ")[0]);
+    int option = JOptionPane.showConfirmDialog(this, fields, "Update Car", JOptionPane.OK_CANCEL_OPTION);
+    if (option == JOptionPane.OK_OPTION) {
+        try {
+            String selectedCarModel = (String) carModelComboBox.getSelectedItem();
+            Integer carModelId = (Integer) carModelComboBox.getClientProperty(selectedCarModel);
 
-                String selectedCategory = (String) categoryComboBox.getSelectedItem();
-                int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
+            String selectedCategory = (String) categoryComboBox.getSelectedItem();
+            int categoryId = Integer.parseInt(selectedCategory.split(" - ")[0]);
 
-                car.setModelID(carModelId);
-                car.setCategoryID(categoryId);
-                car.setMileage(Integer.parseInt(mileageField.getText()));
-                car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
-                car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
-                car.setPlateNo(plateNoField.getText());
-                car.setImageURL(imageURLField.getText());
-                car.setUpdatedAt(LocalDateTime.now());
+            car.setModelID(carModelId);
+            car.setCategoryID(categoryId);
+            car.setMileage(Integer.parseInt(mileageField.getText()));
+            car.setAvailabilityStatus((Boolean) availabilityComboBox.getSelectedItem());
+            car.setRentalPrice(Float.parseFloat(rentalPriceField.getText()));
+            car.setPlateNo(plateNoField.getText());
+            car.setImageURL(imageURLField.getText());
+            car.setUpdatedAt(LocalDateTime.now());
 
-                boolean success = carController.updateCar(car);
-                if (success) {
-                    JOptionPane.showMessageDialog(this, "Car updated successfully!");
-                    loadCars();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Failed to update car.");
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
+            boolean success = carController.updateCar(car);
+            if (success) {
+                JOptionPane.showMessageDialog(this, "Car updated successfully!");
+                loadCars();
+            } else {
+                JOptionPane.showMessageDialog(this, "Failed to update car.");
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Validation Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+}
 
     private String getCategoryNameById(int categoryId) {
         List<Category> categories = new CategoryController().getAllCategories();

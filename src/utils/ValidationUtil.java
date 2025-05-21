@@ -1,13 +1,13 @@
 package utils;
 
 public class ValidationUtil {
-    public static boolean isValidName(String name) throws ValidationException {
-        if (name == null || !name.matches("^[\\p{L} ]{2,}$")) {
-            throw new ValidationException(name + " is not a valid name");
-        }
-        return true;
+public static boolean isValidName(String name) throws ValidationException {
+    // Allow letters, digits, spaces, and dashes, at least 2 characters
+    if (name == null || !name.matches("^[\\p{L}\\d \\-]{2,}$")) {
+        throw new ValidationException(name + " is not a valid name");
     }
-
+    return true;
+}
     public static boolean isValidEmail(String email) throws ValidationException {
 
         if (email == null || !email.matches("^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\\.[a-zA-Z]{2,}$")) {

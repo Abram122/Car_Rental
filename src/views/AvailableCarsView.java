@@ -72,7 +72,7 @@ public class AvailableCarsView extends JPanel {
         JPanel tablePanel = new JPanel(new BorderLayout());
         tablePanel.setBackground(AppColors.MAIN_BG);
         tableModel = new DefaultTableModel(new Object[] {
-                "ID", "Model", "Name", "Category", "Mileage", "Availability",
+                "ID", "Brand", "Name", "Category", "Mileage", "Availability",
                 "Rental Price", "Fuel Type", "Plate No", "Image URL"
         }, 0);
         carTable = new JTable(tableModel);
@@ -128,7 +128,7 @@ public class AvailableCarsView extends JPanel {
                 for (Car car : availableCars) {
                     CarModel carModel = carModelDAO.getCarModelById(car.getModelID());
                     int brand = carModel != null ? carModel.getBrandId() : 0;
-                    int model = carModel != null ? carModel.getModelId() : 0;
+                    String model = carModel != null ? carModel.getModelName() : "";
                     String categoryName = getCategoryNameById(car.getCategoryID());
                     tableModel.addRow(new Object[] {
                             car.getCarID(),
